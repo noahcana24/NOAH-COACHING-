@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NoahCana Coaching</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- LOGIN PAGE -->
+<div id="page-login" class="page active">
+  <div class="login-bg">
+    <div class="login-bg-shape s1"></div>
+    <div class="login-bg-shape s2"></div>
+    <div class="login-bg-shape s3"></div>
+  </div>
+  <div class="login-container">
+    <div class="login-brand">
+      <div class="brand-icon"><i class="fa-solid fa-bolt"></i></div>
+      <div>
+        <div class="brand-name">NoahCana Coaching</div>
+        <div class="brand-tagline">Ta transformation commence ici</div>
+      </div>
+    </div>
+    <div class="login-card">
+      <h1>Accéder à la plateforme</h1>
+      <p class="login-sub">Entre ton code d'accès personnel reçu par ton coach</p>
+      <div class="form-group">
+        <label>Code d'invitation</label>
+        <input type="text" id="invite-code" placeholder="ex: NC-XXXX-XXXX" autocomplete="off">
+        <div id="login-error" class="error-msg"></div>
+      </div>
+      <div class="form-group">
+        <label>Ton prénom</label>
+        <input type="text" id="member-name" placeholder="Prénom">
+      </div>
+      <button class="btn-main" onclick="handleLogin()">
+        <span>Accéder à ma formation</span>
+        <i class="fa-solid fa-arrow-right"></i>
+      </button>
+    </div>
+    <div class="login-footer">Accès réservé aux membres NoahCana Coaching</div>
+  </div>
+</div>
+
+<!-- MEMBER DASHBOARD -->
+<div id="page-member" class="page">
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-top">
+      <div class="sidebar-logo">
+        <div class="brand-icon sm"><i class="fa-solid fa-bolt"></i></div>
+        <span>NoahCana</span>
+      </div>
+      <button class="sidebar-close" onclick="toggleSidebar()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="sidebar-user">
+      <div class="user-av" id="nav-av">?</div>
+      <div>
+        <div class="user-name" id="nav-name">Membre</div>
+        <div class="user-badge"><i class="fa-solid fa-circle-check"></i> Membre actif</div>
+      </div>
+    </div>
+    <nav class="nav-links">
+      <a href="#" class="nav-link active" onclick="showSection('home')">
+        <i class="fa-solid fa-house"></i><span>Accueil</span>
+      </a>
+      <a href="#" class="nav-link" onclick="showSection('modules')">
+        <i class="fa-solid fa-layer-group"></i><span>Modules</span>
+        <span class="nav-count" id="nav-module-count">0</span>
+      </a>
+      <a href="#" class="nav-link" onclick="showSection('community')">
+        <i class="fa-solid fa-comments"></i><span>Communauté</span>
+        <span class="nav-count new" id="nav-post-count">0</span>
+      </a>
+      <a href="#" class="nav-link" onclick="showSection('resources')">
+        <i class="fa-solid fa-file-arrow-down"></i><span>Ressources</span>
+      </a>
+      <a href="#" class="nav-link" onclick="showSection('progress')">
+        <i class="fa-solid fa-chart-line"></i><span>Ma progression</span>
+      </a>
+    </nav>
+    <div class="sidebar-bottom">
+      <button class="btn-logout" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Se déconnecter</button>
+    </div>
+  </nav>
+
+  <div class="main-content">
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+      <div class="topbar-right">
+        <div class="topbar-name" id="topbar-name">Bonjour 👋</div>
+      </div>
+    </div>
+
+    <!-- HOME SECTION -->
+    <section id="section-home" class="section active">
+      <div class="section-hero">
+        <div class="hero-text">
+          <div class="hero-tag">🔥 Bienvenue</div>
+          <h2 id="welcome-title">Prêt à transformer ton physique ?</h2>
+          <p>Accède à tes modules de formation, suis ta progression et échange avec la communauté.</p>
+        </div>
+        <div class="hero-stats">
+          <div class="hstat"><div class="hstat-n" id="hs-modules">0</div><div class="hstat-l">Modules</div></div>
+          <div class="hstat"><div class="hstat-n" id="hs-completed">0</div><div class="hstat-l">Complétés</div></div>
+          <div class="hstat"><div class="hstat-n" id="hs-posts">0</div><div class="hstat-l">Posts</div></div>
+        </div>
+      </div>
+      <div class="continue-section" id="continue-section"></div>
+      <div class="home-grid">
+        <div class="home-card" onclick="showSection('modules')">
+          <div class="hcard-icon blue"><i class="fa-solid fa-play-circle"></i></div>
+          <div class="hcard-title">Continuer ma formation</div>
+          <div class="hcard-sub">Reprendre là où tu t'es arrêté</div>
+          <i class="fa-solid fa-chevron-right hcard-arrow"></i>
+        </div>
+        <div class="home-card" onclick="showSection('community')">
+          <div class="hcard-icon green"><i class="fa-solid fa-fire"></i></div>
+          <div class="hcard-title">Voir la communauté</div>
+          <div class="hcard-sub">Transformations & conseils</div>
+          <i class="fa-solid fa-chevron-right hcard-arrow"></i>
+        </div>
+        <div class="home-card" onclick="showSection('resources')">
+          <div class="hcard-icon amber"><i class="fa-solid fa-file-pdf"></i></div>
+          <div class="hcard-title">Ressources PDF</div>
+          <div class="hcard-sub">Plans & programmes</div>
+          <i class="fa-solid fa-chevron-right hcard-arrow"></i>
+        </div>
+        <div class="home-card" onclick="showSection('progress')">
+          <div class="hcard-icon coral"><i class="fa-solid fa-chart-bar"></i></div>
+          <div class="hcard-title">Ma progression</div>
+          <div class="hcard-sub">Stats & objectifs</div>
+          <i class="fa-solid fa-chevron-right hcard-arrow"></i>
+        </div>
+      </div>
+    </section>
+
+    <!-- MODULES SECTION -->
+    <section id="section-modules" class="section">
+      <div class="section-header">
+        <h2>Modules de formation</h2>
+        <p>Suis les modules dans l'ordre pour des résultats optimaux</p>
+      </div>
+      <div class="modules-grid" id="modules-grid">
+        <div class="empty-state"><i class="fa-solid fa-box-open"></i><p>Aucun module disponible pour l'instant.<br>Reviens bientôt !</p></div>
+      </div>
+    </section>
+
+    <!-- MODULE DETAIL -->
+    <section id="section-module-detail" class="section">
+      <button class="back-btn" onclick="showSection('modules')"><i class="fa-solid fa-arrow-left"></i> Retour aux modules</button>
+      <div id="module-detail-content"></div>
+    </section>
+
+    <!-- COMMUNITY SECTION -->
+    <section id="section-community" class="section">
+      <div class="section-header">
+        <h2>Communauté</h2>
+        <p>Partage ta progression, pose tes questions, inspire les autres</p>
+      </div>
+      <div class="post-composer">
+        <div class="composer-av" id="composer-av">?</div>
+        <div class="composer-input-wrap">
+          <textarea id="post-input" placeholder="Partage ta progression, une question, une victoire..."></textarea>
+          <div class="composer-actions">
+            <label class="attach-btn" for="post-image-input"><i class="fa-solid fa-image"></i> Photo</label>
+            <input type="file" id="post-image-input" accept="image/*" style="display:none" onchange="handlePostImage(this)">
+            <div id="post-image-preview"></div>
+            <button class="btn-post" onclick="submitPost()"><i class="fa-solid fa-paper-plane"></i> Publier</button>
+          </div>
+        </div>
+      </div>
+      <div class="posts-feed" id="posts-feed">
+        <div class="empty-state"><i class="fa-solid fa-comments"></i><p>Sois le premier à poster !</p></div>
+      </div>
+    </section>
+
+    <!-- RESOURCES SECTION -->
+    <section id="section-resources" class="section">
+      <div class="section-header">
+        <h2>Ressources</h2>
+        <p>Plans, programmes et fiches téléchargeables</p>
+      </div>
+      <div class="resources-grid" id="resources-grid">
+        <div class="empty-state"><i class="fa-solid fa-folder-open"></i><p>Aucune ressource disponible.<br>Bientôt disponible !</p></div>
+      </div>
+    </section>
+
+    <!-- PROGRESS SECTION -->
+    <section id="section-progress" class="section">
+      <div class="section-header">
+        <h2>Ma progression</h2>
+        <p>Suis tes stats et reste motivé</p>
+      </div>
+      <div class="progress-grid">
+        <div class="progress-card">
+          <div class="pc-header"><i class="fa-solid fa-dumbbell"></i> Modules complétés</div>
+          <div class="pc-big" id="pg-modules">0 / 0</div>
+          <div class="pc-bar"><div class="pc-fill" id="pg-bar" style="width:0%"></div></div>
+        </div>
+        <div class="progress-card">
+          <div class="pc-header"><i class="fa-solid fa-fire"></i> Posts communauté</div>
+          <div class="pc-big" id="pg-posts">0</div>
+          <div class="pc-sub">publications partagées</div>
+        </div>
+      </div>
+      <div class="weight-tracker">
+        <div class="wt-header">
+          <h3>Suivi de poids</h3>
+          <button class="btn-add-weight" onclick="addWeightEntry()"><i class="fa-solid fa-plus"></i> Ajouter</button>
+        </div>
+        <div class="wt-form" id="wt-form" style="display:none">
+          <input type="number" id="wt-input" placeholder="Ex: 82.5" step="0.1">
+          <input type="date" id="wt-date">
+          <button onclick="saveWeight()">Enregistrer</button>
+          <button onclick="document.getElementById('wt-form').style.display='none'" class="btn-cancel">Annuler</button>
+        </div>
+        <div class="wt-entries" id="wt-entries"><p class="wt-empty">Aucune donnée. Commence à tracker ton poids !</p></div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="page-admin" class="page">
+  <nav class="sidebar admin-sidebar">
+    <div class="sidebar-top">
+      <div class="sidebar-logo">
+        <div class="brand-icon sm admin"><i class="fa-solid fa-shield-halved"></i></div>
+        <span>Admin</span>
+      </div>
+    </div>
+    <div class="sidebar-user">
+      <div class="user-av admin-av">NC</div>
+      <div>
+        <div class="user-name">Noah Cana</div>
+        <div class="user-badge"><i class="fa-solid fa-shield-halved"></i> Coach Admin</div>
+      </div>
+    </div>
+    <nav class="nav-links">
+      <a href="#" class="nav-link active" onclick="showAdminSection('dashboard')"><i class="fa-solid fa-gauge"></i><span>Dashboard</span></a>
+      <a href="#" class="nav-link" onclick="showAdminSection('modules')"><i class="fa-solid fa-layer-group"></i><span>Modules</span></a>
+      <a href="#" class="nav-link" onclick="showAdminSection('invites')"><i class="fa-solid fa-envelope"></i><span>Invitations</span></a>
+      <a href="#" class="nav-link" onclick="showAdminSection('members')"><i class="fa-solid fa-users"></i><span>Membres</span></a>
+      <a href="#" class="nav-link" onclick="showAdminSection('resources')"><i class="fa-solid fa-file-arrow-down"></i><span>Ressources</span></a>
+      <a href="#" class="nav-link" onclick="showAdminSection('community')"><i class="fa-solid fa-comments"></i><span>Communauté</span></a>
+    </nav>
+    <div class="sidebar-bottom">
+      <button class="btn-logout" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Quitter l'admin</button>
+    </div>
+  </nav>
+
+  <div class="main-content">
+    <div class="topbar">
+      <div class="topbar-right">
+        <span class="admin-badge"><i class="fa-solid fa-shield-halved"></i> Mode Admin</span>
+      </div>
+    </div>
+
+    <!-- ADMIN DASHBOARD -->
+    <section id="admin-section-dashboard" class="section active">
+      <div class="section-header">
+        <h2>Vue d'ensemble</h2>
+      </div>
+      <div class="admin-stats" id="admin-stats"></div>
+      <div class="admin-quick">
+        <div class="aq-card" onclick="showAdminSection('modules')">
+          <i class="fa-solid fa-plus-circle"></i>
+          <span>Créer un module</span>
+        </div>
+        <div class="aq-card" onclick="showAdminSection('invites')">
+          <i class="fa-solid fa-envelope-circle-check"></i>
+          <span>Générer une invitation</span>
+        </div>
+        <div class="aq-card" onclick="showAdminSection('resources')">
+          <i class="fa-solid fa-file-circle-plus"></i>
+          <span>Ajouter une ressource</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADMIN MODULES -->
+    <section id="admin-section-modules" class="section">
+      <div class="section-header">
+        <h2>Gérer les modules</h2>
+      </div>
+      <div class="admin-form-card">
+        <h3 id="module-form-title">Créer un nouveau module</h3>
+        <input type="hidden" id="edit-module-id">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Titre du module</label>
+            <input type="text" id="mod-title" placeholder="Ex: Bases de la musculation">
+          </div>
+          <div class="form-group">
+            <label>Icône (emoji)</label>
+            <input type="text" id="mod-icon" placeholder="Ex: 💪" maxlength="4">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Description courte</label>
+          <input type="text" id="mod-desc" placeholder="Ex: Tout comprendre pour bien débuter">
+        </div>
+        <div class="form-group">
+          <label>Couleur du module</label>
+          <div class="color-picker">
+            <div class="cp-opt blue selected" data-color="blue" onclick="selectColor('blue')"></div>
+            <div class="cp-opt green" data-color="green" onclick="selectColor('green')"></div>
+            <div class="cp-opt amber" data-color="amber" onclick="selectColor('amber')"></div>
+            <div class="cp-opt coral" data-color="coral" onclick="selectColor('coral')"></div>
+            <div class="cp-opt purple" data-color="purple" onclick="selectColor('purple')"></div>
+          </div>
+        </div>
+        <div class="lessons-builder">
+          <div class="lb-header">
+            <label>Leçons du module</label>
+            <button class="btn-add-lesson" onclick="addLessonField()"><i class="fa-solid fa-plus"></i> Ajouter une leçon</button>
+          </div>
+          <div id="lessons-container"></div>
+        </div>
+        <div class="form-actions">
+          <button class="btn-main" onclick="saveModule()"><i class="fa-solid fa-save"></i> <span id="save-module-btn-text">Créer le module</span></button>
+          <button class="btn-secondary" onclick="cancelModuleEdit()" id="cancel-edit-btn" style="display:none">Annuler</button>
+        </div>
+      </div>
+      <h3 class="list-title">Modules existants</h3>
+      <div id="admin-modules-list"></div>
+    </section>
+
+    <!-- ADMIN INVITATIONS -->
+    <section id="admin-section-invites" class="section">
+      <div class="section-header">
+        <h2>Invitations</h2>
+        <p>Génère des codes d'accès uniques pour tes nouveaux membres</p>
+      </div>
+      <div class="admin-form-card">
+        <h3>Générer un nouveau code</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Prénom du membre</label>
+            <input type="text" id="inv-name" placeholder="Ex: Karim">
+          </div>
+          <div class="form-group">
+            <label>Note (optionnel)</label>
+            <input type="text" id="inv-note" placeholder="Ex: Client pack 3 mois">
+          </div>
+        </div>
+        <button class="btn-main" onclick="generateInvite()"><i class="fa-solid fa-wand-magic-sparkles"></i> Générer le code</button>
+        <div id="invite-result"></div>
+      </div>
+      <h3 class="list-title">Codes générés</h3>
+      <div id="invites-list"></div>
+    </section>
+
+    <!-- ADMIN MEMBERS -->
+    <section id="admin-section-members" class="section">
+      <div class="section-header"><h2>Membres</h2></div>
+      <div id="members-list"></div>
+    </section>
+
+    <!-- ADMIN RESOURCES -->
+    <section id="admin-section-resources" class="section">
+      <div class="section-header"><h2>Ressources</h2></div>
+      <div class="admin-form-card">
+        <h3>Ajouter une ressource</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Titre</label>
+            <input type="text" id="res-title" placeholder="Ex: Plan alimentaire prise de masse">
+          </div>
+          <div class="form-group">
+            <label>Type</label>
+            <select id="res-type">
+              <option value="pdf">📄 PDF</option>
+              <option value="excel">📊 Excel</option>
+              <option value="video">🎥 Vidéo (lien)</option>
+              <option value="link">🔗 Lien</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>URL ou lien de téléchargement</label>
+          <input type="text" id="res-url" placeholder="https://...">
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <input type="text" id="res-desc" placeholder="Courte description de la ressource">
+        </div>
+        <button class="btn-main" onclick="saveResource()"><i class="fa-solid fa-save"></i> Ajouter la ressource</button>
+      </div>
+      <h3 class="list-title">Ressources existantes</h3>
+      <div id="admin-resources-list"></div>
+    </section>
+
+    <!-- ADMIN COMMUNITY -->
+    <section id="admin-section-community" class="section">
+      <div class="section-header"><h2>Modération communauté</h2></div>
+      <div id="admin-posts-list"></div>
+    </section>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div id="modal-overlay" class="modal-overlay" onclick="closeModal()">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
