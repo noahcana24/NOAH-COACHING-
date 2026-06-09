@@ -62,7 +62,7 @@ function saveCU() {
 // ============================================================
 // AUTH
 // ============================================================
-window.onload = () => {
+window.addEventListener("load", () => {
   const s = DB.get('session');
   if(s) { CU = s; s.isAdmin ? showAdminPage() : showMemberPage(); }
 
@@ -979,3 +979,11 @@ function rndStr(n){return Math.random().toString(36).substring(2,2+n).toUpperCas
 
 // Enter key login
 document.addEventListener('keypress',e=>{if(e.key==='Enter'&&document.getElementById('page-login').classList.contains('active'))handleLogin();});
+
+// Safety: also bind button directly after DOM ready
+document.addEventListener('DOMContentLoaded', function() {
+  const btn = document.querySelector('.btn-login');
+  if(btn) btn.addEventListener('click', handleLogin);
+  const s = DB.get('session');
+  if(s && !CU) { CU = s; s.isAdmin ? showAdminPage() : showMemberPage(); }
+});
