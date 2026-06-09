@@ -290,7 +290,7 @@ function viewModule(id) {
       ${m.lessons.map((l,i)=>{
         const isDone=(CU.completedLessons||[]).includes(m.id+'-'+l.id);
         return `<div class="lesson-item" onclick="openLesson(${m.id},'${l.id}')">
-          <div class="lesson-num ${isDone?'done'}">${isDone?'<i class="fa-solid fa-check"></i>':(i+1)}</div>
+          <div class="lesson-num ${isDone ? 'done' : ''}">${isDone ? '<i class="fa-solid fa-check"></i>' : (i+1)}</div>
           <div><div class="lesson-title">${escHtml(l.title)}</div>${l.duration?`<div class="lesson-duration"><i class="fa-regular fa-clock"></i> ${l.duration}</div>`:''}</div>
           <div class="lesson-status">${isDone?'✅':'▶️'}</div>
         </div>`;
