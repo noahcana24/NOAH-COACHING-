@@ -71,7 +71,7 @@ window.addEventListener("load", () => {
   if(tipTheme) tipTheme.addEventListener('change', () => {
     document.getElementById('tip-besoin-wrap').style.display = tipTheme.value === 'Compléments' ? 'block' : 'none';
   });
-};
+});
 
 function handleLogin() {
   const code = (document.getElementById('invite-code').value||'').trim().toUpperCase();
