@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{
   --blue:#0f4c81;--blue-mid:#1a6bbf;--blue-light:#e8f2fc;--blue-xlight:#f0f7ff;
@@ -717,6 +718,7 @@ input,select,textarea{font-family:var(--fb);}
   .main-content{padding:14px 14px 20px;}
   .gs-btn{display:none;}
   .breadcrumb{display:none;}
+  .tb-name{display:none;}
   .toast{bottom:calc(76px + env(safe-area-inset-bottom));right:12px;left:12px;max-width:none;}
   .fab{display:flex;}
   .dash-hero{flex-direction:column;gap:18px;padding:22px;border-radius:var(--rl);}
@@ -1305,9 +1307,38 @@ const BADGES=[
   {id:'streak7',icon:'🔥',label:'7 jours streak',c:u=>(u.streak||0)>=7}
 ];
 
+// ============================================================
+// SUPABASE — synchronisation cloud (données partagées entre appareils)
+// ============================================================
+const SB_URL='https://saluihriqmnjtsnurtbv.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNhbHVpaHJpcW1uanRzbnVydGJ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEwODY5OTksImV4cCI6MjA5NjY2Mjk5OX0.tA1ypxLeUr_HcinMamkXcb7UmFwp4de9Xu51qpAfSsg';
+let SB=null;
+try{if(window.supabase)SB=window.supabase.createClient(SB_URL,SB_KEY);}catch(e){console.warn('Supabase init fail',e);}
+// Clés synchronisées dans le cloud (le reste = purement local : theme, session, sb_mini, checklist...)
+const CLOUD_KEYS=['members','invites','modules','repas','defis','resources','glossaire','tips','faq','posts','coach_message','notifs'];
+function isCloudKey(k){
+  if(CLOUD_KEYS.includes(k))return true;
+  // données par client : body_, transfo_, temo_, comments_
+  return /^(body_|transfo_|temo_|comments_)/.test(k);
+}
+// Pousse une clé vers Supabase (sans bloquer l'interface)
+function cloudPush(key,val){
+  if(!SB||!isCloudKey(key))return;
+  try{SB.from('contenu').upsert({cle:key,data:val,updated_at:new Date().toISOString()}).then(()=>{},e=>console.warn('push',key,e));}catch(e){}
+}
+// Tire toutes les données cloud vers le localStorage au démarrage
+async function cloudPullAll(){
+  if(!SB)return;
+  try{
+    const {data,error}=await SB.from('contenu').select('cle,data');
+    if(error){console.warn('pull',error);return;}
+    (data||[]).forEach(row=>{try{localStorage.setItem('nc3_'+row.cle,JSON.stringify(row.data));}catch(e){}});
+  }catch(e){console.warn('pullAll',e);}
+}
+
 const DB={
   get:k=>{try{return JSON.parse(localStorage.getItem('nc3_'+k));}catch{return null;}},
-  set:(k,v)=>localStorage.setItem('nc3_'+k,JSON.stringify(v)),
+  set:(k,v)=>{localStorage.setItem('nc3_'+k,JSON.stringify(v));cloudPush(k,v);},
   getArr:k=>{try{return JSON.parse(localStorage.getItem('nc3_'+k))||[];}catch{return[];}}
 };
 
@@ -1346,7 +1377,9 @@ function fireConfetti(){const c=document.getElementById('confetti-c');const cols
 // ============================================================
 // INIT
 // ============================================================
-document.addEventListener('DOMContentLoaded',()=>{
+document.addEventListener('DOMContentLoaded',async()=>{
+  // Tire les données partagées du cloud AVANT d'afficher (si Supabase dispo)
+  await cloudPullAll();
   seedData();
   document.getElementById('login-btn').addEventListener('click',handleLogin);
   document.getElementById('invite-code').addEventListener('keypress',e=>{if(e.key==='Enter')handleLogin();});
@@ -1365,6 +1398,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 // SEED demo data on first run
 function seedData(){
   if(DB.get('seeded'))return;
+  if(DB.getArr('modules').length>0){localStorage.setItem('nc3_seeded','true');return;}
   DB.set('modules',[
     {id:1,title:'Bases de la musculation',icon:'💪',domain:'Musculation',desc:'Les fondamentaux pour bien démarrer',lessons:[{id:'l1',title:'Échauffement & mobilité',duration:'6 min',videoUrl:'',content:'Un bon échauffement prépare tes muscles et articulations à l\'effort. Consacre 5 à 10 minutes à activer le cardio et mobiliser les articulations principales.',quiz:{question:'Combien de temps dure un bon échauffement ?',options:['1 minute','5 à 10 minutes','30 minutes'],correct:1}},{id:'l2',title:'Les mouvements de base',duration:'8 min',videoUrl:'',content:'Squat, soulevé de terre, développé couché : les 3 mouvements polyarticulaires qui forment la base de tout programme efficace.',quiz:{question:'',options:[],correct:0}}]},
     {id:2,title:'Nutrition pour la prise de masse',icon:'🥗',domain:'Nutrition',desc:'Mange pour construire du muscle',lessons:[{id:'l1',title:'Le surplus calorique',duration:'5 min',videoUrl:'',content:'Pour prendre de la masse, tu dois consommer plus de calories que tu n\'en dépenses. Vise un surplus de 250 à 500 kcal par jour.',quiz:{question:'',options:[],correct:0}}]}
@@ -1689,7 +1723,19 @@ function delInvite(code){DB.set('invites',DB.getArr('invites').filter(i=>i.code!
 function renderAInvites(){const list=document.getElementById('invites-list');const invs=DB.getArr('invites');if(!invs.length){list.innerHTML='<div class="empty"><i class="fa-solid fa-envelope"></i><p>Aucun code généré.</p></div>';return;}list.innerHTML=invs.slice().reverse().map(i=>'<div class="inv-item"><span class="ii-code">'+i.code+'</span><div style="font-size:12px;color:var(--text3)">'+(i.name?h(i.name):'')+(i.note?' · '+h(i.note):'')+'</div><span class="ii-status '+(i.used?'ii-used':'ii-unused')+'">'+(i.used?'✅ Utilisé'+(i.usedBy?' ('+h(i.usedBy)+')':''):'⏳ En attente')+'</span><button class="be-del" onclick="delInvite(\''+i.code+'\')" style="margin-left:8px"><i class="fa-solid fa-xmark"></i></button></div>').join('');}
 
 // ADMIN MEMBERS
-function renderAMembers(){const q=(document.getElementById('member-search')?.value||'').toLowerCase();let members=DB.getArr('members');if(q)members=members.filter(m=>m.name.toLowerCase().includes(q)||(m.code||'').toLowerCase().includes(q));const list=document.getElementById('members-list');if(!members.length){list.innerHTML='<div class="empty"><i class="fa-solid fa-users"></i><p>Aucun membre'+(q?' trouvé':' inscrit')+'.</p></div>';return;}const mods=DB.getArr('modules');const totalL=mods.reduce((s,m)=>s+m.lessons.length,0);list.innerHTML=members.map(m=>{const lv=getLevel(m.xp||0);const doneL=(m.completedLessons||[]).length;const pct=totalL?Math.round(doneL/totalL*100):0;const temo=DB.get('temo_'+m.code);const lastLogin=m.lastLogin||'—';return '<div class="member-card"><div class="mc-hdr"><div class="mc-av">'+initials(m.name)+'</div><div style="flex:1"><div class="mc-name">'+h(m.name)+(temo&&!temo.read?' <span style="background:var(--red);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px">⭐ Nouveau témo</span>':'')+'</div><div class="mc-meta">Code: '+m.code+' · Inscrit le '+fmtDate(m.joinedAt)+'</div></div><span class="lv-pill lv-'+lv.name+'">'+lv.name+'</span></div><div class="mc-stats"><div class="mc-stat">⚡ <strong>'+(m.xp||0)+'</strong> XP</div><div class="mc-stat">📚 <strong>'+doneL+'</strong> leçons ('+pct+'%)</div><div class="mc-stat">🏆 <strong>'+((m.completedDefis||[]).length)+'</strong> défis</div><div class="mc-stat">🔥 <strong>'+(m.streak||0)+'</strong> j streak</div><div class="mc-stat">📅 Dernière connexion: '+(lastLogin==='—'?'—':lastLogin)+'</div>'+(temo?'<div class="mc-stat" onclick="viewTemo(\''+m.code+'\')" style="cursor:pointer;color:var(--gold)">⭐ '+temo.note+'/5 — voir</div>':'')+'</div></div>';}).join('');}
+function renderAMembers(){const q=(document.getElementById('member-search')?.value||'').toLowerCase();let members=DB.getArr('members');if(q)members=members.filter(m=>m.name.toLowerCase().includes(q)||(m.code||'').toLowerCase().includes(q));const list=document.getElementById('members-list');if(!members.length){list.innerHTML='<div class="empty"><i class="fa-solid fa-users"></i><p>Aucun membre'+(q?' trouvé':' inscrit')+'.</p></div>';return;}const mods=DB.getArr('modules');const totalL=mods.reduce((s,m)=>s+m.lessons.length,0);list.innerHTML=members.map(m=>{const lv=getLevel(m.xp||0);const doneL=(m.completedLessons||[]).length;const pct=totalL?Math.round(doneL/totalL*100):0;const temo=DB.get('temo_'+m.code);const lastLogin=m.lastLogin||'—';const nBody=DB.getArr('body_'+m.code).length;const nTransfo=DB.getArr('transfo_'+m.code).length;return '<div class="member-card"><div class="mc-hdr"><div class="mc-av">'+initials(m.name)+'</div><div style="flex:1"><div class="mc-name">'+h(m.name)+(temo&&!temo.read?' <span style="background:var(--red);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px">⭐ Nouveau témo</span>':'')+'</div><div class="mc-meta">Code: '+m.code+' · Inscrit le '+fmtDate(m.joinedAt)+'</div></div><span class="lv-pill lv-'+lv.name+'">'+lv.name+'</span></div><div class="mc-stats"><div class="mc-stat">⚡ <strong>'+(m.xp||0)+'</strong> XP</div><div class="mc-stat">📚 <strong>'+doneL+'</strong> leçons ('+pct+'%)</div><div class="mc-stat">🏆 <strong>'+((m.completedDefis||[]).length)+'</strong> défis</div><div class="mc-stat">🔥 <strong>'+(m.streak||0)+'</strong> j streak</div><div class="mc-stat">📅 '+(lastLogin==='—'?'—':lastLogin)+'</div></div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:1px solid var(--border2)"><button class="btn-edit btn-sm" onclick="viewClientBody(\''+m.code+'\')"><i class="fa-solid fa-chart-line"></i> Suivi corporel'+(nBody?' ('+nBody+')':'')+'</button><button class="btn-edit btn-sm" onclick="viewClientTransfo(\''+m.code+'\')"><i class="fa-solid fa-camera"></i> Transformations'+(nTransfo?' ('+nTransfo+')':'')+'</button><button class="btn-edit btn-sm" onclick="viewTemo(\''+m.code+'\')" '+(temo?'':'disabled style="opacity:.4;cursor:default"')+'><i class="fa-solid fa-star"></i> Témoignage'+(temo?' ('+temo.note+'/5)':'')+'</button><button class="btn-del btn-sm" style="margin-left:auto" onclick="deleteMember(\''+m.code+'\',\''+escA(m.name)+'\')"><i class="fa-solid fa-trash"></i> Supprimer le compte</button></div></div>';}).join('');}
+
+function viewClientBody(code){const m=DB.getArr('members').find(x=>x.code===code);const entries=DB.getArr('body_'+code).sort((a,b)=>new Date(b.date)-new Date(a.date));let html='<h3 style="font-family:var(--fd);font-size:20px;margin-bottom:16px"><i class="fa-solid fa-chart-line" style="color:var(--blue)"></i> Suivi corporel — '+h(m?m.name:'')+'</h3>';if(!entries.length){html+='<div class="empty"><i class="fa-solid fa-chart-line"></i><p>Aucune mesure enregistrée par ce client.</p></div>';}else{html+='<div style="display:flex;flex-direction:column;gap:10px">'+entries.map(e=>'<div class="body-entry" style="margin:0"><span class="be-date">'+fmtDate(e.date)+'</span><div class="be-metrics">'+(e.poids?'<span class="be-metric"><strong>'+e.poids+'</strong> kg</span>':'')+(e.taille?' <span class="be-metric">Taille: <strong>'+e.taille+'</strong>cm</span>':'')+(e.bras?' <span class="be-metric">Bras: <strong>'+e.bras+'</strong>cm</span>':'')+(e.cuisse?' <span class="be-metric">Cuisse: <strong>'+e.cuisse+'</strong>cm</span>':'')+(e.hanches?' <span class="be-metric">Hanches: <strong>'+e.hanches+'</strong>cm</span>':'')+(e.mg?' <span class="be-metric">MG: <strong>'+e.mg+'</strong>%</span>':'')+'</div></div>').join('')+'</div>';}document.getElementById('modal-content').innerHTML=html;openModal();}
+
+function viewClientTransfo(code){const m=DB.getArr('members').find(x=>x.code===code);const entries=DB.getArr('transfo_'+code).sort((a,b)=>new Date(b.date)-new Date(a.date));let html='<h3 style="font-family:var(--fd);font-size:20px;margin-bottom:16px"><i class="fa-solid fa-camera" style="color:var(--blue)"></i> Transformations — '+h(m?m.name:'')+'</h3>';if(!entries.length){html+='<div class="empty"><i class="fa-solid fa-camera"></i><p>Aucune photo de ce client.</p></div>';}else{html+='<div style="display:flex;flex-direction:column;gap:16px">'+entries.map(e=>'<div style="border:1px solid var(--border);border-radius:var(--rl);overflow:hidden">'+(e.image?'<img src="'+e.image+'" style="width:100%;max-height:320px;object-fit:cover;cursor:zoom-in" onclick="openFS(\''+e.image+'\')" alt="">':'<div style="height:120px;display:flex;align-items:center;justify-content:center;font-size:42px;background:var(--bg2)">📸</div>')+'<div style="padding:14px"><div style="font-size:12px;color:var(--text3);font-weight:500;margin-bottom:4px">'+fmtDate(e.date)+'</div><div style="font-size:14px;color:var(--text2)">'+h(e.comment||'')+'</div></div></div>').join('')+'</div>';}document.getElementById('modal-content').innerHTML=html;openModal();}
+
+function deleteMember(code,name){if(!confirm('Supprimer définitivement le compte de '+name+' ?\n\nÇa supprime : son accès, sa progression, son suivi corporel, ses photos et son témoignage. Cette action est irréversible.'))return;
+  DB.set('members',DB.getArr('members').filter(m=>m.code!==code));
+  DB.set('invites',DB.getArr('invites').filter(i=>i.code!==code));
+  ['body_','transfo_','temo_','logins_'].forEach(p=>localStorage.removeItem('nc3_'+p+code));
+  // supprime aussi ses posts et commentaires
+  DB.set('posts',DB.getArr('posts').filter(p=>p.authorCode!==code));
+  renderAMembers();toast('Compte supprimé','success');}
 function viewTemo(code){const t=DB.get('temo_'+code);if(!t)return;t.read=true;DB.set('temo_'+code,t);const m=DB.getArr('members').find(x=>x.code===code);document.getElementById('modal-content').innerHTML='<h3 style="font-family:var(--fd);font-size:20px;margin-bottom:6px">Témoignage de '+h(m?m.name:'')+'</h3><div style="font-size:24px;margin:12px 0">'+'⭐'.repeat(t.note)+'</div><div class="td-field"><div class="td-lbl">Points forts</div><div class="td-val">'+h(t.pointsForts)+'</div></div><div class="td-field"><div class="td-lbl">Résultats</div><div class="td-val">'+h(t.resultats)+'</div></div><div class="td-field"><div class="td-lbl">Recommandation</div><div class="td-val">'+h(t.reco)+'</div></div>';openModal();renderAMembers();}
 function exportMembersCSV(){const members=DB.getArr('members');const mods=DB.getArr('modules');const totalL=mods.reduce((s,m)=>s+m.lessons.length,0);const csv=['Nom,Code,Inscrit le,XP,Niveau,Lecons completees,Progression %,Defis,Streak,Derniere connexion'].concat(members.map(m=>{const lv=getLevel(m.xp||0);const doneL=(m.completedLessons||[]).length;const pct=totalL?Math.round(doneL/totalL*100):0;return '"'+m.name+'",'+m.code+','+fmtDate(m.joinedAt)+','+(m.xp||0)+','+lv.name+','+doneL+','+pct+','+((m.completedDefis||[]).length)+','+(m.streak||0)+',"'+(m.lastLogin||'')+'"';})).join('\n');const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='membres-noahcana.csv';a.click();toast('CSV exporté ✅','success');}
 
