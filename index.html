@@ -1570,45 +1570,781 @@ document.addEventListener('DOMContentLoaded',async()=>{
   document.getElementById('boot-loader')?.classList.add('hide');
 });
 
-// SEED demo data on first run
+// SEED — Contenu pédagogique v2 (rempli le 2026-06-11). S'exécute une fois par appareil.
+// Le marqueur v:2 dans les données évite d'écraser un cloud déjà à jour ou édité depuis l'admin.
+// ⚠️ Contenu éducatif : ne remplace pas un avis médical individualisé.
 function seedData(){
-  if(DB.get('seeded'))return;
-  if(DB.getArr('modules').length>0){localStorage.setItem('nc3_seeded','true');return;}
+  if(DB.get('seeded_v2'))return;
+  if(DB.getArr('modules').some(m=>m.v===2)||DB.getArr('glossaire').some(g=>g.v===2)){localStorage.setItem('nc3_seeded_v2','true');return;}
   DB.set('modules',[
-    {id:1,title:'Bases de la musculation',icon:'💪',domain:'Musculation',desc:'Les fondamentaux pour bien démarrer',lessons:[{id:'l1',title:'Échauffement & mobilité',duration:'6 min',videoUrl:'',content:'Un bon échauffement prépare tes muscles et articulations à l\'effort. Consacre 5 à 10 minutes à activer le cardio et mobiliser les articulations principales.',quiz:{question:'Combien de temps dure un bon échauffement ?',options:['1 minute','5 à 10 minutes','30 minutes'],correct:1}},{id:'l2',title:'Les mouvements de base',duration:'8 min',videoUrl:'',content:'Squat, soulevé de terre, développé couché : les 3 mouvements polyarticulaires qui forment la base de tout programme efficace.',quiz:{question:'',options:[],correct:0}}]},
-    {id:2,title:'Nutrition pour la prise de masse',icon:'🥗',domain:'Nutrition',desc:'Mange pour construire du muscle',lessons:[{id:'l1',title:'Le surplus calorique',duration:'5 min',videoUrl:'',content:'Pour prendre de la masse, tu dois consommer plus de calories que tu n\'en dépenses. Vise un surplus de 250 à 500 kcal par jour.',quiz:{question:'',options:[],correct:0}}]}
+  {id:1,v:2,title:"Fondamentaux de la musculation",icon:"💪",domain:"Musculation",desc:"Les bases indispensables pour progresser vite et sans te blesser",lessons:[
+    {id:"l1",title:"Comprendre tes muscles : anatomie express",duration:"7 min",videoUrl:"",content:`Pas besoin d'un diplôme de médecine, mais connaître les grands groupes musculaires change ta façon de t'entraîner.
+
+On distingue 6 grandes familles : les jambes (quadriceps, ischio-jambiers, fessiers, mollets), le dos (grand dorsal, trapèzes, lombaires), les pectoraux, les épaules (deltoïdes antérieur, latéral, postérieur), les bras (biceps, triceps, avant-bras) et la sangle abdominale (grand droit, obliques, transverse).
+
+Pourquoi c'est important ? Parce qu'un programme équilibré travaille TOUTES ces familles. Le déséquilibre classique du débutant : beaucoup de pectoraux et de biceps (les muscles du miroir), pas assez de dos et de jambes. Résultat : posture voûtée, épaules fragiles et physique déséquilibré.
+
+Règle simple : pour chaque exercice de poussée (développé couché, développé épaules), prévois au moins autant de tirage (rowing, tractions). Et les jambes représentent la moitié de ta masse musculaire — les ignorer, c'est laisser la moitié de tes progrès au vestiaire.`,quiz:{question:"Quel déséquilibre faut-il éviter dans un programme ?",options:["Trop de jambes par rapport aux bras","Trop de poussée (pecs/épaules) par rapport au tirage (dos)","Trop d'abdos par rapport aux lombaires"],correct:1}},
+    {id:"l2",title:"Polyarticulaires vs isolation : où mettre ton énergie",duration:"8 min",videoUrl:"",content:`Les exercices polyarticulaires mobilisent plusieurs articulations en même temps : squat, soulevé de terre, développé couché, rowing, tractions, développé militaire, fentes. Les exercices d'isolation n'en mobilisent qu'une : curl biceps, extension triceps, élévations latérales, leg extension.
+
+Les polyarticulaires sont la fondation de ton programme : ils recrutent plus de masse musculaire par série, permettent de soulever plus lourd, progressent plus longtemps et offrent le meilleur retour sur investissement quand ton temps est limité. C'est pour ça qu'ils se placent en début de séance, quand tu es frais.
+
+L'isolation n'est pas inutile pour autant : elle complète, cible un muscle en retard, et permet d'ajouter du volume sans fatigue excessive. Épaules latérales, biceps, mollets et ischio-jambiers en bénéficient particulièrement.
+
+En pratique : 70 à 80 % de ton volume sur des polyarticulaires, le reste en isolation ciblée. Un débutant peut progresser des mois avec 5 à 6 polyarticulaires bien exécutés.`,quiz:{question:"Où placer les exercices polyarticulaires lourds dans la séance ?",options:["En fin de séance, une fois échauffé par l'isolation","Au début, quand tu es frais","Peu importe l'ordre"],correct:1}},
+    {id:"l3",title:"Tempo et types de contraction",duration:"6 min",videoUrl:"",content:`Chaque répétition contient trois phases : la phase excentrique (tu freines la charge, ex. la descente du squat), la phase concentrique (tu soulèves) et parfois une phase isométrique (tu maintiens, comme un gainage).
+
+Ce que dit la recherche : la phase excentrique contrôlée joue un rôle important dans les adaptations musculaires. Laisser tomber la charge sans la freiner, c'est perdre une partie du stimulus et augmenter le risque de blessure.
+
+Tempo recommandé pour la majorité des exercices : descente contrôlée en 2 à 3 secondes, montée dynamique en 1 seconde environ. Pas besoin de tempos exotiques de 8 secondes : les méta-analyses montrent que les durées de répétition entre 0,5 et 8 secondes produisent une hypertrophie comparable — l'essentiel est le contrôle de la charge et l'effort fourni.
+
+Signal d'alarme : si tu dois donner un coup de rein, rebondir ou écourter l'amplitude pour finir ta série, la charge est trop lourde pour être productive.`,quiz:{question:"Quelle phase consiste à freiner la charge ?",options:["Concentrique","Isométrique","Excentrique"],correct:2}},
+    {id:"l4",title:"Amplitude complète : ton meilleur allié",duration:"6 min",videoUrl:"",content:`L'amplitude de mouvement (ROM, range of motion) est la distance parcourue par l'articulation pendant l'exercice. Squat complet vs quart de squat, développé jusqu'à la poitrine vs demi-rep.
+
+La recherche récente est claire : l'entraînement en amplitude complète, et particulièrement le travail en position étirée (muscle allongé sous tension), produit généralement plus d'hypertrophie que les amplitudes partielles raccourcies, à effort égal. Le bas du squat, la position bras tendus aux tractions, l'étirement profond aux écartés : ce sont des zones en or.
+
+Bénéfices concrets : plus de muscle par rep, plus de mobilité fonctionnelle, des tendons et articulations renforcés dans toute l'amplitude, et une technique plus honnête (impossible de tricher avec l'ego en demi-reps).
+
+Exception légitime : amplitude réduite temporairement sur blessure, limitation de mobilité réelle, ou partielles volontaires en complément. Sinon : amplitude complète, charge adaptée en conséquence. Mieux vaut 80 kg en squat profond que 120 kg en quart de squat.`,quiz:{question:"Quelle position est particulièrement intéressante pour l'hypertrophie ?",options:["La position où le muscle est étiré sous tension","La position où le muscle est raccourci","Uniquement le milieu du mouvement"],correct:0}},
+    {id:"l5",title:"L'échauffement qui sert vraiment à quelque chose",duration:"7 min",videoUrl:"",content:`Oublie les 20 minutes de tapis et les étirements statiques prolongés avant la séance : ce n'est ni nécessaire, ni optimal (les étirements statiques longs juste avant l'effort peuvent même réduire légèrement la force immédiate).
+
+Un échauffement efficace en 3 étapes, 8 à 12 minutes au total :
+
+1. Élévation générale (3-5 min) : cardio léger (rameur, vélo, marche rapide) pour monter la température corporelle et la fréquence cardiaque.
+
+2. Mobilisation ciblée (2-3 min) : mouvements dynamiques des articulations qui vont travailler — rotations d'épaules, ouvertures de hanches, chevilles. Cible TES raideurs.
+
+3. Séries d'approche (3-5 min) : sur ton premier exercice, monte progressivement vers ta charge de travail. Exemple pour un squat à 100 kg : barre à vide x10, 40 kg x6, 70 kg x4, 90 kg x2, puis séries de travail. Ces séries préparent le système nerveux sans créer de fatigue.
+
+Les exercices suivants de la séance ne nécessitent qu'une ou deux séries d'approche légères. C'est tout : efficace, court, et tu attaques tes séries lourdes réellement prêt.`,quiz:{question:"Que faut-il éviter juste avant des séries lourdes ?",options:["Les séries d'approche progressives","Les étirements statiques prolongés","Le cardio léger de 3 minutes"],correct:1}},
+    {id:"l6",title:"La technique d'abord, la charge ensuite",duration:"6 min",videoUrl:"",content:`La progression la plus rapide sur le long terme passe par une technique solide dès le départ. Une mauvaise technique limite tes charges futures, déplace le travail sur les mauvais muscles et augmente le risque de blessure — et une blessure, c'est des semaines de progression perdues.
+
+Les fondamentaux communs à presque tous les exercices : colonne neutre (ni dos rond ni hyperextension exagérée), gainage actif (imagine qu'on va te donner un coup dans le ventre), trajectoire contrôlée, et amplitude complète maîtrisée.
+
+Comment apprendre proprement : commence léger (oui, plus léger que ton ego ne le voudrait), filme-toi de profil et de face — la vidéo ne ment pas —, compare avec des références fiables, et n'augmente la charge que lorsque toutes tes reps se ressemblent.
+
+Règle des 2 secondes : si tu ne peux pas contrôler la descente en 2 secondes sur toutes les reps, la charge est trop lourde pour ta technique actuelle. La salle sera encore là dans 10 ans : construis des fondations qui te porteront jusque-là.`,quiz:{question:"Quel est le meilleur outil pour vérifier ta technique ?",options:["Le miroir pendant la série","Te filmer et analyser la vidéo","Demander si ça avait l'air lourd"],correct:1}}
+  ]},
+  {id:2,v:2,title:"Hypertrophie : la science de la prise de muscle",icon:"🧬",domain:"Musculation",desc:"Volume, intensité, fréquence : ce que dit vraiment la recherche",lessons:[
+    {id:"l1",title:"Comment le muscle grossit : les mécanismes",duration:"8 min",videoUrl:"",content:`L'hypertrophie est l'augmentation de la taille des fibres musculaires. Le moteur principal identifié par la recherche : la tension mécanique — la force que tes fibres produisent en se contractant contre une résistance, surtout quand le muscle approche de ses limites.
+
+Concrètement, les répétitions qui comptent le plus sont les dernières d'une série difficile : quand le mouvement ralentit malgré ton effort maximal, le recrutement des fibres est maximal. C'est le concept de répétitions effectives, généralement les 5 dernières avant l'échec.
+
+Le stress métabolique (la brûlure, la congestion) et les dommages musculaires accompagnent souvent le processus, mais la recherche actuelle les considère comme secondaires. Les courbatures ne sont d'ailleurs PAS un indicateur fiable de croissance : tu peux progresser sans courbatures, et avoir des courbatures sans progresser.
+
+Après le stimulus, ton corps augmente la synthèse protéique musculaire pendant 24 à 72 h : c'est là que tu construis, à condition d'apporter protéines, calories et sommeil. Le muscle se construit entre les séances, pas pendant.`,quiz:{question:"Quel est le moteur principal de l'hypertrophie selon la recherche actuelle ?",options:["Les courbatures","La tension mécanique","La transpiration"],correct:1}},
+    {id:"l2",title:"Le volume : ta dose d'entraînement",duration:"8 min",videoUrl:"",content:`Le volume — le nombre de séries difficiles par groupe musculaire et par semaine — est un des leviers les plus puissants de l'hypertrophie. La relation est dose-dépendante : plus de volume produit plus de croissance, jusqu'à un point de rendement décroissant.
+
+Repères issus des méta-analyses (notamment les travaux de Schoenfeld et collègues) :
+• Moins de 4 séries/semaine par muscle : entretien ou progrès minimes.
+• Environ 10 séries/semaine : excellent rapport efficacité/fatigue pour la plupart.
+• 10 à 20 séries/semaine : la zone productive pour la majorité des pratiquants intermédiaires.
+• Au-delà : gains supplémentaires possibles mais décroissants, et récupération de plus en plus difficile.
+
+Important : on parle de séries DURES (terminées à 0-3 répétitions de l'échec), pas de séries de chauffe ni de séries abandonnées à 10 reps de l'échec.
+
+Stratégie intelligente : commence dans le bas de la fourchette (8-10 séries/muscle/semaine), progresse en performance, et n'ajoute des séries que lorsque la progression stagne alors que sommeil et nutrition sont en place. Le volume minimal qui te fait progresser est ton meilleur volume.`,quiz:{question:"Quelle fourchette de séries dures hebdomadaires par muscle est productive pour la plupart ?",options:["2 à 4 séries","10 à 20 séries","Plus de 35 séries"],correct:1}},
+    {id:"l3",title:"Proximité de l'échec : le RIR, ton outil de pilotage",duration:"7 min",videoUrl:"",content:`Le RIR (Reps In Reserve) mesure combien de répétitions tu aurais encore pu faire à la fin d'une série. RIR 0 = échec total, RIR 2 = tu t'arrêtes 2 reps avant l'échec.
+
+Ce que montre la recherche : il faut s'entraîner PRÈS de l'échec pour maximiser l'hypertrophie (les séries trop faciles, RIR 5 et plus, sont peu productives), mais aller systématiquement À l'échec n'apporte qu'un léger bonus de croissance au prix d'une fatigue nettement supérieure, qui finit par réduire ton volume de qualité sur la semaine.
+
+Recommandations pratiques :
+• Zone de travail principale : RIR 0 à 3 sur tes séries de travail.
+• Polyarticulaires lourds (squat, soulevé de terre) : reste plutôt à RIR 2-3, l'échec y coûte très cher en fatigue et en risque technique.
+• Isolation et machines : tu peux pousser à RIR 0-1, voire à l'échec, le coût est faible.
+
+Apprendre à estimer son RIR demande de la pratique : va à l'échec de temps en temps sur des exercices sûrs (curl, machines) pour calibrer tes sensations. La plupart des débutants sous-estiment ce qu'ils ont dans le réservoir.`,quiz:{question:"Que signifie RIR 2 ?",options:["2 séries restantes dans la séance","Tu t'arrêtes 2 répétitions avant l'échec","2 minutes de repos entre les séries"],correct:1}},
+    {id:"l4",title:"Fréquence : combien de fois par muscle chaque semaine ?",duration:"6 min",videoUrl:"",content:`La fréquence est le nombre de fois où tu entraînes un muscle dans la semaine. Pendant des années, le bodybuilding classique a juré par le muscle une fois par semaine (le fameux « pec lundi »). La recherche a nuancé tout ça.
+
+Ce que disent les méta-analyses : à volume hebdomadaire égal, entraîner un muscle 2 fois ou plus par semaine produit une hypertrophie égale ou légèrement supérieure à 1 fois. Mais surtout, la fréquence est un OUTIL DE QUALITÉ : il est beaucoup plus facile de faire 16 bonnes séries de pecs en 2 séances de 8 qu'en une seule séance de 16, où les dernières séries deviennent médiocres.
+
+La synthèse protéique musculaire stimulée par une séance retombe en 24 à 72 h : restimuler le muscle 2 à 3 fois par semaine colle bien à cette fenêtre.
+
+En pratique :
+• Débutant : full body 3x/semaine = chaque muscle 3 fois.
+• Intermédiaire : upper/lower 4 jours ou push/pull/legs sur 6 jours = chaque muscle 2 fois.
+• L'essentiel : atteins ton volume hebdomadaire cible avec des séries de qualité, réparties comme ton emploi du temps le permet.`,quiz:{question:"À volume égal, quelle fréquence est au moins aussi efficace et plus pratique ?",options:["1 fois par semaine par muscle","2 fois ou plus par semaine par muscle","Le même muscle tous les jours"],correct:1}},
+    {id:"l5",title:"La surcharge progressive : la loi non négociable",duration:"7 min",videoUrl:"",content:`Ton corps s'adapte exactement au niveau de stress qu'on lui impose, puis s'arrête. Pour continuer à construire du muscle, le stimulus doit progresser dans le temps : c'est la surcharge progressive, le principe le plus fondamental de l'entraînement.
+
+Les leviers de progression, du plus simple au plus fin :
+• Ajouter des répétitions à charge égale (8 reps → 10 reps).
+• Ajouter de la charge (souvent par paliers de 1,25 à 2,5 kg).
+• Ajouter des séries (augmenter le volume).
+• Améliorer l'exécution : plus d'amplitude, meilleur contrôle, moins d'élan.
+
+Méthode concrète : la double progression. Choisis une fourchette de reps (ex. 8 à 12). Garde la même charge et grimpe de 8 vers 12 reps au fil des séances. Quand tu atteins 12 reps proprement sur toutes tes séries, augmente la charge et repars à 8.
+
+Indispensable : note tout (carnet ou appli). Sans historique, tu navigues à vue. La question à te poser chaque séance : « qu'est-ce que je fais de plus ou de mieux que la dernière fois ? »`,quiz:{question:"Avec la double progression sur 8-12 reps, quand augmentes-tu la charge ?",options:["Quand tu atteins 12 reps propres sur toutes tes séries","À chaque séance, quoi qu'il arrive","Quand la charge te semble légère au toucher"],correct:0}},
+    {id:"l6",title:"Plages de répétitions : lourd, moyen, léger ?",duration:"6 min",videoUrl:"",content:`Bonne nouvelle : la science a simplifié le débat. Les études montrent qu'on peut construire du muscle sur une très large plage de répétitions — d'environ 5 à 30 reps par série — À CONDITION que les séries soient menées proches de l'échec.
+
+Alors pourquoi la zone 6-12 reps reste-t-elle la référence pratique ? Parce qu'elle offre le meilleur compromis :
+• En dessous de 5 reps : excellent pour la force, mais chaque série apporte peu de répétitions effectives et use beaucoup les articulations et le système nerveux pour du volume d'hypertrophie.
+• Au-dessus de 20 reps : ça marche, mais les séries deviennent très inconfortables (brûlure, cardio) et il est difficile d'aller vraiment près de l'échec.
+
+Stratégie recommandée : construis l'essentiel de ton hypertrophie en 6-12 reps sur les polyarticulaires, utilise 12-20 reps sur l'isolation et les machines, et garde quelques séries lourdes de 3-6 reps si la force t'intéresse. Varier les plages au fil des blocs est aussi un bon moyen de ménager les articulations.`,quiz:{question:"À quelle condition les séries légères (20+ reps) construisent-elles du muscle ?",options:["Si elles sont menées proches de l'échec","Si on les fait très vite","Elles ne fonctionnent jamais"],correct:0}}
+  ]},
+  {id:3,v:2,title:"Force et mouvements de base",icon:"🏋️",domain:"Musculation",desc:"Squat, développé couché, soulevé de terre : devenir fort intelligemment",lessons:[
+    {id:"l1",title:"Les 3 mouvements rois et pourquoi ils comptent",duration:"7 min",videoUrl:"",content:`Le squat, le développé couché et le soulevé de terre forment la base du powerlifting et, plus largement, de tout développement de la force. Pourquoi eux ?
+
+• Le squat charge l'ensemble du bas du corps (quadriceps, fessiers, adducteurs) et le gainage. C'est le mouvement de référence pour la force des jambes.
+• Le développé couché développe pectoraux, deltoïdes antérieurs et triceps : la poussée horizontale la plus chargeable.
+• Le soulevé de terre travaille toute la chaîne postérieure : ischio-jambiers, fessiers, lombaires, trapèzes, avant-bras. Aucun exercice ne permet de soulever aussi lourd.
+
+Ces mouvements recrutent énormément de masse musculaire, se chargent progressivement pendant des années, et transfèrent vers le sport et la vie quotidienne (porter, pousser, ramasser).
+
+Tu n'es pas obligé de faire les versions de compétition : goblet squat, soulevé de terre roumain, développé avec haltères sont des variantes parfaitement légitimes selon ta morphologie et ton historique. L'important est de maîtriser un schéma de squat, une poussée et une charnière de hanche lourds.`,quiz:{question:"Quel mouvement cible principalement la chaîne postérieure ?",options:["Le développé couché","Le soulevé de terre","Le curl biceps"],correct:1}},
+    {id:"l2",title:"La force, c'est spécifique : lourd et peu de reps",duration:"7 min",videoUrl:"",content:`La force maximale est une compétence autant qu'une qualité musculaire : ton système nerveux apprend à recruter plus de fibres, plus vite, et à coordonner le mouvement. Pour devenir fort, il faut donc pratiquer... le lourd.
+
+Repères validés par la recherche et la pratique :
+• Zone principale : 1 à 6 répétitions, à 80-92 % de ton maximum environ.
+• Les charges supérieures à 80-85 % du 1RM sont celles qui développent le mieux la force maximale, même si l'hypertrophie peut se construire plus léger.
+• Volume typique : 10 à 20 séries lourdes par mouvement et par semaine, réparties en 2 à 3 séances.
+• Repos longs entre séries lourdes : 3 à 5 minutes. C'est nécessaire, pas du temps perdu.
+
+La technique devient encore plus critique qu'en hypertrophie : à 90 %, le moindre défaut se paie. D'où l'intérêt de garder 1 à 3 reps en réserve sur la grande majorité des séries — l'échec sur squat ou soulevé lourd coûte très cher en fatigue et en risque.
+
+Et n'oublie pas : le muscle reste le moteur de la force à long terme. Les blocs d'hypertrophie servent aussi les pratiquants de force.`,quiz:{question:"Quelle zone de charge développe le mieux la force maximale ?",options:["Plus de 80 % du 1RM, 1 à 6 reps","40 % du 1RM, 25 reps","Uniquement le poids du corps"],correct:0}},
+    {id:"l3",title:"RPE et gestion des charges au quotidien",duration:"7 min",videoUrl:"",content:`Le RPE (Rating of Perceived Exertion, échelle de 1 à 10) est le standard moderne pour piloter les séances de force : RPE 10 = échec, RPE 8 = 2 reps en réserve, RPE 7 = 3 reps en réserve.
+
+Pourquoi c'est supérieur aux pourcentages fixes ? Parce que ta force varie de ±5 à 10 % selon le sommeil, le stress, la nutrition. Un programme qui exige 85 % un jour où tu n'as dormi que 5 heures te casse ; le RPE s'adapte automatiquement : « un triple à RPE 8 » sera plus léger ce jour-là, et c'est très bien.
+
+Application type d'une séance : monte progressivement jusqu'à une série top à RPE 8 (par exemple 3 reps), puis fais tes séries de volume 5 à 10 % en dessous de cette charge.
+
+Calibrage : teste de temps en temps une série à RPE quasi maximal dans un cadre sécurisé pour vérifier que ton ressenti colle à la réalité. Filmer la vitesse de la barre aide aussi : si la dernière rep ralentit beaucoup, tu es vers RPE 8,5-9.
+
+Le RPE n'est pas une excuse pour t'économiser : sur un cycle, la majorité de tes séries de travail doivent rester exigeantes (RPE 7 à 9).`,quiz:{question:"Que signifie RPE 8 ?",options:["8 répétitions obligatoires","Environ 2 répétitions en réserve","80 kg sur la barre"],correct:1}},
+    {id:"l4",title:"Périodiser simplement : vagues et blocs",duration:"8 min",videoUrl:"",content:`La périodisation, c'est organiser la progression sur plusieurs semaines au lieu d'improviser. Pas besoin d'un tableur de fou : des structures simples battent l'absence de structure.
+
+Trois modèles efficaces :
+
+1. Progression linéaire (débutant) : même schéma chaque séance, +2,5 kg dès que les reps passent. Fonctionne des mois — exploite-la tant qu'elle dure.
+
+2. Progression par vagues (intermédiaire) : cycles de 3-4 semaines où l'intensité monte et le volume descend. Exemple : semaine 1 : 4x6 à RPE 7 ; semaine 2 : 4x5 à RPE 8 ; semaine 3 : 3x3 à RPE 9 ; semaine 4 : décharge, puis nouvelle vague légèrement plus lourde.
+
+3. Blocs (avancé) : plusieurs semaines orientées hypertrophie/volume, puis un bloc force à intensité croissante, éventuellement un pic.
+
+Dans tous les cas, intègre une semaine de décharge (deload) toutes les 4 à 8 semaines : volume réduit de moitié, intensité modérée, pour dissiper la fatigue accumulée et exprimer les adaptations.
+
+Le meilleur programme est celui que tu suis 12 mois, pas celui qui est parfait 3 semaines.`,quiz:{question:"À quoi sert une semaine de décharge (deload) ?",options:["À perdre volontairement du muscle","À dissiper la fatigue accumulée pour mieux progresser ensuite","À tester son maximum tous les 7 jours"],correct:1}},
+    {id:"l5",title:"Stagnation : diagnostiquer et relancer",duration:"7 min",videoUrl:"",content:`Tu bloques sur une charge depuis 3 semaines ? Avant de tout changer, diagnostique dans l'ordre :
+
+1. Le sommeil et le stress : c'est la cause n°1 des stagnations de force. 7 à 9 h par nuit, sinon le reste compte peu.
+2. La nutrition : on devient rarement plus fort durablement en déficit calorique sévère. Vérifie calories et protéines (1,6-2,2 g/kg/jour).
+3. La récupération locale : trop de volume ou trop d'échec ? Parfois il faut FAIRE MOINS pour repartir.
+4. La technique : un point de blocage récurrent (ex. sortie de trou au squat) se travaille avec des variantes ciblées (pause squat, tempo).
+
+Stratégies de relance éprouvées :
+• Reset modeste : -10 % sur la barre, remonte en 3-4 semaines avec une exécution parfaite — tu repasseras ton blocage avec de l'élan.
+• Change de variante 4 à 6 semaines (ex. développé incliné à la place du couché) puis reviens.
+• Ajoute une série top + back-off au lieu de séries uniformes.
+
+La force ne progresse jamais en ligne droite : des plateaux de quelques semaines sont normaux. Sur 6 à 12 mois, c'est la tendance qui compte.`,quiz:{question:"Quelle est la première cause à vérifier en cas de stagnation ?",options:["La couleur de la barre","Le sommeil et le niveau de stress","La marque des chaussures"],correct:1}}
+  ]},
+  {id:4,v:2,title:"Nutrition : les fondations",icon:"🥗",domain:"Nutrition",desc:"Calories, macros, TDEE : comprendre une fois pour toutes comment ça marche",lessons:[
+    {id:"l1",title:"La balance énergétique : la loi qui gouverne ton poids",duration:"8 min",videoUrl:"",content:`Ton poids corporel obéit d'abord à la balance énergétique : les calories que tu absorbes versus celles que tu dépenses. Déficit prolongé = perte de poids ; surplus prolongé = prise de poids. Ce principe est l'un des mieux établis de toute la physiologie — aucun aliment magique ni horaire magique ne le contourne.
+
+Ta dépense quotidienne (TDEE) se compose de :
+• Le métabolisme de base (60-70 %) : l'énergie pour vivre — organes, cerveau, température.
+• Le NEAT (15-30 %) : toute l'activité hors sport — marche, ménage, gesticulation. C'est le poste le plus variable d'une personne à l'autre !
+• L'effet thermique des aliments (~10 %) : digérer coûte de l'énergie, surtout les protéines.
+• L'exercice volontaire (5-15 % pour la plupart) : oui, souvent moins que ce qu'on croit.
+
+Deux conséquences pratiques : on ne compense pas une mauvaise alimentation par du sport (une pâtisserie = 45-60 min de cardio), et bouger PLUS au quotidien (NEAT) pèse souvent plus lourd que la séance elle-même dans la dépense totale.
+
+Les calories ne sont pas toute l'histoire (la composition compte pour la satiété, la santé, le muscle), mais elles sont le chapitre un.`,quiz:{question:"Quel poste de dépense varie le plus d'une personne à l'autre ?",options:["Le métabolisme de base","Le NEAT (activité non sportive)","L'effet thermique des aliments"],correct:1}},
+    {id:"l2",title:"Calculer ton TDEE sans te tromper",duration:"7 min",videoUrl:"",content:`Les formules (Mifflin-St Jeor, Harris-Benedict) donnent un point de départ, pas une vérité. Méthode simple :
+
+1. Estime ton métabolisme de base : pour aller vite, poids (kg) × 22 environ.
+2. Multiplie par un facteur d'activité : 1,4-1,5 (sédentaire + 3-4 séances), 1,6-1,7 (travail actif + entraînement), 1,8+ (travail physique + sport intense).
+
+Exemple : 80 kg, employé de bureau, 4 séances/semaine → 80 × 22 × 1,5 ≈ 2 640 kcal/jour.
+
+MAIS la vraie méthode, c'est l'ajustement par les données : mange ce total pendant 2 à 3 semaines en te pesant 3-4 fois par semaine, le matin à jeun, et compare la moyenne hebdomadaire (jamais un jour isolé, le poids fluctue de ±1-2 kg avec l'eau, le sel, les glucides, le transit).
+
+• Poids stable → tu as trouvé ta maintenance.
+• Tu perds ~0,5 kg/semaine → tu es ~500 kcal sous ta maintenance.
+• Tu prends → tu es au-dessus.
+
+Ton TDEE évolue avec ton poids, ton activité et ton niveau d'énergie : recalibre tous les 2-3 mois. Ce n'est pas un chiffre gravé dans le marbre, c'est une boussole.`,quiz:{question:"Comment confirmer son TDEE de façon fiable ?",options:["Avec une seule pesée le dimanche","En suivant la moyenne de poids sur 2-3 semaines à apport constant","En demandant à un ami du même poids"],correct:1}},
+    {id:"l3",title:"Les protéines : le macronutriment prioritaire",duration:"8 min",videoUrl:"",content:`Les protéines fournissent les acides aminés qui construisent et réparent ton muscle. C'est le macronutriment à verrouiller en premier, quel que soit ton objectif.
+
+Combien ? Le consensus scientifique (ISSN, méta-analyses) converge vers 1,6 à 2,2 g par kg de poids corporel et par jour pour les pratiquants de musculation. Exemple : 80 kg → 130 à 175 g/jour. En déficit calorique, vise plutôt le haut de la fourchette pour protéger ta masse musculaire. Au-delà de ~2,2 g/kg : pas de bénéfice musculaire démontré, mais pas de danger non plus chez le sujet sain (l'idée que les protéines « abîment les reins » sains n'est pas soutenue par les études).
+
+Bonnes sources : viandes, volailles, poissons, œufs, produits laitiers (skyr, fromage blanc, cottage), légumineuses, tofu, tempeh, et la whey en complément pratique.
+
+Répartition : 3 à 5 prises de 25-50 g réparties dans la journée semblent légèrement optimales pour stimuler la synthèse protéique, mais c'est un détail comparé au TOTAL quotidien. Atteins ton quota d'abord, peaufine ensuite.
+
+Astuce satiété : c'est aussi le macronutriment le plus rassasiant et le plus coûteux à digérer (~20-25 % de ses calories) — un allié majeur en perte de gras.`,quiz:{question:"Quelle fourchette de protéines est recommandée pour un pratiquant de musculation ?",options:["0,5 g/kg/jour","1,6 à 2,2 g/kg/jour","5 g/kg/jour minimum"],correct:1}},
+    {id:"l4",title:"Glucides et lipides : tes deux carburants",duration:"7 min",videoUrl:"",content:`Une fois les protéines fixées, le reste de tes calories se répartit entre glucides et lipides. Aucun des deux n'est « l'ennemi » — les régimes low-carb et low-fat produisent la même perte de gras à calories et protéines égales (c'est solidement démontré).
+
+Les lipides : indispensables aux hormones, à l'absorption des vitamines liposolubles et aux membranes cellulaires. Plancher recommandé : 0,6 à 1 g/kg/jour (ne descends pas durablement sous ~20 % de tes calories). Privilégie olives, avocat, oléagineux, poissons gras, et limite les graisses trans industrielles.
+
+Les glucides : le carburant préféré de l'entraînement intensif. Ils remplissent ton glycogène musculaire, soutiennent la performance et la récupération. Pour un pratiquant de musculation : 3 à 6 g/kg/jour selon ton volume d'entraînement et tes calories disponibles. Privilégie les sources riches en fibres (avoine, riz, patates, légumineuses, fruits) la plupart du temps.
+
+En pratique : Protéines 1,6-2,2 g/kg → Lipides 0,8-1 g/kg → le reste en glucides. Ajuste le curseur glucides/lipides selon tes préférences : l'adhérence bat l'optimisation théorique.`,quiz:{question:"À calories et protéines égales, quel régime fait perdre plus de gras ?",options:["Low-carb","Low-fat","Égalité : c'est le déficit qui compte"],correct:2}},
+    {id:"l5",title:"Qualité alimentaire : la règle des 80/20",duration:"6 min",videoUrl:"",content:`Les calories déterminent ton poids ; la QUALITÉ de tes aliments détermine ta santé, ton énergie, ta satiété et ta capacité à tenir le plan.
+
+Vise environ 80 % de ton apport sous forme d'aliments peu transformés : viandes, poissons, œufs, légumes, fruits, céréales complètes, légumineuses, produits laitiers nature, oléagineux. Ces aliments apportent fibres, vitamines, minéraux — et surtout, ils rassasient énormément par calorie.
+
+Les 20 % restants : la pizza du vendredi, le dessert, le verre entre amis. Les intégrer SANS culpabilité est une stratégie, pas une faiblesse : les études sur l'adhérence montrent que la rigidité extrême (« aliments interdits ») prédit les craquages et l'abandon, alors que la flexibilité prédit le maintien des résultats à long terme.
+
+Deux réflexes simples qui changent tout :
+• Des légumes à 2 repas par jour minimum (volume, fibres, micronutriments).
+• 25 à 35 g de fibres par jour : transit, santé cardiovasculaire et satiété.
+
+Aucun aliment isolé ne rend gros ou maigre. C'est la structure d'ensemble, répétée des mois, qui fait le résultat.`,quiz:{question:"Pourquoi garder ~20 % d'aliments plaisir est-il une bonne stratégie ?",options:["Parce que la flexibilité améliore l'adhérence à long terme","Parce que ces aliments contiennent des nutriments secrets","C'est une mauvaise stratégie"],correct:0}},
+    {id:"l6",title:"Hydratation : le facteur sous-estimé",duration:"5 min",videoUrl:"",content:`Une déshydratation même légère (~2 % du poids corporel) dégrade mesurablement la performance physique, la force, l'endurance et la concentration. C'est l'un des leviers les plus simples et les plus négligés.
+
+Repères pratiques :
+• Base : 30 à 40 ml par kg de poids corporel et par jour (ex. 80 kg → 2,4 à 3,2 L), eau des aliments comprise.
+• Ajoute 500 ml à 1 L par heure d'entraînement selon ta transpiration et la chaleur.
+• Indicateur fiable et gratuit : la couleur des urines — jaune pâle = bien hydraté ; foncé = bois davantage.
+
+Pendant la séance : quelques gorgées toutes les 15-20 minutes suffisent pour une séance de musculation classique. Les boissons électrolytiques ne deviennent réellement utiles que pour les efforts longs (plus de 60-90 min), intenses ou par forte chaleur.
+
+Astuce comportementale : une grande bouteille graduée remplie le matin, finie le soir. Le café et le thé comptent dans l'hydratation (l'effet diurétique de la caféine est faible chez les consommateurs habitués), l'alcool non.
+
+Note : si tu as une condition médicale (rénale, cardiaque), les besoins hydriques se discutent avec ton médecin.`,quiz:{question:"Quel indicateur simple reflète bien ton hydratation ?",options:["La couleur des urines","La sensation de bouche pâteuse uniquement","Le nombre de bouteilles achetées"],correct:0}}
+  ]},
+  {id:5,v:2,title:"Prise de masse propre",icon:"📈",domain:"Nutrition",desc:"Construire du muscle sans te transformer en bonhomme Michelin",lessons:[
+    {id:"l1",title:"Le surplus calorique : combien exactement ?",duration:"7 min",videoUrl:"",content:`Pour construire du muscle de façon optimale, ton corps a besoin d'un excédent d'énergie. Mais le muscle se fabrique LENTEMENT : un surplus énorme ne fait pas pousser le muscle plus vite, il remplit surtout les cellules graisseuses.
+
+Recommandations fondées sur la recherche (Helms, Iraki et coll.) :
+• Surplus modéré : +250 à 500 kcal au-dessus de ta maintenance.
+• Objectif de prise : +0,25 à 0,5 % du poids corporel par semaine (ex. 80 kg → +200 à 400 g/semaine, soit 1 à 1,5 kg/mois).
+• Débutants : haut de la fourchette (le potentiel de croissance est maximal). Avancés : bas de la fourchette (le potentiel ralentit, le surplus part plus vite en gras).
+
+Pèse-toi 3-4 fois par semaine à jeun et pilote à la moyenne hebdomadaire :
+• Tu prends plus vite que prévu ? Retire 150-200 kcal.
+• Le poids stagne 2-3 semaines ? Ajoute 150-200 kcal.
+
+Une prise de masse réussie dure plusieurs mois (4 à 8 typiquement) : c'est un marathon d'assiettes, pas un sprint de buffets. Le « dirty bulk » fait gagner du gras qu'il faudra perdre ensuite — et perdre du gras, c'est long aussi.`,quiz:{question:"Quel rythme de prise de poids hebdomadaire est recommandé en prise de masse ?",options:["+0,25 à 0,5 % du poids corporel","+2 kg par semaine minimum","Aucune prise de poids"],correct:0}},
+    {id:"l2",title:"Protéines et timing : ce qui compte vraiment",duration:"6 min",videoUrl:"",content:`En prise de masse, vise 1,6 à 2,2 g de protéines par kg par jour. Au-delà du total, la recherche permet d'affiner — en gardant les priorités dans l'ordre.
+
+Ce qui est bien établi :
+• Le TOTAL quotidien est le facteur dominant, de très loin.
+• Répartir en 3 à 5 prises d'au moins 0,3-0,4 g/kg (soit 25-40 g pour la plupart) optimise légèrement la stimulation de la synthèse protéique.
+
+Ce qui est un mythe dépassé : la « fenêtre anabolique » de 30 minutes post-entraînement. Les méta-analyses montrent que si ton apport quotidien est bon et que tu as mangé des protéines dans les heures autour de la séance, l'urgence du shaker dans les 30 minutes n'existe pas. La fenêtre réelle est large : plusieurs heures.
+
+En pratique, simple et efficace :
+• Des protéines à chaque repas (petit-déj compris — c'est souvent le repas le plus pauvre en protéines).
+• Un repas ou une collation protéinée dans les 2-3 h après l'entraînement, par confort et habitude.
+• Une source de protéines lentes ou un repas complet le soir si ça t'aide à atteindre ton total.
+
+Le shaker de whey est un OUTIL pratique, pas une obligation : la nourriture solide fait exactement le même travail.`,quiz:{question:"Que dit la recherche sur la « fenêtre anabolique » de 30 min ?",options:["Elle est critique : sans shaker immédiat, la séance est perdue","La fenêtre réelle est large ; le total quotidien domine","Elle ne concerne que les débutants"],correct:1}},
+    {id:"l3",title:"Manger plus quand on n'a pas faim",duration:"6 min",videoUrl:"",content:`Le vrai défi de la prise de masse propre, ce n'est pas la théorie, c'est d'avaler les calories quand l'appétit ne suit pas. Stratégies concrètes :
+
+• Augmente la densité calorique : oléagineux et beurres de noix (100 g de beurre d'amande ≈ 600 kcal), huile d'olive sur les plats, avocat, fruits secs, granola.
+• Bois une partie de tes calories : un smoothie lait + banane + avoine + whey + beurre de cacahuète passe beaucoup plus facilement que l'équivalent à mâcher (700-900 kcal sans douleur).
+• Réduis un peu le volume de légumes très rassasiants si tu n'arrives jamais au bout de tes assiettes (garde-en, mais sois stratégique).
+• Mange plus souvent : 4 à 5 repas/collations moyens plutôt que 3 énormes.
+• Les liquides pendant le repas coupent l'appétit : bois plutôt entre les repas.
+
+Garde l'œil sur la qualité : un surplus se construit très bien avec des aliments denses ET sains. Les fast-foods quotidiens ajoutent surtout des lipides de médiocre qualité et te font sortir du surplus contrôlé.
+
+Si malgré tout tu ne prends pas : tu ne manges pas autant que tu le crois. Pèse et note quelques jours pour recalibrer — c'est presque toujours la réponse.`,quiz:{question:"Quelle stratégie facilite l'augmentation des calories ?",options:["Boire une partie de ses calories (smoothies)","Manger uniquement des légumes vapeur","Sauter le petit-déjeuner"],correct:0}},
+    {id:"l4",title:"Suivre sa prise de masse et savoir s'arrêter",duration:"6 min",videoUrl:"",content:`Une prise de masse pilotée repose sur trois jeux de données :
+
+1. Le poids : moyenne hebdomadaire (3-4 pesées/semaine à jeun). Cible : +0,25 à 0,5 %/semaine.
+2. Les performances : tes charges et reps doivent monter régulièrement. Si le poids monte mais pas les perfs, le surplus part en gras — vérifie entraînement et sommeil.
+3. Les mesures et photos : tour de taille toutes les 2 semaines, photos mensuelles dans les mêmes conditions. Si le tour de taille grimpe nettement plus vite que le reste, lève le pied.
+
+Quand arrêter la prise de masse ?
+• Quand tu atteins un niveau de gras où tu ne te sens plus bien (souvent autour de +4 à 6 cm de tour de taille pour beaucoup).
+• Quand l'appétit, la digestion ou la motivation décrochent durablement.
+• Après 4 à 8 mois, une phase de maintenance de 4-8 semaines stabilise le nouveau poids et remet les compteurs à zéro avant, éventuellement, une mini-sèche.
+
+L'alternance intelligente : prise de masse contrôlée → maintenance → sèche courte si besoin → nouvelle prise. C'est ce cycle, répété sur des années, qui construit les physiques impressionnants — pas une bulk éternelle.`,quiz:{question:"Si le poids monte mais pas les performances, que se passe-t-il probablement ?",options:["Tu gagnes surtout du gras","Tu gagnes du muscle ultra-dense","C'est le signe d'une prise parfaite"],correct:0}}
+  ]},
+  {id:6,v:2,title:"Perte de graisse intelligente",icon:"🔥",domain:"Nutrition",desc:"Perdre du gras, garder le muscle, sans régime de misère",lessons:[
+    {id:"l1",title:"Le déficit calorique : taille et rythme",duration:"8 min",videoUrl:"",content:`Pour perdre du gras, il faut un déficit calorique — c'est non négociable physiologiquement. TOUTES les diètes qui fonctionnent (low-carb, jeûne intermittent, paléo...) fonctionnent par ce mécanisme. La vraie question, c'est la taille et la durée du déficit.
+
+Recommandations consensuelles :
+• Déficit modéré : 300 à 600 kcal/jour sous ta maintenance.
+• Rythme cible : perdre 0,5 à 1 % du poids corporel par semaine (ex. 90 kg → 450 à 900 g/semaine). Plus tu es sec, plus tu ralentis pour protéger le muscle.
+• Les régimes drastiques (-1 000 kcal et plus) font perdre plus de muscle, dégradent l'énergie et l'entraînement, et préparent le rebond.
+
+Pèse-toi 3-4 fois/semaine à jeun, compare les MOYENNES hebdomadaires. La balance fluctue avec l'eau, le sodium, les glucides, le cycle hormonal et le transit : un « +800 g » du jour au lendemain n'est jamais du gras (800 g de gras = ~6 000 kcal de surplus réel).
+
+Si la moyenne ne bouge plus pendant 2-3 semaines : réduis de 150-200 kcal OU ajoute 2 000-3 000 pas quotidiens. Petites touches successives, jamais de panique.
+
+Rappel : en cas d'antécédents de troubles alimentaires, fais-toi accompagner par un professionnel de santé.`,quiz:{question:"Quel rythme de perte hebdomadaire est recommandé ?",options:["0,5 à 1 % du poids corporel","3 kg par semaine","Le plus vite possible, toujours"],correct:0}},
+    {id:"l2",title:"Garder le muscle en sèche : les 3 piliers",duration:"7 min",videoUrl:"",content:`Perdre du poids est facile. Perdre du GRAS en gardant le muscle, c'est tout l'art. Trois piliers, validés par la recherche :
+
+1. L'entraînement de force, maintenu lourd. C'est le signal qui dit à ton corps « ce muscle sert, garde-le ». Garde des charges proches de tes habitudes : réduis un peu le volume si la récupération baisse (-20 à -30 % de séries), mais ne remplace surtout pas la musculation par du cardio léger. Les séries doivent rester difficiles.
+
+2. Les protéines hautes : 1,8 à 2,7 g/kg/jour en déficit (plus haut qu'en maintenance — la recherche montre que le besoin augmente quand l'énergie baisse). Concrètement : chaque repas construit autour d'une source de protéines.
+
+3. Un rythme de perte raisonnable : voir leçon précédente. Le muscle se sacrifie d'autant plus que le déficit est brutal et que le sommeil manque (la privation de sommeil en déficit augmente nettement la part de poids perdue sous forme de masse maigre — dors 7-9 h).
+
+Indicateur de réussite : tes charges d'entraînement se maintiennent (ou baissent à peine) pendant que le poids et le tour de taille descendent. Si ta force s'effondre, quelque chose cloche : déficit trop grand, protéines trop basses ou sommeil insuffisant.`,quiz:{question:"Quel signal principal préserve le muscle pendant un déficit ?",options:["Le cardio à jeun","L'entraînement de force maintenu lourd","Les bains froids quotidiens"],correct:1}},
+    {id:"l3",title:"La satiété : ton arme secrète contre la faim",duration:"7 min",videoUrl:"",content:`Un régime qui affame échoue. La clé du déficit tenable : maximiser le volume et la satiété par calorie.
+
+La hiérarchie de la satiété, selon les études :
+• Les protéines : le macronutriment le plus rassasiant, calorie pour calorie.
+• Les fibres et l'eau des aliments : légumes, fruits, légumineuses, pommes de terre — remplissent l'estomac pour très peu de calories. La pomme de terre bouillie est l'un des aliments les plus rassasiants jamais mesurés.
+• Les aliments solides rassasient plus que les liquides : c'est le moment de NE PAS boire ses calories (jus, sodas, alcool = calories sans satiété).
+
+Tactiques concrètes :
+• Remplis la moitié de l'assiette de légumes avant le reste.
+• Commence le repas par les protéines et les légumes.
+• Soupe ou crudités en entrée : moins de calories totales sur le repas (démontré).
+• Aliments peu transformés en priorité : à calories égales, les ultra-transformés poussent à manger plus (étude contrôlée de Hall, 2019).
+• Dors : la privation de sommeil augmente la faim (ghréline) et les envies de produits denses.
+
+Tu ne dois pas avoir faim en permanence en sèche. Une faim modérée avant les repas, oui. Une obsession alimentaire constante : revois la copie.`,quiz:{question:"Pourquoi éviter de boire ses calories en sèche ?",options:["Les liquides rassasient beaucoup moins que les solides","Les liquides contiennent plus de calories par gramme","C'est interdit par les fédérations"],correct:0}},
+    {id:"l4",title:"Refeeds et diet breaks : pauses stratégiques",duration:"6 min",videoUrl:"",content:`Plus une sèche dure, plus le corps s'adapte : NEAT en baisse (tu bouges spontanément moins), faim en hausse, énergie en berne. Deux outils pour gérer ça :
+
+• Le refeed : 1 à 2 jours à maintenance, surplus de calories venant surtout des glucides. Recharge le glycogène, redonne de l'énergie à l'entraînement et casse la monotonie.
+• Le diet break : 1 à 2 SEMAINES complètes à maintenance, typiquement toutes les 6 à 12 semaines de déficit.
+
+Soyons honnêtes sur la science : l'effet « relance du métabolisme » de ces pauses est réel mais MODESTE (les études comme MATADOR suggèrent un léger avantage, d'autres ne trouvent pas de différence de perte totale). Leur vrai super-pouvoir est PSYCHOLOGIQUE et comportemental : meilleure adhérence, meilleures séances, vie sociale préservée, et apprentissage de la maintenance — la compétence qui te servira après la sèche.
+
+Règles d'or : un refeed se planifie (ce n'est pas un craquage rebaptisé), reste riche en protéines, et privilégie les glucides plutôt que les lipides.
+
+Si tu es du genre à dérailler après une journée plus libre, le diet break structuré (calories chiffrées) te conviendra mieux que le refeed improvisé.`,quiz:{question:"Quel est le principal bénéfice démontré des diet breaks ?",options:["Un doublement du métabolisme","L'adhérence et la soutenabilité de la diète","La suppression définitive de la faim"],correct:1}},
+    {id:"l5",title:"Réussir l'après-sèche (là où beaucoup échouent)",duration:"7 min",videoUrl:"",content:`La statistique qui fâche : la majorité des personnes reprennent le poids perdu dans les 1 à 3 ans. Pas par fatalité métabolique, mais parce qu'elles « finissent le régime » et reviennent aux habitudes qui avaient créé le surplus.
+
+Plan de sortie en 3 phases :
+
+1. Remontée progressive (4-6 semaines) : augmente de 100-150 kcal par semaine jusqu'à ta nouvelle maintenance (un peu plus basse qu'avant la sèche, car tu pèses moins). Le poids peut remonter de 1-2 kg les premières semaines : c'est du glycogène et de l'eau, pas du gras — ne panique pas.
+
+2. Maintenance assumée (2-3 mois minimum) : ton corps et ta tête stabilisent le nouveau poids. Continue à te peser 2-3 fois/semaine : la pesée régulière est l'un des meilleurs prédicteurs du maintien dans les études.
+
+3. Garde les habitudes-socles : protéines à chaque repas, légumes, 7 000-10 000 pas, musculation 3-4x/semaine. Ce sont elles qui maintiennent le résultat, pas la motivation.
+
+Fixe une ligne rouge : si tu reprends plus de 2-3 kg sur la moyenne, mini-déficit de 2-3 semaines immédiat. Corriger 2 kg est trivial ; corriger 10 kg est un projet.
+
+Le but d'une sèche n'est pas la photo de fin, c'est le mode de vie qui rend la photo permanente.`,quiz:{question:"Pourquoi le poids remonte-t-il de 1-2 kg en début de remontée calorique ?",options:["C'est du gras instantané","C'est du glycogène et de l'eau","La balance est cassée"],correct:1}}
+  ]},
+  {id:7,v:2,title:"Récupération et sommeil",icon:"😴",domain:"Lifestyle",desc:"Le tiers de ta progression se joue la nuit",lessons:[
+    {id:"l1",title:"Le sommeil : ton anabolisant légal",duration:"8 min",videoUrl:"",content:`Si le sommeil était un complément, ce serait le plus puissant du marché. Ce que montrent les études :
+
+• La privation de sommeil réduit la force, la puissance et la motivation à l'entraînement.
+• En déficit calorique, dormir ~5 h au lieu de ~8 h augmente massivement la part de poids perdue sous forme de masse MAIGRE au lieu de gras (étude classique de Nedeltcheva : la perte de gras a été réduite de moitié environ chez les dormeurs courts).
+• Le manque de sommeil augmente la ghréline (faim), diminue la leptine (satiété) et pousse vers les aliments denses en calories : tenir une diète devient une lutte.
+• La majorité de la sécrétion d'hormone de croissance survient pendant le sommeil profond ; la testostérone chute mesurablement après une semaine de nuits courtes.
+
+Recommandation : 7 à 9 heures par nuit pour la quasi-totalité des adultes, et plutôt le haut de la fourchette quand l'entraînement est intense. Les « petits dormeurs » génétiques existent mais sont rarissimes — se sentir « habitué » à 6 h n'est pas la même chose que ne pas en subir les effets (les études montrent que la performance se dégrade même quand la sensation de fatigue s'émousse).
+
+Priorise le sommeil comme tu priorises ta séance : c'est le même projet.`,quiz:{question:"Que se passe-t-il quand on dort ~5 h en déficit calorique ?",options:["On perd plus de muscle et moins de gras","On perd plus de gras","Rien ne change"],correct:0}},
+    {id:"l2",title:"Hygiène du sommeil : le protocole concret",duration:"7 min",videoUrl:"",content:`Mieux dormir s'apprend. Les leviers validés par la recherche en médecine du sommeil, par ordre d'impact :
+
+1. Régularité : lever et coucher à heures stables (±30-45 min), week-end compris. C'est LE levier n°1 — ton horloge circadienne adore la routine.
+2. Lumière : forte lumière (idéalement naturelle) dans l'heure qui suit le réveil ; lumière tamisée le soir. La lumière du matin cale ton horloge, celle du soir la retarde.
+3. Caféine : demi-vie de ~5-6 h. Dernier café 8 à 10 h avant le coucher pour les sensibles (un café à 16 h laisse encore un quart de la dose dans ton sang à minuit).
+4. Chambre : fraîche (17-19 °C), sombre (occultants ou masque), silencieuse (bouchons si besoin).
+5. Écrans : le problème est autant le CONTENU stimulant (scroll, notifications) que la lumière. Dernière demi-heure : lecture, étirements légers, routine calme.
+6. Alcool : il endort plus vite mais fragmente le sommeil et supprime une partie du sommeil paradoxal — un mauvais somnifère.
+7. Entraînement tardif : si la séance se finit à moins de 2 h du coucher et que tu as du mal à t'endormir, avance-la ou allège le soir.
+
+Choisis DEUX leviers, applique-les 2 semaines, puis ajoute. L'hygiène du sommeil se construit comme un programme : progressivement.`,quiz:{question:"Quel est le levier n°1 pour améliorer son sommeil ?",options:["Des horaires de lever/coucher réguliers","Un oreiller ergonomique","Dormir avec des chaussettes"],correct:0}},
+    {id:"l3",title:"Fatigue, surmenage et l'art du deload",duration:"7 min",videoUrl:"",content:`La fatigue d'entraînement s'accumule plus vite qu'elle ne se dissipe. Savoir la gérer sépare ceux qui progressent des années de ceux qui alternent blessures et abandons.
+
+Les signaux d'un surmenage qui s'installe (plusieurs en même temps, sur 1-2 semaines) :
+• Performances en baisse malgré l'effort
+• Sommeil dégradé alors que tu es épuisé
+• Fréquence cardiaque de repos en hausse de 5-10 bpm
+• Motivation en chute, irritabilité, appétit perturbé
+• Douleurs articulaires diffuses qui traînent
+
+La réponse : le deload — une semaine à volume réduit (≈50 % des séries) et intensité modérée (≈70-80 % des charges habituelles, loin de l'échec). Tu continues à t'entraîner : tu dissipes la fatigue sans perdre les adaptations. Le muscle ne fond pas en une semaine — il faut des semaines d'inactivité totale pour perdre significativement.
+
+Quand le placer ? Soit programmé (toutes les 4-8 semaines selon ton intensité), soit réactif (dès que les signaux ci-dessus convergent). Les pratiquants avancés, plus lourds et plus proches de leurs limites, en ont besoin plus souvent que les débutants.
+
+Vraie maxime de vétéran : tu ne perds jamais tes gains pendant un deload ; tu perds des mois sur une blessure ou un burn-out.`,quiz:{question:"Que fait-on pendant une semaine de deload ?",options:["On arrête tout complètement","On réduit volume et intensité mais on continue de s'entraîner","On double le volume pour compenser"],correct:1}},
+    {id:"l4",title:"Courbatures et récupération : ce qui marche vraiment",duration:"7 min",videoUrl:"",content:`Les courbatures (DOMS) sont des douleurs musculaires apparaissant 24 à 72 h après un effort inhabituel, liées surtout aux contractions excentriques. Mise au point : elles ne sont PAS un indicateur de qualité de séance — juste un signe de nouveauté du stimulus. Elles diminuent naturellement avec la répétition (effet de charge répétée).
+
+Ce qui aide réellement, selon les données :
+• La récupération active : marche, vélo très léger, mobilité douce — augmente le flux sanguin et réduit la sensation de raideur.
+• Le sommeil et les calories/protéines suffisantes : la base, encore et toujours.
+• Le massage et les rouleaux : réduisent la PERCEPTION de douleur (effet modeste mais réel et agréable).
+• Continuer à s'entraîner léger sur le muscle courbaturé est sans danger et souvent bénéfique.
+
+Ce qui est surtout du marketing (ou contre-productif) :
+• Le froid/bains glacés APRÈS la musculation : ils réduisent la douleur mais peuvent atténuer les adaptations d'hypertrophie s'ils sont systématiques. À réserver aux phases de compétition.
+• Les protocoles de « détox », les patchs : preuves faibles à nulles.
+
+Si une douleur est ARTICULAIRE, asymétrique, vive ou présente au repos : ce ne sont pas des courbatures. Repos de la zone et avis médical si ça persiste.`,quiz:{question:"Les grosses courbatures prouvent-elles qu'une séance était efficace ?",options:["Oui, toujours","Non : elles indiquent surtout la nouveauté du stimulus","Oui, mais seulement le mardi"],correct:1}},
+    {id:"l5",title:"Stress et progression : gérer l'invisible",duration:"6 min",videoUrl:"",content:`Ton corps ne fait pas la différence entre le stress d'un déménagement, d'une rupture ou d'un squat lourd : tout puise dans le même réservoir de récupération. C'est pourquoi les mêmes programmes donnent des résultats différents selon les périodes de vie.
+
+Ce que la recherche montre : un stress psychologique élevé ralentit la récupération de force après une séance et augmente le risque de blessure chez les sportifs. Le stress chronique dégrade aussi le sommeil — cercle vicieux.
+
+Stratégies concrètes :
+• Périodes chargées (examens, rush au travail, bébé) : réduis le volume de 30-40 % AVANT d'y être obligé. 2-3 séances courtes et lourdes maintiennent parfaitement tes acquis.
+• Outils validés contre le stress : activité physique légère (marche en extérieur), exposition à la nature, respiration lente (ex. 4-6 respirations/min pendant 5 min), cohérence cardiaque, méditation de pleine conscience — effets modestes mais réels et cumulables.
+• Limite les stimulants quand le stress est haut : la caféine en excès amplifie l'anxiété et casse le sommeil.
+• Le sport lui-même est un anti-stress démontré : ne le supprime jamais totalement, adapte-le.
+
+S'entraîner « moins mais bien » pendant 2 mois difficiles vaut infiniment mieux qu'alterner semaines parfaites et abandons. Et si l'anxiété ou le moral pèsent durablement : en parler à un professionnel de santé est un acte de force, pas de faiblesse.`,quiz:{question:"Que faire de son entraînement pendant une période de vie très stressante ?",options:["Le supprimer complètement","Réduire le volume mais maintenir des séances courtes","Doubler le volume pour évacuer"],correct:1}}
+  ]},
+  {id:8,v:2,title:"Cardio et santé",icon:"❤️",domain:"Lifestyle",desc:"Intégrer le cardio sans saboter tes gains",lessons:[
+    {id:"l1",title:"LISS, HIIT : comprendre les deux familles",duration:"7 min",videoUrl:"",content:`Le cardio se décline en deux grandes approches, complémentaires :
+
+• Le LISS (Low Intensity Steady State) : effort continu à intensité modérée — marche rapide, vélo tranquille, rameur léger. Tu peux tenir une conversation (zone 2 environ, 60-70 % de la FC max). Avantages : récupération quasi nulle à payer, accessible tous les jours, excellent pour la base aérobie et la santé cardiovasculaire, n'interfère presque pas avec la musculation.
+
+• Le HIIT (High Intensity Interval Training) : alternance d'efforts intenses (15 s à 4 min) et de récupérations. Exemple : 6 × 1 min dur / 2 min facile. Avantages : très efficace par minute investie, améliore vite le VO2max. Inconvénients : coût de récupération élevé, exigeant mentalement, à doser quand on fait déjà de la musculation intense.
+
+Pour la perte de gras, soyons clairs : à dépense calorique égale, HIIT et LISS font perdre autant de gras l'un que l'autre (méta-analyses sans appel). Le fameux « afterburn » (EPOC) du HIIT est réel mais modeste — quelques dizaines de calories, pas des centaines.
+
+Choisis donc selon ta récupération, ton temps et tes goûts : le meilleur cardio est celui que tu feras régulièrement.`,quiz:{question:"À dépense calorique égale, lequel fait perdre plus de gras ?",options:["Le HIIT, grâce à l'afterburn massif","Le LISS, car on brûle en zone graisse","Égalité : c'est la dépense totale qui compte"],correct:2}},
+    {id:"l2",title:"Combien de cardio pour la santé ? Les vrais chiffres",duration:"6 min",videoUrl:"",content:`Les recommandations de l'OMS et des grandes sociétés de cardiologie pour les adultes :
+
+• 150 à 300 minutes d'activité aérobie modérée par semaine (ou 75 à 150 min vigoureuse, ou un mix), PLUS du renforcement musculaire 2 fois par semaine minimum. Si tu suis ton programme de musculation, cette deuxième partie est déjà cochée — et largement.
+
+Ce que disent les données épidémiologiques : le plus grand bond de bénéfice santé se produit en passant de RIEN à UN PEU. Chaque tranche d'activité supplémentaire réduit le risque cardiovasculaire et la mortalité toutes causes, avec des rendements décroissants mais positifs très loin.
+
+Un indicateur que les coachs aiment : la fréquence cardiaque de repos. Une FC de repos qui baisse au fil des mois (mesurée au réveil) reflète une meilleure condition aérobie. Une FC de repos chroniquement élevée ou qui grimpe soudainement peut signaler fatigue, stress ou maladie.
+
+Concrètement pour un pratiquant de musculation : 2 à 4 sessions de 20-40 min de LISS (ou l'équivalent en marche quotidienne) couvrent la santé cardiovasculaire sans entamer la récupération. Ton cœur est un muscle : lui aussi mérite son entraînement.
+
+Évidemment : reprise du sport après une longue pause, antécédents cardiaques, ou plus de 40 ans avec facteurs de risque → un avis médical avant de pousser les intensités est la norme.`,quiz:{question:"Quelle est la recommandation OMS d'activité aérobie modérée hebdomadaire ?",options:["150 à 300 minutes","15 minutes","Aucune si on fait de la musculation"],correct:0}},
+    {id:"l3",title:"Cardio + musculation : éviter l'interférence",duration:"7 min",videoUrl:"",content:`« Le cardio tue les gains » : mythe ou réalité ? Réponse nuancée de la recherche : l'effet d'interférence existe, mais il est largement évitable.
+
+Ce que montrent les méta-analyses : un cardio modéré (2-3 sessions/semaine) n'altère pratiquement pas l'hypertrophie. L'interférence devient mesurable quand le volume de cardio est élevé, intense et concurrent (beaucoup de course à pied + beaucoup de musculation des jambes). La puissance explosive est plus sensible que la masse musculaire.
+
+Règles pratiques pour cumuler sereinement :
+• Privilégie les modalités à faible impact pour les jambes : vélo, rameur, marche inclinée — moins de dommages musculaires que la course.
+• Sépare les stimuli : cardio et musculation à 6 h ou plus d'écart, ou jours différents. Si même séance : musculation D'ABORD, cardio ensuite.
+• Évite le HIIT de jambes la veille d'une grosse séance bas du corps.
+• Compense les calories : le cardio creuse la dépense ; en prise de masse, mange en conséquence.
+• Dose globale raisonnable : jusqu'à ~3 h de cardio modéré/semaine, l'immense majorité des pratiquants ne constate AUCUN frein.
+
+Bonus souvent oublié : une meilleure base aérobie améliore ta récupération ENTRE les séries et entre les séances. Un cœur efficace, c'est plus de volume de qualité en musculation.`,quiz:{question:"Si cardio et musculation sont dans la même séance, quel ordre choisir ?",options:["Cardio d'abord pour s'échauffer 45 min","Musculation d'abord, cardio ensuite","L'ordre n'a aucune importance"],correct:1}},
+    {id:"l4",title:"Le NEAT et les pas : l'arme invisible",duration:"6 min",videoUrl:"",content:`Le NEAT (Non-Exercise Activity Thermogenesis) regroupe toutes les calories brûlées hors sport : marcher, monter des escaliers, cuisiner, gesticuler. Et c'est un géant : entre deux personnes de même gabarit, le NEAT peut varier de plusieurs centaines de kcal par jour.
+
+Pourquoi c'est crucial :
+• En sèche, le corps réduit SPONTANÉMENT le NEAT (tu bouges moins sans t'en rendre compte) — c'est une grosse part de « l'adaptation métabolique ». Suivre ses pas contrecarre cette dérive silencieuse.
+• Une heure de musculation ne brûle que 200-400 kcal : ta dépense quotidienne se joue bien plus dans les 23 autres heures.
+
+Repères chiffrés :
+• Moins de 5 000 pas/jour : mode de vie sédentaire, risques santé documentés.
+• 7 000 à 10 000 pas/jour : excellente cible pour la santé et la gestion du poids (les bénéfices plafonnent progressivement vers 8 000-10 000 selon les cohortes récentes).
+• ~1 000 pas ≈ 30 à 50 kcal selon le gabarit : passer de 4 000 à 9 000 pas ≈ 150-250 kcal/jour, soit l'équivalent d'un déficit alimentaire supplémentaire... sans faim.
+
+Tactiques sans douleur : marcher en téléphonant, descendre un arrêt plus tôt, se garer loin, 10 min de marche après les repas (bonus : meilleure glycémie post-prandiale), escaliers par défaut.
+
+Le NEAT est le seul « cardio » qui ne fatigue pas et ne coupe pas l'appétit : utilise-le comme variable d'ajustement principale en sèche.`,quiz:{question:"Pourquoi suivre ses pas en sèche est-il particulièrement utile ?",options:["Parce que le corps réduit spontanément le NEAT en déficit","Parce que marcher remplace la musculation","Parce que les montres sont à la mode"],correct:0}}
+  ]},
+  {id:9,v:2,title:"Construire son programme",icon:"🗓️",domain:"Musculation",desc:"Full body, split, sélection d'exercices : assemble TON plan",lessons:[
+    {id:"l1",title:"Full body, half body, PPL : choisir sa structure",duration:"8 min",videoUrl:"",content:`La meilleure structure dépend d'une seule vraie question : combien de séances FIABLES par semaine peux-tu tenir sur 6 mois ?
+
+• 2-3 séances → Full body. Chaque séance travaille tout le corps via les grands mouvements. Chaque muscle est stimulé 2-3 fois par semaine, aucune séance ratée ne laisse un muscle orphelin. C'est LA structure reine du débutant (et très sous-cotée chez les confirmés pressés).
+
+• 4 séances → Upper/Lower (half body). Deux séances haut du corps, deux séances bas. Fréquence 2x par muscle, séances équilibrées de 60-75 min, énorme classique qui fonctionne pour presque tout le monde.
+
+• 5-6 séances → Push/Pull/Legs (poussée/tirage/jambes) répété 2 fois, ou hybrides Upper/Lower/PPL. Réservé à ceux dont l'emploi du temps est réellement stable — un PPL avec des séances sautées devient vite déséquilibré.
+
+Le « bro split » (un muscle par jour, 1x/semaine) n'est pas catastrophique, mais à volume égal il est moins pratique pour accumuler des séries de QUALITÉ et pardonne mal les absences.
+
+Vérité d'expérience : la structure compte moins que la constance, la surcharge progressive et l'effort. Choisis le format que ta vie réelle peut absorber.`,quiz:{question:"Tu peux t'entraîner 3 fois par semaine de façon fiable. Quelle structure choisir ?",options:["Push/Pull/Legs strict","Full body","Un muscle par jour"],correct:1}},
+    {id:"l2",title:"Sélectionner ses exercices : le menu idéal",duration:"7 min",videoUrl:"",content:`Construis chaque séance autour de SCHÉMAS DE MOUVEMENT plutôt que de muscles isolés. Les 6 schémas fondamentaux :
+
+1. Squat (flexion de genoux dominante) : squat, goblet squat, presse, fentes.
+2. Charnière de hanche : soulevé de terre, soulevé roumain, hip thrust.
+3. Poussée horizontale : développé couché, pompes, développé haltères.
+4. Poussée verticale : développé militaire, développé haltères assis.
+5. Tirage horizontal : rowing barre, rowing haltère, rowing machine.
+6. Tirage vertical : tractions, tirage poitrine.
+
+Un programme équilibré contient chaque schéma 1 à 2 fois par semaine, puis complète avec de l'isolation selon tes priorités : élévations latérales (épaules), curls, extensions triceps, mollets, abdos, leg curl (ischio).
+
+Critères de choix entre deux exercices du même schéma :
+• Tu le sens dans le muscle cible et pas dans les articulations.
+• Tu peux le progresser facilement (petits incréments possibles).
+• Il respecte ta morphologie et ton historique de blessures (un rowing peut remplacer un soulevé, une presse peut remplacer un squat barre).
+
+Stabilité avant tout : garde les mêmes exercices 8 à 12 semaines minimum. Changer sans cesse empêche la progression mesurable — la « confusion musculaire » est un mythe marketing, le muscle ne se confond pas, il s'adapte à la surcharge.`,quiz:{question:"Combien de temps garder les mêmes exercices pour bien progresser ?",options:["Changer à chaque séance pour surprendre le muscle","8 à 12 semaines minimum","5 ans obligatoires sans exception"],correct:1}},
+    {id:"l3",title:"Structurer la séance et la semaine",duration:"7 min",videoUrl:"",content:`L'ordre dans la séance n'est pas un détail : la qualité d'exécution chute au fil de la fatigue.
+
+Ordre type d'une séance efficace :
+1. Le polyarticulaire le plus lourd/exigeant (squat, développé, soulevé) — quand tu es frais.
+2. Le 2e polyarticulaire ou une variante (rowing, fentes, développé incliné).
+3. Les machines et l'isolation (élévations, curls, extensions).
+4. Le « petit reste » : mollets, abdos, avant-bras.
+
+Temps de repos, selon les données : 2 à 3 min sur les polyarticulaires (les repos courts de 60 s réduisent le volume réalisable et légèrement l'hypertrophie), 1 à 2 min sur l'isolation. Repose-toi assez pour que la série suivante soit de qualité.
+
+Sur la semaine, gère les interférences :
+• Évite deux séances très exigeantes pour le bas du corps à moins de 48 h.
+• Place ta séance prioritaire (point faible) après ton meilleur jour de repos.
+• 48 h entre deux stimulations du même muscle est un bon standard.
+
+Durée réaliste : 45 à 75 min suffisent largement pour 15-25 séries de travail. Au-delà de 90 min, c'est rarement le muscle qui travaille — c'est le téléphone.`,quiz:{question:"Quel temps de repos est recommandé sur les gros polyarticulaires ?",options:["15 secondes pour rester chaud","2 à 3 minutes","10 minutes minimum"],correct:1}},
+    {id:"l4",title:"Le journal d'entraînement : ton GPS",duration:"5 min",videoUrl:"",content:`Demande à dix pratiquants qui stagnent ce qu'ils faisaient il y a 6 semaines : neuf ne sauront pas répondre. Sans données, pas de progression pilotée — juste des impressions.
+
+Ce qu'il faut noter, à minima, pour CHAQUE série de travail :
+• Exercice, charge, répétitions, et idéalement le RIR/RPE.
+• Exemple d'une ligne : « Développé couché 80 kg — 8/8/7 @RIR 2 ».
+
+Ce que tu y gagnes :
+• La double progression devient automatique : tu sais exactement quoi battre aujourd'hui (une rep de plus, 2,5 kg de plus).
+• Tu détectes les stagnations RÉELLES (3-4 semaines sans amélioration) au lieu de paniquer sur une mauvaise séance isolée.
+• Tu identifies ce qui marche pour TOI en comparant les blocs.
+
+Complète avec 3 mesures hebdomadaires hors salle : poids moyen, tour de taille, et une note d'énergie/sommeil sur 10. Le croisement de ces données raconte toute l'histoire : performances qui montent + poids stable = recomposition ; performances qui chutent + sommeil à 4/10 = problème de récupération, pas de programme.
+
+Papier, application, notes du téléphone : le support n'a aucune importance. La régularité, si. Trente secondes entre les séries suffisent — tu les as.`,quiz:{question:"Quel est l'intérêt principal du journal d'entraînement ?",options:["Décorer son sac de sport","Savoir exactement quoi battre à chaque séance","Le montrer sur les réseaux"],correct:1}},
+    {id:"l5",title:"Adapter le programme à TA vie (et le faire évoluer)",duration:"6 min",videoUrl:"",content:`Un programme n'est pas un contrat figé, c'est un organisme vivant. Les bons réflexes d'adaptation :
+
+Quand tu manques de temps : ne saute pas la séance, compresse-la. Garde les 2 premiers polyarticulaires avec leurs séries lourdes, coupe l'isolation. Une séance de 30 min bien menée conserve l'essentiel du stimulus. Les supersets antagonistes (ex. développé + rowing enchaînés) divisent presque le temps par deux sans perte de performance notable.
+
+Quand tu voyages : 2 séances full body avec ce qui est disponible (haltères d'hôtel, élastiques, poids du corps) maintiennent tes acquis. Le muscle se maintient avec environ un tiers du volume qui l'a construit — la recherche est rassurante là-dessus.
+
+Quand un exercice fait mal (douleur articulaire, pas musculaire) : ne sois pas un héros. Remplace par une variante du même schéma qui ne réveille rien (presse au lieu de squat, haltères au lieu de barre, prise neutre au lieu de pronation). Réintroduis progressivement plus tard.
+
+Quand tu t'ennuies : change l'ACCESSOIRE, garde la STRUCTURE. Nouveaux exercices d'isolation, nouvelles plages de reps sur le second polyarticulaire — mais les mouvements de base et la logique de progression restent.
+
+Révision complète du programme : toutes les 8-16 semaines, ou à chaque changement d'objectif. Entre-temps : exécute, note, progresse. L'ennui de la répétition est le prix de la maîtrise.`,quiz:{question:"Tu n'as que 30 minutes aujourd'hui. Que fais-tu ?",options:["Tu sautes la séance, ça ne vaut pas le coup","Tu gardes les polyarticulaires lourds et tu coupes l'isolation","Tu ne fais que des abdos"],correct:1}}
+  ]},
+  {id:10,v:2,title:"Mindset et habitudes",icon:"🧠",domain:"Mental",desc:"La psychologie de ceux qui tiennent sur la durée",lessons:[
+    {id:"l1",title:"L'adhérence : la variable qui écrase toutes les autres",duration:"7 min",videoUrl:"",content:`Voici le secret le moins sexy et le plus important du fitness : le programme moyen suivi pendant 2 ans bat le programme parfait abandonné au bout de 6 semaines. Toujours. La recherche sur les diètes le confirme : low-carb, low-fat, jeûne... le prédicteur n°1 du résultat n'est jamais le type de régime, c'est L'ADHÉRENCE.
+
+Conséquences pratiques :
+
+• Choisis la version SOUTENABLE de chaque décision. Le déficit que tu tiens 6 mois bat le déficit héroïque qui explose en vol au bout de 3 semaines. Les 4 séances réalistes battent les 6 séances théoriques.
+
+• Conçois pour ton pire jour, pas ton meilleur. Tout le monde s'entraîne bien motivé, reposé, en janvier. Ton plan doit survivre à novembre, au rhume, à la semaine de rush.
+
+• Le perfectionnisme est l'ennemi : la pensée « tout ou rien » (j'ai raté un repas → la journée est fichue → la semaine est fichue) est le mécanisme d'échec le plus documenté en changement de comportement. Un écart rattrapé immédiatement n'a AUCUN impact mesurable sur 6 mois.
+
+• Vise 80-90 % de constance, pas 100 %. Sur 200 repas mensuels, 20 repas libres ne changent rien si les 180 autres sont alignés.
+
+La question à te poser devant chaque règle que tu t'imposes : « est-ce que je me vois encore faire ça dans un an ? » Si non, simplifie.`,quiz:{question:"Quel est le meilleur prédicteur de résultats d'une diète selon la recherche ?",options:["Le type de régime choisi","L'adhérence sur la durée","L'heure des repas"],correct:1}},
+    {id:"l2",title:"Construire des habitudes qui tiennent toutes seules",duration:"8 min",videoUrl:"",content:`La motivation est une émotion : elle monte, elle descend, elle disparaît en hiver. L'habitude, elle, fonctionne sans carburant émotionnel. La science du changement de comportement donne des outils concrets :
+
+• L'intention d'implémentation : la formule « QUAND il se passe X, ALORS je fais Y » double à peu près les chances de passage à l'acte dans les études. Pas « je vais m'entraîner plus », mais « lundi, mercredi, vendredi à 18 h 30, je vais à la salle directement après le travail ». Le cerveau exécute un plan précis ; il procrastine un vœu vague.
+
+• L'empilement d'habitudes : accroche le nouveau comportement à un existant. « Après mon café du matin, je prépare mon sac de sport. » « Pendant que le riz cuit, je fais mes 10 min de mobilité. »
+
+• Réduis la friction : sac préparé la veille, salle sur le trajet du travail, shaker déjà dosé. Chaque obstacle en moins augmente le taux d'exécution. Inversement, AJOUTE de la friction aux comportements à limiter (les biscuits au fond du placard du haut, pas sur le plan de travail).
+
+• La règle des 2 minutes pour démarrer : les jours sans envie, engage-toi seulement sur les 2 premières minutes (mettre les chaussures, faire l'échauffement). Dans la grande majorité des cas, la séance suit. Et si elle ne suit pas, tu as protégé l'identité « je suis quelqu'un qui y va ».
+
+Compte 8 à 12 semaines pour qu'une routine devienne quasi automatique. Investis lourd au début : ça devient gratuit ensuite.`,quiz:{question:"Quelle formulation a le plus de chances d'être exécutée ?",options:["« Je vais essayer de m'entraîner plus »","« Lundi et jeudi à 18 h 30, je vais à la salle après le travail »","« Un jour je m'y mettrai sérieusement »"],correct:1}},
+    {id:"l3",title:"Discipline, systèmes et identité",duration:"6 min",videoUrl:"",content:`On admire « la discipline » des gens constants. En réalité, les études sur l'autocontrôle montrent un paradoxe : les personnes les plus « disciplinées » RESSENTENT MOINS la tentation — parce qu'elles ont construit des environnements et des routines qui ne les exposent pas. La discipline visible est surtout un système invisible.
+
+Trois étages à construire :
+
+1. L'environnement (le plus puissant) : ce qui est visible et facile sera fait ; ce qui est caché et compliqué sera évité. Fruits sur la table, affaires de sport prêtes, téléphone hors de la chambre. Tu ne combats pas la tentation, tu la désarmes en amont.
+
+2. Les systèmes : séances planifiées dans l'agenda comme des rendez-vous professionnels, courses hebdomadaires avec liste, batch cooking du dimanche, pesée aux mêmes heures. Moins de décisions à chaud = moins d'occasions de flancher. Chaque décision évitée est une victoire silencieuse.
+
+3. L'identité : le niveau le plus profond. « Je suis quelqu'un qui s'entraîne » est plus solide que « j'essaie de m'entraîner ». Chaque séance honorée est un VOTE pour cette identité — c'est l'enjeu réel des jours moyens : pas les calories brûlées, mais la preuve que tu es ce genre de personne.
+
+Arrête de te demander si tu es motivé. Demande-toi si ton système rend l'action facile et l'inaction inconfortable. La réponse est dans ton agenda et ta cuisine, pas dans ta volonté.`,quiz:{question:"Que révèlent les études sur les personnes « très disciplinées » ?",options:["Elles ressentent moins la tentation grâce à leur environnement et leurs routines","Elles ont une volonté infinie innée","Elles ne dorment jamais"],correct:0}},
+    {id:"l4",title:"Plateaux, patience et attentes réalistes",duration:"7 min",videoUrl:"",content:`La cause n°1 d'abandon n'est pas la difficulté : ce sont les attentes irréalistes. Calibrons-les avec les données.
+
+Gains musculaires réalistes en s'entraînant bien :
+• Année 1 : 6 à 10 kg de muscle pour un homme (souvent moins pour une femme en valeur absolue, comparable en relatif), c'est la « lune de miel » du débutant.
+• Année 2 : 3 à 5 kg. Année 3 : 1 à 3 kg. Ensuite : on se bat pour des centaines de grammes par an.
+À l'échelle d'un mois, même une excellente progression est INVISIBLE à l'œil nu. C'est normal. C'est le jeu.
+
+Perte de gras réaliste : 2 à 4 kg par mois en début de sèche, qui ralentit naturellement. Les transformations spectaculaires « en 8 semaines » des publicités combinent éclairage, déshydratation, rebond glucidique et parfois des années de muscle préexistant.
+
+Sur les plateaux : un poids qui stagne 10 jours n'est pas un plateau (eau, transit, cycle). Une force qui stagne 2 semaines non plus. Décide sur des fenêtres de 3-4 semaines minimum, en moyennes.
+
+Outils anti-découragement :
+• Mesure PLUSIEURS indicateurs : photos mensuelles, mensurations, charges, énergie. Quand l'un stagne, un autre bouge presque toujours.
+• Compare-toi à toi-même d'il y a 6 mois — jamais aux physiques sous éclairage des réseaux.
+• Tiens un « journal des victoires » : premières tractions, sommeil amélioré, escaliers sans essoufflement. Le poids n'est qu'UNE colonne du tableau.
+
+Le fitness sur 5 ans est une accumulation d'années moyennes, pas une succession de mois parfaits.`,quiz:{question:"Combien de muscle un débutant masculin peut-il espérer gagner la première année ?",options:["15 à 20 kg","6 à 10 kg","500 g maximum"],correct:1}},
+    {id:"l5",title:"Réseaux sociaux, comparaison et rapport au corps",duration:"6 min",videoUrl:"",content:`Parlons d'un sujet que les programmes ignorent : ce que le fitness fait à la tête quand il est mal cadré.
+
+Les faits : les études associent l'exposition intensive aux contenus « fitspiration » à une moins bonne image corporelle et à plus de comparaison négative — surtout quand on compare son quotidien aux meilleurs moments mis en scène des autres. Les physiques viraux cumulent génétique favorable, années d'entraînement, éclairage, pose, déshydratation, retouches, et parfois pharmacologie non avouée. Te comparer à ça, c'est comparer ta prise de vue ratée à leur film monté.
+
+Garde-fous concrets :
+• Cure ton fil : désabonne-toi de ce qui te fait te sentir en retard ; suis des sources qui éduquent plutôt qu'elles n'exhibent.
+• Ancre tes objectifs dans la PERFORMANCE et la santé (tractions, squat, sommeil, énergie) plutôt que dans la seule apparence : les objectifs de performance sont contrôlables et durables, l'apparence évolue lentement et fluctue.
+• Surveille les signaux d'un rapport malsain : anxiété si une séance saute, culpabilité alimentaire systématique, isolement social pour « rester clean », pesées compulsives plusieurs fois par jour. Si tu te reconnais durablement, parles-en — coach, médecin, psychologue. C'est sérieux et ça se soigne.
+
+Le but de tout ça — l'entraînement, la nutrition, le sommeil — c'est une vie PLUS grande : plus de force, plus d'énergie, plus de confiance, plus d'années en bonne santé. Si la quête du physique rétrécit ta vie, l'outil a remplacé l'objectif.
+
+Contenu éducatif : ne remplace pas un avis médical ou psychologique individualisé.`,quiz:{question:"Quel type d'objectif est le plus durable psychologiquement ?",options:["Des objectifs de performance contrôlables (force, endurance, sommeil)","Ressembler à un influenceur précis","Avoir des abdos avant l'été à tout prix"],correct:0}}
+  ]}
   ]);
   DB.set('defis',[
-    {id:1,title:'7 jours sans sucre ajouté',type:'Hebdomadaire',xp:100,icon:'🍭',desc:'Élimine tous les sucres ajoutés pendant une semaine complète.',featured:true},
-    {id:2,title:'4 séances cette semaine',type:'Hebdomadaire',xp:80,icon:'🏋️',desc:'Complète 4 séances d\'entraînement dans la semaine.',featured:false},
-    {id:3,title:'10 000 pas par jour',type:'Mensuel',xp:150,icon:'🚶',desc:'Atteins 10 000 pas chaque jour pendant un mois.',featured:false}
+    {id:1,title:"4 séances cette semaine",type:"Hebdomadaire",xp:80,icon:"🏋️",desc:"Complète 4 séances d'entraînement structurées cette semaine. La constance bat l'intensité ponctuelle : c'est la base de toute progression.",featured:true},
+    {id:2,title:"7 jours sans sucre ajouté",type:"Hebdomadaire",xp:100,icon:"🍭",desc:"Une semaine sans sodas, bonbons, pâtisseries et sucre dans le café. Les fruits entiers restent autorisés et encouragés !",featured:false},
+    {id:3,title:"8 000 pas par jour pendant 7 jours",type:"Hebdomadaire",xp:90,icon:"🚶",desc:"Atteins 8 000 pas chaque jour de la semaine. Le NEAT est l'arme secrète de la dépense énergétique — marche en téléphonant, prends les escaliers.",featured:false},
+    {id:4,title:"2 litres d'eau par jour",type:"Hebdomadaire",xp:60,icon:"💧",desc:"Bois au moins 2 litres d'eau chaque jour pendant 7 jours. Astuce : une grande bouteille remplie le matin, finie le soir.",featured:false},
+    {id:5,title:"Protéines à chaque repas",type:"Hebdomadaire",xp:70,icon:"🍗",desc:"Pendant 7 jours, inclus une source de protéines (viande, poisson, œufs, laitages, légumineuses, tofu) à chacun de tes repas principaux.",featured:false},
+    {id:6,title:"Couché avant 23 h, 5 nuits",type:"Hebdomadaire",xp:80,icon:"😴",desc:"Au lit avant 23 h au moins 5 nuits cette semaine. Le sommeil est ton meilleur allié récupération — traite-le comme une séance.",featured:false},
+    {id:7,title:"10 minutes d'étirements x4",type:"Hebdomadaire",xp:60,icon:"🧘",desc:"Quatre sessions de 10 minutes d'étirements ou de mobilité cette semaine, idéalement après les séances ou le soir.",featured:false},
+    {id:8,title:"Zéro alcool cette semaine",type:"Hebdomadaire",xp:80,icon:"🚫",desc:"Sept jours sans alcool : meilleur sommeil, meilleure récupération, calories économisées. Ton corps te dira merci.",featured:false},
+    {id:9,title:"3 nouveaux PR au carnet",type:"Hebdomadaire",xp:90,icon:"📝",desc:"Bats 3 records personnels cette semaine : une rep de plus, 2,5 kg de plus ou une meilleure exécution notée dans ton journal d'entraînement.",featured:false},
+    {id:10,title:"Légumes à 2 repas par jour",type:"Hebdomadaire",xp:70,icon:"🥦",desc:"Pendant 7 jours, mets des légumes dans au moins 2 repas quotidiens. Fibres, micronutriments, satiété : le trio gagnant.",featured:false},
+    {id:11,title:"Marche digestive quotidienne",type:"Hebdomadaire",xp:50,icon:"🌿",desc:"10 minutes de marche après le déjeuner ou le dîner, chaque jour pendant une semaine. Bonus glycémie et digestion.",featured:false},
+    {id:12,title:"Petit-déj protéiné x7",type:"Hebdomadaire",xp:60,icon:"🍳",desc:"Sept petits-déjeuners avec au moins 25 g de protéines (œufs, skyr, fromage blanc, whey). Le repas le plus souvent négligé côté protéines.",featured:false},
+    {id:13,title:"16 séances dans le mois",type:"Mensuel",xp:200,icon:"🔥",desc:"Seize séances complétées sur le mois, soit environ 4 par semaine. Le défi des machines de constance — ta transformation se joue ici.",featured:true},
+    {id:14,title:"30 jours de streak connexion",type:"Mensuel",xp:150,icon:"⚡",desc:"Connecte-toi à la plateforme tous les jours pendant 30 jours : suis tes leçons, coche ta checklist, reste dans le game.",featured:false},
+    {id:15,title:"Mois complet de suivi corporel",type:"Mensuel",xp:120,icon:"📏",desc:"Enregistre tes mesures (poids, tour de taille...) chaque semaine pendant un mois entier. On ne pilote que ce qu'on mesure.",featured:false},
+    {id:16,title:"Photo transformation du mois",type:"Mensuel",xp:100,icon:"📸",desc:"Prends ta photo de suivi mensuelle dans les mêmes conditions (lumière, heure, pose). Le miroir ment, les photos comparées non.",featured:false},
+    {id:17,title:"4 semaines de sommeil 7 h+",type:"Mensuel",xp:180,icon:"🌙",desc:"Une moyenne de 7 heures de sommeil minimum par nuit sur 4 semaines. Le défi le plus rentable de toute la liste.",featured:false},
+    {id:18,title:"Zéro séance manquée du mois",type:"Mensuel",xp:160,icon:"🏆",desc:"Toutes les séances prévues à ton programme honorées pendant un mois. Réduis une séance plutôt que de la sauter : 30 minutes comptent.",featured:false}
   ]);
   DB.set('repas',[
-    {id:1,nom:'Bowl poulet riz brocoli',cat:'dejeuner',cal:520,prot:45,gluc:55,lip:12,photo:'',desc:'150g poulet grillé, 80g riz basmati cuit, 100g brocoli vapeur. Assaisonne avec sauce soja légère.'},
-    {id:2,nom:'Omelette avoine banane',cat:'petit-dejeuner',cal:380,prot:24,gluc:42,lip:11,photo:'',desc:'3 œufs, 40g flocons d\'avoine, 1 banane écrasée. Cuire à la poêle comme un pancake.'},
-    {id:3,nom:'Skyr fruits rouges',cat:'snack',cal:180,prot:20,gluc:18,lip:2,photo:'',desc:'200g skyr nature, poignée de fruits rouges, filet de miel.'}
+    {id:1,nom:"Bowl avoine whey banane",cat:"petit-dejeuner",cal:530,prot:40,gluc:65,lip:12,photo:"",desc:`80 g de flocons d'avoine cuits dans 250 ml de lait demi-écrémé, 30 g de whey mélangée hors du feu, 1 banane en rondelles, 10 g de beurre de cacahuète. Le petit-déj de masse classique : protéines, glucides complexes et satiété pour la matinée.`},
+    {id:2,nom:"Omelette complète pain grillé",cat:"petit-dejeuner",cal:460,prot:30,gluc:35,lip:22,photo:"",desc:`3 œufs entiers battus, 30 g de fromage râpé, tomates cerises, cuits à la poêle. Servir avec 2 tranches de pain complet grillé. Rapide, rassasiant, parfait avant une journée chargée.`},
+    {id:3,nom:"Skyr granola fruits rouges",cat:"petit-dejeuner",cal:365,prot:28,gluc:45,lip:8,photo:"",desc:`250 g de skyr nature, 40 g de granola, 100 g de fruits rouges (frais ou surgelés), 1 c. à café de miel. Prêt en 2 minutes, riche en protéines, idéal en sèche comme en maintenance.`},
+    {id:4,nom:"Pancakes protéinés myrtilles",cat:"petit-dejeuner",cal:430,prot:35,gluc:50,lip:10,photo:"",desc:`60 g de flocons d'avoine mixés, 25 g de whey, 1 œuf, 100 ml de lait, 1/2 banane écrasée. Cuire en petits pancakes, garnir de myrtilles. Le plaisir du week-end compatible avec tes macros.`},
+    {id:5,nom:"Toast avocat œufs pochés",cat:"petit-dejeuner",cal:480,prot:22,gluc:35,lip:28,photo:"",desc:`2 tranches de pain complet, 1/2 avocat écrasé au citron, 2 œufs pochés, piment d'Espelette. Riche en bonnes graisses — un petit-déjeuner qui tient jusqu'au déjeuner sans fringale.`},
+    {id:6,nom:"Smoothie gainer maison",cat:"petit-dejeuner",cal:720,prot:45,gluc:90,lip:20,photo:"",desc:`300 ml de lait entier, 30 g de whey, 60 g d'avoine, 1 banane, 20 g de beurre de cacahuète, glaçons. Mixer 1 minute. 720 kcal faciles à boire : l'arme des prises de masse quand l'appétit ne suit pas.`},
+    {id:7,nom:"Fromage blanc amandes miel",cat:"petit-dejeuner",cal:355,prot:25,gluc:30,lip:15,photo:"",desc:`250 g de fromage blanc 3 %, 15 g d'amandes effilées, 1 c. à soupe de miel, cannelle. Simplissime et efficace — la caséine du fromage blanc en fait aussi une excellente option du soir.`},
+    {id:8,nom:"Bowl poulet riz brocoli",cat:"dejeuner",cal:530,prot:45,gluc:60,lip:12,photo:"",desc:`150 g de blanc de poulet grillé, 80 g de riz basmati (poids cru) cuit, 150 g de brocoli vapeur, 1 c. à café d'huile d'olive, sauce soja légère. LE classique de la muscu : simple, équilibré, efficace.`},
+    {id:9,nom:"Pâtes bolognaise légère",cat:"dejeuner",cal:575,prot:42,gluc:70,lip:14,photo:"",desc:`90 g de pâtes complètes (poids cru), 125 g de bœuf haché 5 %, sauce tomate maison, oignon, ail, basilic, 10 g de parmesan. Le plat réconfortant version athlète — protéines élevées, gras maîtrisé.`},
+    {id:10,nom:"Saumon patate douce épinards",cat:"dejeuner",cal:500,prot:35,gluc:45,lip:20,photo:"",desc:`130 g de pavé de saumon au four (12 min à 200 °C), 250 g de patate douce rôtie, épinards poêlés à l'ail. Oméga-3, glucides de qualité : un repas premium pour la récupération.`},
+    {id:11,nom:"Buddha bowl pois chiches",cat:"dejeuner",cal:510,prot:22,gluc:65,lip:18,photo:"",desc:`150 g de pois chiches rôtis aux épices, 70 g de quinoa (poids cru) cuit, carottes râpées, concombre, avocat 1/4, sauce tahini citron. Végétarien, complet et coloré.`},
+    {id:12,nom:"Wrap poulet crudités",cat:"dejeuner",cal:470,prot:38,gluc:45,lip:15,photo:"",desc:`1 grande tortilla complète, 120 g de poulet grillé en lamelles, salade, tomate, oignon rouge, 2 c. à soupe de fromage blanc en sauce avec moutarde et herbes. Le déjeuner nomade parfait à emporter.`},
+    {id:13,nom:"Riz dinde curry coco",cat:"dejeuner",cal:580,prot:40,gluc:65,lip:18,photo:"",desc:`140 g d'escalope de dinde en dés, 80 g de riz jasmin (poids cru), 100 ml de lait de coco léger, curry, poivrons, oignons. Un plat qui sent bon le restaurant pour le prix d'un Tupperware.`},
+    {id:14,nom:"Salade thon haricots blancs",cat:"dejeuner",cal:390,prot:35,gluc:35,lip:12,photo:"",desc:`140 g de thon au naturel, 150 g de haricots blancs, tomates, oignon rouge, persil, 1 c. à soupe d'huile d'olive, vinaigre. Zéro cuisson, 5 minutes chrono, très rassasiant — parfait en sèche.`},
+    {id:15,nom:"Bœuf sauté nouilles légumes",cat:"dejeuner",cal:585,prot:40,gluc:70,lip:16,photo:"",desc:`130 g de bœuf à wok en lamelles, 80 g de nouilles de riz (poids cru), poivrons, carottes, pousses de soja, sauce soja-gingembre-ail. Un wok maison prêt en 15 minutes.`},
+    {id:16,nom:"Chili sin carne gourmand",cat:"dejeuner",cal:485,prot:24,gluc:70,lip:12,photo:"",desc:`150 g de haricots rouges, 100 g de maïs, protéines de soja texturées (30 g sec), tomates concassées, cumin, paprika fumé. Servir avec 50 g de riz. Végétarien riche en fibres et en protéines.`},
+    {id:17,nom:"Cabillaud riz courgettes citron",cat:"diner",cal:405,prot:38,gluc:45,lip:8,photo:"",desc:`160 g de dos de cabillaud au four avec citron et thym, 60 g de riz (poids cru), courgettes sautées. Léger, digeste et très protéiné : le dîner type des phases de sèche.`},
+    {id:18,nom:"Omelette champignons salade",cat:"diner",cal:390,prot:28,gluc:25,lip:20,photo:"",desc:`3 œufs, 150 g de champignons poêlés, ciboulette, grande salade verte vinaigrette légère, 1 tranche de pain complet. Le dîner express des soirs pressés — 10 minutes en cuisine.`},
+    {id:19,nom:"Poulet rôti pommes de terre",cat:"diner",cal:455,prot:42,gluc:40,lip:14,photo:"",desc:`150 g de cuisse de poulet rôtie sans peau, 250 g de pommes de terre au four aux herbes, haricots verts. Le repas familial du dimanche, version compatible objectifs.`},
+    {id:20,nom:"Steak haché purée maison",cat:"diner",cal:450,prot:40,gluc:45,lip:12,photo:"",desc:`130 g de steak haché 5 %, purée maison (250 g de pommes de terre + un peu de lait), haricots verts à l'ail. Le combo réconfort/protéines par excellence.`},
+    {id:21,nom:"Tofu sauté quinoa légumes",cat:"diner",cal:475,prot:28,gluc:50,lip:18,photo:"",desc:`150 g de tofu ferme doré à la poêle avec sauce soja et sésame, 70 g de quinoa (poids cru), brocoli et carottes vapeur. Végétarien complet avec tous les acides aminés essentiels.`},
+    {id:22,nom:"Soupe lentilles corail + fromage blanc",cat:"diner",cal:405,prot:28,gluc:55,lip:8,photo:"",desc:`Soupe maison : 80 g de lentilles corail (poids sec), carottes, tomates, cumin, mixée. En dessert : 150 g de fromage blanc. Un dîner léger, chaud et étonnamment protéiné.`},
+    {id:23,nom:"Crevettes sautées riz à l'ail",cat:"diner",cal:430,prot:35,gluc:55,lip:8,photo:"",desc:`200 g de crevettes décortiquées sautées à l'ail et au persil, 70 g de riz (poids cru), courgettes. Très haut ratio protéines/calories — un classique de fin de sèche.`},
+    {id:24,nom:"Dinde semoule ratatouille",cat:"diner",cal:470,prot:40,gluc:55,lip:10,photo:"",desc:`140 g d'escalope de dinde grillée, 70 g de semoule complète (poids cru), ratatouille maison (courgette, aubergine, poivron, tomate). Méditerranéen, coloré, efficace.`},
+    {id:25,nom:"Skyr fruits rouges miel",cat:"snack",cal:170,prot:20,gluc:20,lip:1,photo:"",desc:`200 g de skyr nature, 80 g de fruits rouges, 1 c. à café de miel. 20 g de protéines pour 170 kcal : le meilleur ratio du rayon frais.`},
+    {id:26,nom:"Pomme beurre d'amande",cat:"snack",cal:265,prot:5,gluc:25,lip:16,photo:"",desc:`1 pomme en quartiers trempée dans 20 g de beurre d'amande. Fibres + bonnes graisses : la collation anti-fringale qui remplace le distributeur.`},
+    {id:27,nom:"Œufs durs et crackers complets",cat:"snack",cal:220,prot:15,gluc:15,lip:11,photo:"",desc:`2 œufs durs (préparés à l'avance pour la semaine), 3 crackers complets. La collation à 1 € qui cale vraiment. Sel, poivre, et c'est réglé.`},
+    {id:28,nom:"Cottage cheese ananas",cat:"snack",cal:190,prot:18,gluc:18,lip:5,photo:"",desc:`200 g de cottage cheese, 100 g d'ananas frais en morceaux. Le duo sucré-salé old school des bodybuilders — toujours aussi efficace.`},
+    {id:29,nom:"Viande séchée et fruit",cat:"snack",cal:195,prot:22,gluc:20,lip:3,photo:"",desc:`40 g de viande de bœuf séchée (jerky nature), 1 fruit de saison. La collation de sac à dos : aucune conservation nécessaire, protéines maximales.`},
+    {id:30,nom:"Shaker whey banane",cat:"collation",cal:260,prot:28,gluc:30,lip:3,photo:"",desc:`30 g de whey, 250 ml d'eau ou de lait écrémé, 1 banane. Le standard post-entraînement : pratique, rapide, efficace — même si un vrai repas dans les 2-3 h fait le même travail.`},
+    {id:31,nom:"Smoothie vert protéiné",cat:"collation",cal:315,prot:26,gluc:35,lip:8,photo:"",desc:`25 g de whey vanille, 1 poignée d'épinards frais, 1/2 banane, 1/2 pomme, 200 ml de lait d'amande, glaçons. On ne sent pas les épinards, promis — que les bénéfices.`},
+    {id:32,nom:"Riz au lait protéiné",cat:"collation",cal:335,prot:25,gluc:45,lip:6,photo:"",desc:`50 g de riz rond cuit dans 300 ml de lait demi-écrémé, 20 g de whey vanille ajoutée tiède, cannelle. Le dessert d'enfance recyclé en collation de athlète.`},
+    {id:33,nom:"Barre avoine maison",cat:"collation",cal:275,prot:12,gluc:30,lip:12,photo:"",desc:`Recette pour 6 barres : 150 g d'avoine, 60 g de beurre de cacahuète, 40 g de miel, 30 g de whey, 30 g de pépites de chocolat noir. Mélanger, presser, 2 h au frigo, découper. Valeurs par barre.`},
+    {id:34,nom:"Toast ricotta miel noix",cat:"collation",cal:300,prot:14,gluc:30,lip:14,photo:"",desc:`2 tranches de pain complet grillé, 80 g de ricotta, filet de miel, 4 cerneaux de noix concassés. La collation qui ressemble à un brunch de café — en 3 minutes chez toi.`}
   ]);
   DB.set('resources',[
-    {id:1,type:'pdf',title:'Plan alimentaire type',cat:'Nutrition',desc:'Exemple de journée alimentaire équilibrée',url:'#'},
-    {id:2,type:'video',title:'Technique du squat',cat:'Entraînement',desc:'Tutoriel complet en vidéo',url:'#'}
+    {id:1,type:"excel",title:"Calculateur de TDEE et macros",cat:"Nutrition",desc:"Entre ton poids, ta taille, ton activité : le fichier calcule ta maintenance, puis tes calories et macros cibles selon ton objectif (sèche, maintenance, prise de masse).",url:"#"},
+    {id:2,type:"pdf",title:"Guide des portions à la main",cat:"Nutrition",desc:"Estimer ses portions sans balance : la paume pour les protéines, le poing pour les légumes, la main en coupe pour les glucides, le pouce pour les lipides. Le guide complet illustré.",url:"#"},
+    {id:3,type:"pdf",title:"Liste de courses prise de masse",cat:"Nutrition",desc:"La liste de courses type pour un surplus propre : protéines économiques, glucides denses, bonnes graisses, et les indispensables du placard. Organisée par rayon.",url:"#"},
+    {id:4,type:"pdf",title:"Liste de courses sèche",cat:"Nutrition",desc:"Les aliments à haut volume et haute satiété pour tenir ton déficit sans souffrir : protéines maigres, légumes stratégiques, féculents rassasiants, snacks malins.",url:"#"},
+    {id:5,type:"pdf",title:"Guide du batch cooking en 90 minutes",cat:"Lifestyle",desc:"Préparer 10 repas équilibrés en une session du dimanche : plan d'attaque minute par minute, conservation, et 3 rotations de menus pour ne jamais te lasser.",url:"#"},
+    {id:6,type:"excel",title:"Modèle de programme Full Body 3 jours",cat:"Entraînement",desc:"Programme débutant/reprise clé en main : 3 séances par semaine, progression intégrée, cases à remplir pour tes charges. Exercices avec alternatives selon le matériel.",url:"#"},
+    {id:7,type:"excel",title:"Modèle de programme Upper/Lower 4 jours",cat:"Entraînement",desc:"Le programme intermédiaire de référence : 4 séances, chaque muscle 2 fois par semaine, gestion du volume et du RIR incluse, suivi de progression automatique.",url:"#"},
+    {id:8,type:"excel",title:"Journal d'entraînement à imprimer",cat:"Entraînement",desc:"Le carnet de bord : exercices, charges, reps, RIR, notes de séance. Sans données, pas de progression pilotée — version numérique et version imprimable.",url:"#"},
+    {id:9,type:"video",title:"Technique du squat pas à pas",cat:"Entraînement",desc:"Tutoriel vidéo complet : position des pieds, profondeur, gestion du dos, erreurs classiques (genoux qui rentrent, talons qui décollent) et leurs corrections.",url:"#"},
+    {id:10,type:"video",title:"Technique du soulevé de terre",cat:"Entraînement",desc:"Le mouvement le plus rentable et le plus technique : setup, prise, trajectoire de barre, gainage. Avec la variante roumaine et la version trap bar.",url:"#"},
+    {id:11,type:"video",title:"Technique du développé couché",cat:"Entraînement",desc:"Placement des épaules, arche naturelle, largeur de prise, trajectoire. Et comment progresser quand on bloque, avec les variantes haltères et incliné.",url:"#"},
+    {id:12,type:"pdf",title:"Routine mobilité 10 minutes",cat:"Récupération",desc:"La routine quotidienne pour hanches, épaules et thoracique : 8 mouvements illustrés, à faire le matin ou en fin de séance. Spécial travailleurs de bureau.",url:"#"},
+    {id:13,type:"pdf",title:"Checklist hygiène du sommeil",cat:"Récupération",desc:"Les 10 leviers validés par la recherche pour mieux dormir, classés par impact, avec un plan d'implémentation sur 4 semaines. À coller sur le frigo.",url:"#"},
+    {id:14,type:"pdf",title:"Guide des compléments fondés sur la science",cat:"Récupération",desc:"Ce qui marche (créatine, whey, caféine, vitamine D...), ce qui est inutile, les dosages et le niveau de preuve pour chaque produit. Sans sponsor, sans langue de bois.",url:"#"},
+    {id:15,type:"pdf",title:"Plan anti-plateau : le protocole en 5 étapes",cat:"Mental",desc:"Poids ou performances qui stagnent ? Le diagnostic pas à pas (sommeil, calories, volume, technique, stress) et les actions correctives dans le bon ordre.",url:"#"},
+    {id:16,type:"link",title:"Examine — encyclopédie des compléments",cat:"Nutrition",desc:"La base de données indépendante de référence (en anglais) qui synthétise les études sur chaque complément et nutriment. Le réflexe avant tout achat.",url:"https://examine.com"},
+    {id:17,type:"pdf",title:"Guide : s'entraîner en voyage ou à la maison",cat:"Lifestyle",desc:"Maintenir ses acquis avec un équipement minimal : 2 séances full body aux élastiques/poids du corps, et la science rassurante du maintien musculaire.",url:"#"}
   ]);
   DB.set('glossaire',[
-    {id:1,term:'Hypertrophie',cat:'Musculation',emoji:'💪',def:'Augmentation du volume des fibres musculaires sous l\'effet de l\'entraînement en résistance.'},
-    {id:2,term:'Macronutriments',cat:'Nutrition',emoji:'🥗',def:'Les 3 grandes familles de nutriments : protéines, glucides et lipides, qui fournissent l\'énergie.'},
-    {id:3,term:'Progressive Overload',cat:'Musculation',emoji:'📈',def:'Principe d\'augmentation progressive de la charge ou du volume pour continuer à progresser.'},
-    {id:4,term:'TDEE',cat:'Nutrition',emoji:'🔥',def:'Total Daily Energy Expenditure : dépense énergétique journalière totale.'}
+    {id:1,v:2,term:"Hypertrophie",cat:"Musculation",emoji:"💪",def:`Augmentation du volume des fibres musculaires en réponse à l'entraînement en résistance. Elle est principalement déclenchée par la tension mécanique répétée proche de l'effort maximal, soutenue par un apport suffisant en protéines et en énergie.`},
+    {id:2,v:2,term:"Surcharge progressive",cat:"Musculation",emoji:"📈",def:`Principe fondamental de l'entraînement : augmenter graduellement le stimulus (charge, répétitions, séries, qualité d'exécution) pour forcer le corps à continuer de s'adapter. Sans surcharge progressive, la progression s'arrête.`},
+    {id:3,v:2,term:"RPE",cat:"Musculation",emoji:"🎯",def:`Rating of Perceived Exertion : échelle d'effort de 1 à 10. RPE 10 = échec total, RPE 8 = environ 2 répétitions en réserve. Permet d'ajuster les charges aux fluctuations quotidiennes de forme, contrairement aux pourcentages fixes.`},
+    {id:4,v:2,term:"RIR",cat:"Musculation",emoji:"🔋",def:`Reps In Reserve : nombre de répétitions que tu pourrais encore faire à la fin d'une série. RIR 0 = échec, RIR 2 = tu t'arrêtes 2 reps avant. La zone RIR 0-3 est celle où les séries stimulent le mieux l'hypertrophie.`},
+    {id:5,v:2,term:"Série effective",cat:"Musculation",emoji:"⚡",def:`Série menée suffisamment proche de l'échec (RIR 0-3) pour recruter au maximum les fibres musculaires. Ce sont ces séries — et non les séries faciles — qu'on comptabilise dans le volume d'entraînement hebdomadaire.`},
+    {id:6,v:2,term:"Échec musculaire",cat:"Musculation",emoji:"🛑",def:`Point où il est impossible de compléter une répétition supplémentaire avec une technique correcte. Utile avec parcimonie sur l'isolation ; coûteux en fatigue et en risque sur les gros mouvements lourds.`},
+    {id:7,v:2,term:"Volume d'entraînement",cat:"Musculation",emoji:"📊",def:`Quantité de travail réalisée, généralement comptée en séries difficiles par groupe musculaire et par semaine. La zone productive se situe autour de 10 à 20 séries hebdomadaires pour la plupart des pratiquants.`},
+    {id:8,v:2,term:"Intensité",cat:"Musculation",emoji:"🏋️",def:`En musculation, désigne la charge relative utilisée, exprimée en pourcentage du maximum (1RM). À ne pas confondre avec la difficulté ressentie : une série de 20 reps légère peut être très éprouvante mais peu intense au sens strict.`},
+    {id:9,v:2,term:"Fréquence",cat:"Musculation",emoji:"🗓️",def:`Nombre de fois qu'un muscle est entraîné par semaine. À volume égal, 2 fois ou plus par semaine est au moins aussi efficace qu'une fois, et permet des séances de meilleure qualité.`},
+    {id:10,v:2,term:"Tempo",cat:"Musculation",emoji:"⏱️",def:`Vitesse d'exécution des phases d'une répétition. Recommandation simple : descente contrôlée (2-3 s), montée dynamique. Les durées de répétition entre 0,5 et 8 secondes produisent une hypertrophie comparable selon les méta-analyses.`},
+    {id:11,v:2,term:"Amplitude (ROM)",cat:"Musculation",emoji:"📐",def:`Range of Motion : distance parcourue par l'articulation pendant un exercice. L'amplitude complète, surtout en position étirée, produit généralement plus d'hypertrophie que les mouvements partiels raccourcis.`},
+    {id:12,v:2,term:"1RM",cat:"Musculation",emoji:"🥇",def:`Répétition maximale : la charge la plus lourde que tu peux soulever une seule fois sur un exercice. Sert de référence pour calibrer les programmes de force (ex. travailler à 80 % du 1RM).`},
+    {id:13,v:2,term:"Deload",cat:"Musculation",emoji:"🪫",def:`Semaine de décharge programmée : volume réduit d'environ moitié et charges modérées pour dissiper la fatigue accumulée sans perdre les adaptations. À placer toutes les 4 à 8 semaines selon l'intensité de l'entraînement.`},
+    {id:14,v:2,term:"Périodisation",cat:"Musculation",emoji:"📅",def:`Organisation planifiée de l'entraînement en cycles (semaines ou blocs) faisant varier volume et intensité. Permet de progresser durablement en alternant phases de charge et phases de récupération.`},
+    {id:15,v:2,term:"Polyarticulaire",cat:"Musculation",emoji:"🔗",def:`Exercice mobilisant plusieurs articulations et groupes musculaires simultanément (squat, soulevé de terre, développé, rowing). La base de tout programme efficace : plus de muscle recruté par série et meilleure progression de charge.`},
+    {id:16,v:2,term:"Isolation",cat:"Musculation",emoji:"🎯",def:`Exercice ne mobilisant qu'une articulation pour cibler un muscle précis (curl, élévations latérales, leg extension). Complète les polyarticulaires pour ajouter du volume ciblé avec peu de fatigue générale.`},
+    {id:17,v:2,term:"Superset",cat:"Musculation",emoji:"🔀",def:`Enchaînement de deux exercices sans repos entre eux. Les supersets de muscles antagonistes (ex. biceps/triceps, développé/rowing) font gagner beaucoup de temps sans dégrader la performance.`},
+    {id:18,v:2,term:"Drop set",cat:"Musculation",emoji:"⬇️",def:`Technique d'intensification : après l'échec ou presque, on réduit immédiatement la charge (20-30 %) et on continue la série. Efficace pour densifier le travail sur l'isolation, à doser car très fatigant.`},
+    {id:19,v:2,term:"Congestion",cat:"Musculation",emoji:"🎈",def:`Gonflement temporaire du muscle pendant l'effort, dû à l'afflux sanguin et à l'accumulation de métabolites (le « pump »). Agréable et signe que le muscle travaille, mais ce n'est pas un indicateur fiable de croissance à long terme.`},
+    {id:20,v:2,term:"Full body",cat:"Musculation",emoji:"🧍",def:`Structure de programme où chaque séance entraîne l'ensemble du corps via les grands mouvements. Idéale pour 2 à 3 séances par semaine : chaque muscle est stimulé à haute fréquence et aucune absence ne déséquilibre la semaine.`},
+    {id:21,v:2,term:"Split",cat:"Musculation",emoji:"🗂️",def:`Répartition des groupes musculaires sur différentes séances de la semaine (ex. haut/bas, push/pull/legs). Pertinent à partir de 4 séances hebdomadaires fiables pour répartir le volume.`},
+    {id:22,v:2,term:"Progressive overload",cat:"Musculation",emoji:"🪜",def:`Terme anglais de la surcharge progressive : l'augmentation graduelle et mesurable du stimulus d'entraînement au fil des semaines. Se pilote avec un journal d'entraînement et la méthode de la double progression.`},
+    {id:23,v:2,term:"TDEE",cat:"Nutrition",emoji:"🔥",def:`Total Daily Energy Expenditure : ta dépense énergétique quotidienne totale (métabolisme de base + activité + digestion). C'est ta « maintenance » : manger en dessous fait perdre du poids, au-dessus en fait prendre.`},
+    {id:24,v:2,term:"Métabolisme de base (BMR)",cat:"Nutrition",emoji:"🫀",def:`Énergie minimale dont ton corps a besoin au repos complet pour faire fonctionner organes, cerveau et température corporelle. Représente 60 à 70 % de la dépense quotidienne chez la plupart des gens.`},
+    {id:25,v:2,term:"Macronutriments",cat:"Nutrition",emoji:"🥗",def:`Les trois familles de nutriments énergétiques : protéines (4 kcal/g), glucides (4 kcal/g) et lipides (9 kcal/g). La répartition des « macros » structure l'alimentation du sportif une fois les calories fixées.`},
+    {id:26,v:2,term:"Micronutriments",cat:"Nutrition",emoji:"💎",def:`Vitamines et minéraux : sans apport calorique, mais indispensables à des centaines de fonctions (énergie, immunité, contraction musculaire). Une alimentation variée riche en végétaux couvre l'essentiel des besoins.`},
+    {id:27,v:2,term:"Déficit calorique",cat:"Nutrition",emoji:"📉",def:`Situation où tu consommes moins de calories que tu n'en dépenses : la condition obligatoire de toute perte de gras. Un déficit modéré (300-600 kcal/jour) permet de perdre 0,5 à 1 % du poids par semaine en préservant le muscle.`},
+    {id:28,v:2,term:"Surplus calorique",cat:"Nutrition",emoji:"📈",def:`Consommer plus que sa dépense : la condition optimale de la prise de muscle. Un surplus modéré (+250 à 500 kcal) suffit — au-delà, l'excédent part principalement en graisse car la construction musculaire est lente.`},
+    {id:29,v:2,term:"Balance énergétique",cat:"Nutrition",emoji:"⚖️",def:`Rapport entre calories absorbées et calories dépensées, qui gouverne l'évolution du poids corporel. Principe physiologique parmi les mieux établis : aucun aliment ni horaire ne le contourne.`},
+    {id:30,v:2,term:"NEAT",cat:"Nutrition",emoji:"🚶",def:`Non-Exercise Activity Thermogenesis : toutes les calories brûlées hors sport (marche, escaliers, gestes du quotidien). Très variable d'une personne à l'autre, il baisse spontanément en régime — d'où l'intérêt de suivre ses pas.`},
+    {id:31,v:2,term:"Whey",cat:"Nutrition",emoji:"🥤",def:`Protéine de lactosérum issue du lait, rapidement digérée et riche en leucine. Un complément pratique et bien étudié pour atteindre son quota protéique quotidien — pas un produit magique : la nourriture solide fait le même travail.`},
+    {id:32,v:2,term:"Caséine",cat:"Nutrition",emoji:"🌙",def:`Protéine laitière à digestion lente (fromage blanc, skyr, cottage). Souvent consommée le soir pour fournir des acides aminés pendant la nuit — un avantage réel mais modeste comparé au total protéique quotidien.`},
+    {id:33,v:2,term:"Leucine",cat:"Nutrition",emoji:"🔑",def:`Acide aminé essentiel qui agit comme principal déclencheur de la synthèse protéique musculaire. Un repas en contenant 2-3 g (≈25-40 g de protéines de qualité) stimule efficacement la construction musculaire.`},
+    {id:34,v:2,term:"Synthèse protéique musculaire",cat:"Nutrition",emoji:"🏗️",def:`Processus par lequel le corps fabrique de nouvelles protéines musculaires. Stimulée par l'entraînement et l'apport en protéines, elle reste élevée 24 à 72 h après une séance — c'est dans cette fenêtre large que le muscle se construit.`},
+    {id:35,v:2,term:"Fenêtre protéique",cat:"Nutrition",emoji:"🪟",def:`Idée selon laquelle il faudrait consommer des protéines dans les 30 minutes post-entraînement. La recherche moderne montre que cette fenêtre est en réalité large de plusieurs heures : le total quotidien domine très largement.`},
+    {id:36,v:2,term:"Recomposition corporelle",cat:"Nutrition",emoji:"🔄",def:`Perdre du gras et gagner du muscle simultanément. Réaliste surtout chez les débutants, les personnes en surpoids ou en reprise d'entraînement, avec des protéines hautes et un entraînement sérieux autour de la maintenance calorique.`},
+    {id:37,v:2,term:"Refeed",cat:"Nutrition",emoji:"🍚",def:`Journée (ou deux) à maintenance calorique pendant une sèche, avec un surplus venant surtout des glucides. Recharge le glycogène et soulage psychologiquement — à planifier, pas à improviser après un craquage.`},
+    {id:38,v:2,term:"Diet break",cat:"Nutrition",emoji:"⏸️",def:`Pause structurée de 1 à 2 semaines à maintenance au milieu d'une sèche longue. Son bénéfice métabolique est modeste selon les études, mais son effet sur l'adhérence et la santé mentale du régime est précieux.`},
+    {id:39,v:2,term:"Densité calorique",cat:"Nutrition",emoji:"🧮",def:`Nombre de calories par gramme d'aliment. Les légumes et fruits sont peu denses (volume, satiété — parfaits en sèche) ; les oléagineux, huiles et fruits secs sont très denses (utiles en prise de masse).`},
+    {id:40,v:2,term:"Satiété",cat:"Nutrition",emoji:"🍽️",def:`Sensation de rassasiement après un repas. Maximisée par les protéines, les fibres, l'eau des aliments et les textures solides — c'est l'arme principale pour tenir un déficit sans souffrance.`},
+    {id:41,v:2,term:"Anabolisme",cat:"Anatomie",emoji:"🧱",def:`Ensemble des processus de construction de l'organisme : synthèse de nouvelles protéines, stockage de glycogène, croissance musculaire. Favorisé par l'entraînement, l'apport en protéines, les calories suffisantes et le sommeil.`},
+    {id:42,v:2,term:"Catabolisme",cat:"Anatomie",emoji:"🧨",def:`Processus inverse de l'anabolisme : dégradation des tissus et réserves pour produire de l'énergie. Normal et permanent (le corps alterne sans cesse les deux), il ne devient problématique qu'en cas de déficit sévère, stress chronique ou sous-récupération prolongée.`},
+    {id:43,v:2,term:"DOMS (courbatures)",cat:"Anatomie",emoji:"🤕",def:`Delayed Onset Muscle Soreness : douleurs musculaires apparaissant 24 à 72 h après un effort inhabituel, surtout excentrique. Elles diminuent avec la répétition du stimulus et ne sont PAS un indicateur fiable de l'efficacité d'une séance.`},
+    {id:44,v:2,term:"Glycogène",cat:"Anatomie",emoji:"🔋",def:`Forme de stockage des glucides dans les muscles et le foie : le carburant des efforts intenses. Chaque gramme de glycogène retient environ 3 g d'eau — d'où les variations de poids rapides en début de régime ou de refeed.`},
+    {id:45,v:2,term:"Surcompensation",cat:"Anatomie",emoji:"🌊",def:`Principe d'adaptation : après un stress d'entraînement et une récupération suffisante, le corps reconstruit à un niveau légèrement supérieur. C'est l'alternance stimulus → fatigue → récupération → progrès qui fait avancer.`},
+    {id:46,v:2,term:"Surentraînement",cat:"Anatomie",emoji:"⚠️",def:`État de fatigue profonde où la performance chute durablement malgré (ou à cause de) l'entraînement : sommeil dégradé, FC de repos élevée, motivation en berne. Se prévient par la gestion du volume, les deloads et le sommeil — le vrai surentraînement clinique met des semaines à se corriger.`},
+    {id:47,v:2,term:"VO2max",cat:"Anatomie",emoji:"🫁",def:`Consommation maximale d'oxygène : la cylindrée de ton moteur aérobie. C'est l'un des meilleurs prédicteurs de santé cardiovasculaire et de longévité connus ; il s'améliore avec l'entraînement d'endurance, notamment les intervalles.`},
+    {id:48,v:2,term:"Fibres musculaires I et II",cat:"Anatomie",emoji:"🧵",def:`Les fibres de type I (lentes) sont endurantes et peu puissantes ; les fibres de type II (rapides) sont puissantes et fatigables, avec le plus grand potentiel de croissance. L'entraînement lourd et proche de l'échec recrute les deux types.`}
   ]);
   DB.set('tips',[
-    {id:1,title:'Auto-massage des trapèzes',theme:'Auto-massage',icon:'🙌',priority:'moyenne',content:'Utilise une balle de tennis contre un mur pour relâcher les tensions des trapèzes après une séance.',besoin:''},
-    {id:2,title:'Étirement des ischio-jambiers',theme:'Étirements',icon:'🧘',priority:'haute',content:'Assis jambes tendues, penche-toi en avant en gardant le dos droit. Tiens 30 secondes.',besoin:''},
-    {id:3,title:'Créatine monohydrate',theme:'Compléments',icon:'💊',priority:'haute',content:'3 à 5g par jour, à n\'importe quel moment. Améliore la force et la récupération.',besoin:'Prise de masse, force'}
+    {id:1,title:"Créatine monohydrate : le complément n°1",theme:"Compléments",icon:"💊",priority:"haute",content:`Le complément le plus étudié et le plus efficace du marché : 3 à 5 g par jour, tous les jours, au moment qui t'arrange (le timing n'a pas d'importance). Bénéfices démontrés par des centaines d'études : +5 à 10 % de force et de performance sur les efforts courts, légère accélération de la prise de muscle. Pas besoin de phase de charge ni de pause. Une prise de poids de 1-2 kg (eau intramusculaire) est normale les premières semaines. Niveau de preuve : très élevé. Inutile d'acheter autre chose que du monohydrate basique. Si tu as une pathologie rénale, demande l'avis de ton médecin.`,besoin:"Force, prise de masse, performance"},
+    {id:2,title:"Whey : combler ton quota de protéines",theme:"Compléments",icon:"🥤",priority:"haute",content:`La whey n'est pas magique : c'est de la nourriture pratique. Utile si tu as du mal à atteindre 1,6-2,2 g de protéines/kg/jour avec les aliments solides. 25-30 g par shaker, 1 à 2 par jour maximum — le reste doit venir de l'assiette. Choisis une whey concentrée basique (l'isolat n'est utile qu'en cas d'intolérance au lactose). Niveau de preuve : très élevé pour l'apport protéique, nul pour tout effet « bonus » au-delà des protéines qu'elle contient.`,besoin:"Tous objectifs, praticité"},
+    {id:3,title:"Caféine : le booster validé",theme:"Compléments",icon:"☕",priority:"moyenne",content:`La caféine améliore la performance (force, endurance, vigilance) à des doses de 3 à 6 mg/kg prises 30 à 60 min avant l'effort — pour 80 kg, c'est 240 à 480 mg, soit 2 à 4 expressos ou un pre-workout simple. Attention : la tolérance s'installe (réserve les grosses doses aux séances clés), et sa demi-vie de 5-6 h impose d'éviter toute caféine 8 à 10 h avant le coucher — un sommeil sacrifié coûte plus que le boost ne rapporte. Niveau de preuve : très élevé. Les pre-workouts hors caféine ajoutent surtout du marketing.`,besoin:"Performance, énergie en séance"},
+    {id:4,title:"Vitamine D : si tu manques de soleil",theme:"Compléments",icon:"☀️",priority:"moyenne",content:`Une grande partie de la population des pays peu ensoleillés est en insuffisance de vitamine D en hiver, ce qui peut affecter os, immunité et fonction musculaire. Supplémentation courante : 1 000 à 2 000 UI/jour d'octobre à avril, avec un repas contenant des graisses (vitamine liposoluble). L'idéal : faire doser ton taux sanguin par ton médecin avant de te supplémenter à plus haute dose. Niveau de preuve : élevé pour corriger une carence, faible pour des bénéfices au-delà des taux normaux.`,besoin:"Santé générale, immunité, hiver"},
+    {id:5,title:"Oméga-3 : si tu ne manges pas de poisson gras",theme:"Compléments",icon:"🐟",priority:"basse",content:`Les oméga-3 (EPA/DHA) soutiennent la santé cardiovasculaire et cognitive. Première option, la vraie nourriture : 2 portions de poisson gras par semaine (saumon, maquereau, sardines) couvrent les besoins. Sinon : 1 à 2 g d'EPA+DHA par jour en capsules, pris avec un repas. Niveau de preuve : bon pour la santé cardiovasculaire de base, modeste et débattu pour la récupération musculaire. Si tu prends des anticoagulants, parles-en à ton médecin.`,besoin:"Santé cardiovasculaire, récupération"},
+    {id:6,title:"Magnésium : utile si apports insuffisants",theme:"Compléments",icon:"✨",priority:"basse",content:`Le magnésium intervient dans la fonction musculaire et nerveuse, et les sportifs en perdent par la sueur. Avant la gélule, l'assiette : oléagineux, légumineuses, céréales complètes, chocolat noir, eaux riches en magnésium. En cas d'apports faibles : 200 à 350 mg/jour (formes bisglycinate ou citrate, mieux tolérées), plutôt le soir. Niveau de preuve : bon pour corriger un apport insuffisant (fréquent), faible pour des effets « anti-crampes » ou « anti-stress » chez les personnes déjà bien pourvues.`,besoin:"Récupération, sommeil, apports faibles"},
+    {id:7,title:"Hydratation et électrolytes en séance",theme:"Compléments",icon:"💧",priority:"haute",content:`Avant tout complément exotique, règle l'hydratation : 30-40 ml/kg/jour de base, plus 500 ml à 1 L par heure d'entraînement selon la transpiration. Indicateur simple : urines jaune pâle. Les boissons d'électrolytes ne deviennent réellement utiles que pour les efforts de plus de 60-90 minutes, intenses ou par forte chaleur — pour une séance de musculation classique, l'eau suffit. Une déshydratation de 2 % du poids corporel dégrade déjà mesurablement la force et la concentration. Niveau de preuve : très élevé.`,besoin:"Performance, énergie, tous objectifs"},
+    {id:8,title:"Rouleau de massage : quadriceps et fessiers",theme:"Auto-massage",icon:"🦵",priority:"moyenne",content:`Le foam roller réduit la sensation de raideur et de douleur post-séance (effet modeste mais réel selon les études, principalement neurologique). Protocole simple : 60 à 90 secondes par zone, mouvement lent, pause de 10-20 s sur les points sensibles en respirant profondément. Quadriceps : en planche sur le rouleau, roule de la hanche au-dessus du genou. Fessiers : assis sur le rouleau, jambe croisée, cherche le point profond. Idéal après la séance ou les jours off — pas d'excès de zèle, la douleur intense n'apporte rien de plus.`,besoin:"Récupération, jambes lourdes"},
+    {id:9,title:"Balle de tennis contre les trapèzes tendus",theme:"Auto-massage",icon:"🎾",priority:"moyenne",content:`Trapèzes en béton après une journée d'ordinateur ? Place une balle de tennis (ou de lacrosse) entre ton trapèze et un mur, plie légèrement les genoux et fais rouler la balle sur les zones tendues. 60 secondes par côté, pression modérée, respiration lente. Même technique sous la plante des pieds (debout, 60 s par pied) — étonnamment efficace après une journée debout, et apprécié des coureurs. À faire le soir ou en pause au bureau.`,besoin:"Tensions cou/épaules, télétravail"},
+    {id:10,title:"Auto-massage du dos avec le rouleau",theme:"Auto-massage",icon:"🔙",priority:"basse",content:`Pour le haut du dos (thoracique) : allongé sur le rouleau placé perpendiculairement sous les omoplates, mains derrière la tête, déroule lentement du milieu du dos jusqu'aux épaules. Excellent aussi en extension : laisse-toi t'ouvrir sur le rouleau 20-30 secondes pour contrer la position assise. Évite de rouler directement les lombaires avec une forte pression — privilégie les fessiers et le thoracique, les lombaires se détendent souvent en travaillant leurs voisins.`,besoin:"Posture, raideurs de bureau"},
+    {id:11,title:"Étirements : le bon timing",theme:"Étirements",icon:"🧘",priority:"haute",content:`Règle simple validée par la recherche : étirements DYNAMIQUES avant l'effort (rotations, balanciers de jambes, ouvertures de hanches), étirements STATIQUES après la séance ou à distance (le soir). Les étirements statiques longs (60 s et plus) juste avant des séries lourdes peuvent réduire légèrement la force immédiate. Après la séance : 5 à 10 minutes sur les groupes travaillés, 30 secondes par position, sans douleur vive — un inconfort doux suffit. La souplesse se construit comme le muscle : avec de la régularité, pas de l'intensité.`,besoin:"Mobilité, prévention, tous niveaux"},
+    {id:12,title:"Débloquer les hanches du télétravailleur",theme:"Étirements",icon:"🪑",priority:"haute",content:`La position assise prolongée raidit les fléchisseurs de hanche et limite ton squat. Routine quotidienne de 5 minutes : 1) Fente basse statique (genou arrière au sol, bassin poussé vers l'avant), 60 s par côté. 2) Pigeon ou figure 4 allongée pour les fessiers, 60 s par côté. 3) Squat profond tenu en t'accrochant à un support, 60 s en respirant. À faire idéalement en fin de journée ou avant la séance jambes (version dynamique, 20-30 s par position seulement).`,besoin:"Mobilité hanches, squat plus profond"},
+    {id:13,title:"Épaules et pecs : contrer la posture fermée",theme:"Étirements",icon:"🚪",priority:"moyenne",content:`Des épaules enroulées vers l'avant limitent ton développé et favorisent les douleurs. Trois outils : 1) Étirement du pectoral au cadre de porte : avant-bras contre le montant, coude à 90°, rotation douce du buste, 45 s par côté. 2) Suspension passive à une barre de traction (30-60 s) : décompression des épaules et du dos. 3) Rotations externes avec élastique léger (2x15) pour réveiller l'arrière d'épaule. En complément : du tirage horizontal sérieux dans ton programme — la meilleure « posture » se construit en musclant le dos.`,besoin:"Posture, santé des épaules"},
+    {id:14,title:"Routine mobilité complète en 10 minutes",theme:"Étirements",icon:"🤸",priority:"moyenne",content:`À faire 3-4 fois par semaine, le matin ou les jours off : 1) Cercles de bras et d'épaules, 30 s. 2) Cat-cow (dos rond/dos creux à quatre pattes), 45 s. 3) Rotation thoracique à quatre pattes, main derrière la tête, 30 s par côté. 4) Fente basse + rotation du buste vers le ciel, 30 s par côté. 5) Squat profond tenu, 60 s. 6) Balanciers de jambes avant/arrière et latéraux, 30 s par jambe. 7) Suspension à une barre si disponible, 30-60 s. Dix minutes qui entretiennent toutes les articulations qui comptent pour tes mouvements de base.`,besoin:"Mobilité générale, échauffement jours off"},
+    {id:15,title:"Ancre ton sommeil : heures fixes",theme:"Sommeil",icon:"⏰",priority:"haute",content:`Le levier n°1 du sommeil selon la recherche : la RÉGULARITÉ. Lever et coucher à heures stables (±30-45 min), week-end compris. Ton horloge circadienne synchronise température, hormones et vigilance sur ce rythme — la « grasse matinée réparatrice » du dimanche décale en réalité ton horloge et fabrique le blues du lundi matin. Commence par fixer l'heure de LEVER (plus facile à contrôler), le coucher suivra naturellement quand la pression de sommeil s'accumulera au bon moment. Vise 7 à 9 h par nuit, et plutôt 8+ en période d'entraînement intense.`,besoin:"Récupération, énergie, tous objectifs"},
+    {id:16,title:"Lumière le matin, pénombre le soir",theme:"Sommeil",icon:"🌅",priority:"haute",content:`Ton horloge interne se règle par la lumière. Le protocole : 10 à 20 minutes de lumière forte dans l'heure qui suit le réveil — idéalement dehors (même nuageux, l'extérieur est 10 à 50 fois plus lumineux qu'un salon). Le soir, à l'inverse : baisse les lumières 1 à 2 h avant le coucher, passe les écrans en mode nuit, privilégie les lampes chaudes et basses. Ce simple contraste lumière forte le matin / pénombre le soir améliore l'endormissement et la qualité du sommeil profond. Gratuit, sans effet secondaire, redoutablement efficace.`,besoin:"Endormissement, qualité du sommeil"},
+    {id:17,title:"Caféine : la règle des 8-10 heures",theme:"Sommeil",icon:"🚫",priority:"moyenne",content:`La caféine a une demi-vie de 5 à 6 heures : un café à 16 h laisse encore l'équivalent d'un quart de tasse dans ton sang à minuit — suffisant pour réduire le sommeil profond, même si tu t'endors sans problème (c'est le piège : on ne le SENT pas). Règle pratique : dernier café 8 à 10 h avant le coucher, soit 13-14 h pour un coucher à 23 h. Si tu t'entraînes le soir et veux un boost : réduis la dose (100 mg max) ou passe sur une séance sans caféine — la régularité du sommeil rapportera plus que le pre-workout.`,besoin:"Sommeil profond, sensibles à la caféine"},
+    {id:18,title:"Chambre : fraîche, sombre, silencieuse",theme:"Sommeil",icon:"🛏️",priority:"moyenne",content:`Ton corps doit baisser sa température interne d'environ 1 °C pour bien dormir. Les trois réglages de la chambre idéale : 1) Température : 17 à 19 °C (plus frais que le confort éveillé). Une douche chaude 1-2 h avant le coucher aide paradoxalement : la vasodilatation évacue la chaleur ensuite. 2) Obscurité : occultants ou masque de nuit — même une faible lumière dégrade la qualité du sommeil mesurée. 3) Silence : bouchons d'oreilles ou bruit blanc si l'environnement est bruyant. Et la chambre sert à dormir : le cerveau associe les lieux aux activités, sors le scroll du lit.`,besoin:"Qualité du sommeil, réveils nocturnes"},
+    {id:19,title:"Routine de décompression avant le coucher",theme:"Sommeil",icon:"🌙",priority:"moyenne",content:`On ne passe pas de 100 à 0 en claquant des doigts. Construis un sas de 30 à 45 minutes avant le lit, toujours dans le même ordre (le rituel signale au cerveau que la nuit arrive) : lumières basses, écrans terminés ou en mode nuit SANS réseaux sociaux, puis au choix : lecture, étirements doux, douche chaude, journal (vider sa tête sur papier réduit les ruminations — noter sa to-do du lendemain aide à l'endormissement selon les études). Option respiration : 5 minutes à 4-6 respirations par minute (inspire 4 s, expire 6 s) activent le système nerveux parasympathique. Simple, gratuit, cumulable.`,besoin:"Endormissement, stress, ruminations"},
+    {id:20,title:"La sieste intelligente",theme:"Sommeil",icon:"😴",priority:"basse",content:`Bien utilisée, la sieste est un outil de récupération validé : 10 à 20 minutes en début d'après-midi (avant 15 h) améliorent vigilance et humeur sans inertie au réveil. Évite les siestes de 45-90 minutes improvisées : tu te réveilles dans le brouillard d'un cycle profond interrompu, et tu voles de la pression de sommeil à ta nuit. Si tu as une dette de sommeil aiguë (nuit très courte), une sieste complète de 90 minutes (un cycle entier) est l'exception qui marche. Et si tu n'arrives jamais à dormir : 15 minutes allongé au calme, yeux fermés, comptent déjà — la récupération n'exige pas l'inconscience.`,besoin:"Dette de sommeil, énergie après-midi"},
+    {id:21,title:"Respiration 4-6 : le frein d'urgence anti-stress",theme:"Sommeil",icon:"🌬️",priority:"basse",content:`Le moyen le plus rapide d'activer ton système nerveux parasympathique (mode récupération) : ralentir la respiration autour de 5-6 cycles par minute. Protocole : inspire par le nez 4 secondes, expire lentement 6 secondes, pendant 5 minutes. Utilisable avant de dormir, entre deux réunions tendues, ou après une séance intense pour basculer plus vite en mode récupération. Les études sur la cohérence cardiaque et la respiration lente montrent des effets modestes mais constants sur le stress perçu et la variabilité cardiaque. Trois fois par jour en période chargée — ça tient dans n'importe quel agenda.`,besoin:"Stress, récupération, endormissement"},
+    {id:22,title:"Marche quotidienne : la récupération active ultime",theme:"Étirements",icon:"🚶",priority:"haute",content:`La marche est l'outil de récupération le plus sous-coté : elle augmente le flux sanguin vers les muscles sans créer de fatigue, améliore l'humeur, compte dans ton NEAT et facilite la digestion. Cibles : 7 000 à 10 000 pas par jour en moyenne, et 10 minutes de marche après les gros repas (effet mesurable sur la glycémie post-prandiale). Les jours de courbatures sévères, 20-30 minutes de marche font plus de bien qu'une journée entière de canapé. En extérieur si possible : l'exposition à la lumière naturelle et à la verdure ajoute un effet anti-stress documenté.`,besoin:"Récupération, NEAT, courbatures"}
   ]);
   DB.set('faq',[
-    {id:1,q:'Combien de fois m\'entraîner par semaine ?',theme:'Entraînement',a:'Pour la plupart des objectifs, 3 à 5 séances par semaine est idéal. L\'important est la régularité et la récupération.'},
-    {id:2,q:'Dois-je prendre des compléments ?',theme:'Nutrition',a:'Les compléments ne sont pas obligatoires. Une alimentation équilibrée couvre la majorité des besoins. La créatine et la whey peuvent aider.'},
-    {id:3,q:'Comment contacter Noah ?',theme:'Coaching',a:'Tu peux poser tes questions directement dans la communauté ou via la messagerie de ton suivi personnalisé.'}
+    {id:1,q:"Combien de séances par semaine pour progresser ?",theme:"Entraînement",a:`Pour la plupart des objectifs, 3 à 5 séances hebdomadaires sont idéales. Le minimum efficace est étonnamment bas : 2 séances bien construites produisent déjà des progrès réels chez un débutant. Au-delà de 5-6, le facteur limitant devient la récupération. Le critère décisif n'est pas le maximum théorique mais le nombre de séances que tu peux tenir TOUTES les semaines pendant 6 mois — choisis ce chiffre-là et construis ton programme autour.`},
+    {id:2,q:"Faut-il s'entraîner jusqu'à l'échec musculaire ?",theme:"Entraînement",a:`Pas systématiquement. La recherche montre qu'il faut s'entraîner PROCHE de l'échec (0 à 3 répétitions en réserve) pour bien stimuler le muscle, mais que l'échec systématique ajoute beaucoup de fatigue pour un bénéfice marginal. Stratégie raisonnable : reste à 2-3 reps de l'échec sur les gros exercices (squat, soulevé, développé), et autorise-toi l'échec occasionnel sur l'isolation et les machines, où le coût est faible.`},
+    {id:3,q:"Quelle durée idéale pour une séance ?",theme:"Entraînement",a:`45 à 75 minutes suffisent pour 15 à 25 séries de travail avec des repos corrects — largement de quoi progresser. La séance de 2 heures n'est pas un badge d'honneur : c'est souvent 1 h de travail et 1 h de téléphone. Si tu es pressé, une séance de 30 minutes concentrée sur 2 gros polyarticulaires conserve l'essentiel du stimulus. La régularité des séances compte infiniment plus que leur durée.`},
+    {id:4,q:"Je n'ai pas de courbatures, ma séance était-elle inutile ?",theme:"Entraînement",a:`Non. Les courbatures signalent surtout la NOUVEAUTÉ d'un stimulus (exercice inhabituel, phase excentrique marquée), pas son efficacité. Avec la répétition d'un même programme, elles diminuent naturellement alors même que tu progresses — c'est l'effet de charge répétée, documenté de longue date. Les vrais indicateurs de séance efficace : des séries proches de l'échec, et des performances qui montent dans ton carnet au fil des semaines.`},
+    {id:5,q:"Charges lourdes ou légères pour prendre du muscle ?",theme:"Entraînement",a:`Les deux fonctionnent ! Les études montrent une hypertrophie comparable entre 5 et 30 répétitions par série, À CONDITION d'aller proche de l'échec. La zone 6-12 reps reste le meilleur compromis pratique : assez lourd pour être efficace rep par rep, assez léger pour accumuler du volume sans casser les articulations. Utilise plus lourd (3-6 reps) si la force t'intéresse, plus léger (12-20) sur l'isolation et les machines.`},
+    {id:6,q:"Les femmes doivent-elles s'entraîner différemment ?",theme:"Entraînement",a:`Fondamentalement, non : les principes (surcharge progressive, volume, proximité de l'échec, protéines) sont identiques. Les femmes récupèrent souvent légèrement mieux entre les séries et tolèrent bien le volume. Et non, soulever lourd ne rend pas « massive » : sans dopage, la prise de muscle est lente pour tout le monde, et encore plus limitée par la testostérone plus basse. La musculation lourde est au contraire l'un des meilleurs investissements santé (os, posture, composition corporelle) pour les femmes.`},
+    {id:7,q:"Le muscle se transforme-t-il en gras si j'arrête ?",theme:"Entraînement",a:`Non, c'est physiologiquement impossible : muscle et gras sont deux tissus différents, l'un ne se convertit pas en l'autre. Ce qui se passe à l'arrêt : le muscle fond lentement (et bien plus lentement qu'on ne le craint), et si l'alimentation reste calibrée pour un sportif actif, le surplus calorique fait du gras. Bonne nouvelle : la « mémoire musculaire » est réelle — le muscle perdu se reconstruit beaucoup plus vite qu'il ne s'était construit la première fois.`},
+    {id:8,q:"Combien de temps avant de voir des résultats ?",theme:"Entraînement",a:`Repères honnêtes : 2-4 semaines pour sentir des progrès de force et d'énergie, 8-12 semaines pour que TOI tu voies des changements dans le miroir, 4-6 mois pour que ton entourage les remarque. Un débutant masculin peut espérer 6 à 10 kg de muscle la première année, puis moitié moins chaque année suivante. Les transformations « spectaculaires en 8 semaines » des publicités relèvent du marketing (éclairage, déshydratation, antécédents) — la vraie transformation est une affaire de mois et d'années. Prends des photos mensuelles : c'est le seul juge fiable.`},
+    {id:9,q:"Dois-je faire du cardio si mon objectif est la prise de muscle ?",theme:"Entraînement",a:`Oui, modérément — pour ton cœur et ta santé, pas contre tes gains. 2 à 3 sessions de 20-40 min de cardio tranquille (marche rapide, vélo, rameur) n'interfèrent pratiquement pas avec l'hypertrophie selon les méta-analyses. Garde les modalités douces pour les jambes, sépare cardio et musculation quand c'est possible, et compense les calories dépensées. L'interférence ne devient réelle qu'avec de gros volumes d'endurance intense — ce qui n'est pas ton cas avec 2-3 sessions légères.`},
+    {id:10,q:"Combien de protéines par jour exactement ?",theme:"Nutrition",a:`Le consensus scientifique (ISSN, méta-analyses) : 1,6 à 2,2 g par kg de poids corporel et par jour pour un pratiquant de musculation. Pour 75 kg, ça fait 120 à 165 g. En sèche, vise le haut de la fourchette (jusqu'à 2,4-2,7 g/kg pour les plus secs) pour protéger le muscle. Au-delà, pas de bénéfice musculaire démontré — et non, ces apports n'abîment pas des reins en bonne santé, c'est un mythe tenace que les études n'ont jamais confirmé.`},
+    {id:11,q:"Dois-je prendre un shaker immédiatement après la séance ?",theme:"Nutrition",a:`Non, la « fenêtre anabolique » de 30 minutes est un mythe dépassé. La recherche montre que la sensibilité du muscle aux protéines reste élevée plusieurs HEURES après l'effort. Si tu as mangé des protéines dans les 2-3 h avant la séance, tu es déjà couvert pendant l'entraînement. Un repas protéiné dans les heures qui suivent fait parfaitement le travail. Le shaker post-training reste pratique et sans inconvénient — mais c'est du confort, pas une urgence.`},
+    {id:12,q:"Les glucides le soir font-ils grossir ?",theme:"Nutrition",a:`Non. Ce qui détermine la prise ou la perte de gras, c'est ton bilan calorique TOTAL sur la durée, pas l'heure des glucides. Les études contrôlées comparant les mêmes calories réparties différemment ne montrent pas de différence de composition corporelle — certaines trouvent même un léger avantage satiété/sommeil aux glucides du soir. Si manger des féculents le soir t'aide à dormir et à tenir ton plan, c'est tout bénéfice. Le mythe vient d'une confusion : on bouge moins le soir, mais le corps ne stocke pas « par horaire ».`},
+    {id:13,q:"Le jeûne intermittent est-il supérieur pour perdre du gras ?",theme:"Nutrition",a:`Non — il n'est ni supérieur ni inférieur. Les essais contrôlés montrent qu'à calories et protéines égales, le jeûne intermittent (16/8 et variantes) produit la même perte de gras qu'une répartition classique. C'est un OUTIL d'organisation : certains mangent naturellement moins avec une fenêtre réduite (super), d'autres craquent le soir ou peinent à atteindre leurs protéines (contre-productif). Si tu fais de la musculation, garde au moins 2-3 prises de protéines dans ta fenêtre. Choisis selon ton confort, pas selon le marketing.`},
+    {id:14,q:"Faut-il manger 6 petits repas pour « booster le métabolisme » ?",theme:"Nutrition",a:`Non, c'est un mythe classique. L'effet thermique des aliments est proportionnel à la quantité mangée : 6 petits repas ou 3 gros repas produisent la même dépense totale à calories égales. La fréquence des repas est une affaire de préférence et de confort digestif. Seule nuance pour les sportifs : répartir les protéines en 3-5 prises dans la journée semble légèrement mieux pour la synthèse musculaire que tout concentrer en une fois — un détail comparé au total quotidien.`},
+    {id:15,q:"Dois-je peser mes aliments pour toujours ?",theme:"Nutrition",a:`Non — pèse pour APPRENDRE, pas pour l'éternité. Quelques semaines de pesée calibrent ton œil : tu découvres ce que représentent vraiment 80 g de riz ou 30 g de beurre de cacahuète (souvent une surprise). Ensuite, beaucoup pilotent très bien avec les portions à la main (paume = protéines, poing = légumes, main en coupe = glucides, pouce = lipides) et la moyenne de la balance corporelle comme juge de paix. Reviens à la pesée temporairement quand la progression stagne ou en fin de sèche, quand la précision compte davantage.`},
+    {id:16,q:"L'alcool ruine-t-il mes progrès ?",theme:"Nutrition",a:`Tout est dans la dose. Une consommation occasionnelle et modérée (1-2 verres) a un impact mineur. Au-delà, l'alcool cumule les malus : 7 kcal/g sans satiété, réduction aiguë de la synthèse protéique musculaire, sommeil fragmenté (donc récupération dégradée), et désinhibition alimentaire (le kebab de 2 h du matin fait souvent plus de dégâts que les verres). Stratégie réaliste : garde les occasions qui comptent, hydrate-toi en parallèle, évite les soirées arrosées la veille des grosses séances, et ne « compense » pas en sautant des repas le lendemain.`},
+    {id:17,q:"Les produits « sans sucre » ou « light » sont-ils de bons alliés ?",theme:"Nutrition",a:`Souvent oui, avec discernement. Les boissons light/zéro permettent de couper des centaines de calories liquides sans frustration — les études montrent qu'elles aident plutôt la perte de poids comparées aux versions sucrées, et les édulcorants autorisés sont considérés comme sûrs aux doses courantes par les agences sanitaires (EFSA, ANSES). Attention en revanche aux produits « allégés » solides : souvent compensés en sucres ou en texture décevante, ils poussent à manger plus à côté. Un yaourt nature entier rassasie parfois mieux que deux desserts « 0 % » insipides.`},
+    {id:18,q:"Combien d'heures de sommeil me faut-il vraiment ?",theme:"Récupération",a:`7 à 9 heures pour la quasi-totalité des adultes — et plutôt 8+ en période d'entraînement intense ou de déficit calorique. Les « petits dormeurs » génétiques qui prospèrent à 5-6 h existent mais sont extrêmement rares ; se sentir « habitué » aux nuits courtes n'empêche pas la dégradation mesurable des performances, de la récupération et de la gestion de la faim. Si tu ne peux pas allonger tes nuits immédiatement, commence par les régulariser : des horaires stables améliorent déjà la qualité du sommeil à durée égale.`},
+    {id:19,q:"Qu'est-ce qu'un deload et quand en faire un ?",theme:"Récupération",a:`Un deload est une semaine de décharge : tu divises le volume par deux et tu utilises des charges modérées (70-80 % de l'habitude, loin de l'échec), tout en continuant à t'entraîner. Objectif : dissiper la fatigue accumulée pour exprimer les adaptations et repartir plus fort. Quand ? Toutes les 4 à 8 semaines de travail intense, ou dès que plusieurs signaux convergent : performances en baisse, sommeil dégradé, motivation en berne, articulations douloureuses. Tu ne perds pas de muscle en une semaine allégée — tu en perds en te blessant.`},
+    {id:20,q:"Bains froids, sauna, massage gun : qu'est-ce qui marche ?",theme:"Récupération",a:`Hiérarchie honnête selon les preuves : 1) Sommeil, calories/protéines, gestion du volume — 90 % du résultat, gratuit. 2) Récupération active (marche, vélo léger) — efficace contre la raideur. 3) Massages, rouleaux, massage gun — réduisent la PERCEPTION de douleur, effet modeste mais réel. 4) Sauna — agréable, bénéfices cardiovasculaires probables. 5) Bains froids — réduisent les courbatures MAIS peuvent atténuer les gains d'hypertrophie s'ils suivent systématiquement la musculation ; à réserver aux phases de compétition. Règle : ne paie pas en gadgets ce que tu ne paies pas d'abord en sommeil.`},
+    {id:21,q:"J'ai mal à une articulation, je continue ?",theme:"Récupération",a:`Distinguons : la fatigue musculaire diffuse et symétrique est normale ; une douleur ARTICULAIRE vive, localisée, asymétrique ou présente au repos ne l'est pas. Conduite raisonnable : arrête l'exercice qui provoque la douleur (pas tout l'entraînement), remplace par une variante indolore du même schéma de mouvement, réduis temporairement charge et amplitude, et réintroduis progressivement. Si la douleur persiste plus de 1-2 semaines, s'aggrave, ou s'accompagne de gonflement : consulte un professionnel de santé (médecin du sport, kiné). S'entraîner À TRAVERS une douleur articulaire qui empire est le meilleur moyen de transformer 2 semaines de prudence en 6 mois d'arrêt.`},
+    {id:22,q:"Le surentraînement existe-t-il vraiment ?",theme:"Récupération",a:`Oui, mais le vrai syndrome de surentraînement (performances effondrées des semaines malgré le repos) est rare et concerne surtout les athlètes d'endurance à très haut volume. Ce que vivent la plupart des pratiquants est du SURMENAGE (overreaching) : fatigue accumulée par excès de volume, d'intensité ou déficit de sommeil, réversible en 1-2 semaines de décharge. Signaux à surveiller : perfs en baisse, FC de repos élevée, sommeil paradoxalement dégradé, irritabilité, blessures qui traînent. La réponse est presque toujours : dormir plus, manger assez, déloader — pas s'entraîner plus fort.`},
+    {id:23,q:"Ai-je besoin de compléments pour progresser ?",theme:"Nutrition",a:`Non — aucun complément n'est indispensable. La hiérarchie réelle : alimentation solide, sommeil et entraînement font 95 % du résultat. Ensuite, trois compléments ont des preuves solides : la créatine monohydrate (3-5 g/jour, le plus étudié et efficace), la whey (si tu peines à atteindre ton quota de protéines), la caféine (3-6 mg/kg avant les séances clés). La vitamine D en hiver et les oméga-3 si tu ne manges pas de poisson complètent utilement. Tout le reste — BCAA si tu manges assez de protéines, brûleurs de graisse, boosters d'hormones — relève du marketing. En cas de traitement médical, parles-en à ton médecin.`},
+    {id:24,q:"Comment rester motivé sur la durée ?",theme:"Général",a:`Mauvaise nouvelle : la motivation est une émotion, elle fluctue et finit toujours par manquer. Bonne nouvelle : les gens constants ne comptent pas dessus — ils s'appuient sur des SYSTÈMES. Concrètement : des séances planifiées comme des rendez-vous non négociables, des intentions précises (« lundi 18 h 30 après le travail » plutôt que « je m'y mets »), un environnement qui réduit la friction (sac prêt, salle sur le trajet), un journal qui rend les progrès visibles, et la règle des 2 minutes les jours difficiles (commence seulement l'échauffement — la suite vient presque toujours). Vise 85 % de constance sur un an, pas 100 % sur un mois.`},
+    {id:25,q:"Je pars en vacances 2 semaines, vais-je tout perdre ?",theme:"Général",a:`Non, respire. La force se maintient quasi intacte sur 2 semaines d'arrêt ; le muscle ne diminue significativement qu'après 3-4 semaines d'inactivité totale — et la baisse initiale de volume est surtout du glycogène et de l'eau. Mieux : un break peut dissiper une fatigue accumulée et te faire revenir plus fort. Si tu veux limiter la casse en vacances : 2 mini-séances (pompes, tractions, squats, ou la salle de l'hôtel) suffisent — le maintien demande environ un tiers du volume qui a construit le muscle. Et grâce à la mémoire musculaire, tout ce qui serait perdu revient à vitesse accélérée.`},
+    {id:26,q:"Balance bloquée depuis 2 semaines : que faire ?",theme:"Nutrition",a:`D'abord, vérifie que c'est un vrai plateau : compare les MOYENNES hebdomadaires (le poids fluctue de ±1-2 kg avec l'eau, le sel, les glucides, le cycle, le transit). Deux semaines de stagnation peuvent masquer une perte de gras réelle derrière de la rétention d'eau, surtout en période de stress. Si la moyenne est vraiment plate sur 3 semaines : 1) Resserre le suivi alimentaire quelques jours (les calories « oubliées » sont la cause n°1 — sauces, grignotages, verres). 2) Ajoute 2 000-3 000 pas quotidiens. 3) Seulement ensuite, retire 150-200 kcal. Une seule modification à la fois, et laisse 2 semaines pour juger l'effet.`},
+    {id:27,q:"Mon coach me donne un plan différent de ce que je lis en ligne. Qui croire ?",theme:"Coaching",a:`Les grands principes scientifiques (surcharge progressive, protéines suffisantes, déficit pour sécher, sommeil) sont universels — si un plan les contredit frontalement, questionne-le. Mais l'APPLICATION est individuelle : ton coach connaît ton historique, tes blessures, ton emploi du temps, ta récupération réelle. Un programme « sous-optimal » sur le papier mais parfaitement exécuté bat le programme théoriquement parfait que tu ne tiens pas. Le bon réflexe : pose tes questions directement (un bon coach explique ses choix volontiers), donne du feedback honnête sur tes séances, et laisse 6-8 semaines à un plan avant de le juger.`},
+    {id:28,q:"Comment poser une question ou avoir un suivi personnalisé ?",theme:"Coaching",a:`Trois canaux : 1) La COMMUNAUTÉ de la plateforme — poste ta question dans la catégorie « Question », Noah et les membres répondent ; il n'y a pas de question bête, et ta question servira aux autres. 2) Ton SUIVI CORPOREL et tes photos de transformation sur la plateforme : tiens-les à jour, c'est sur ces données que le coaching s'ajuste. 3) Pour les sujets personnels (santé, blessure, situation particulière), contacte Noah directement via ton canal de coaching habituel. Rappel : le contenu de la plateforme est éducatif et général — il ne remplace ni un avis médical, ni les consignes individualisées de ton suivi.`}
   ]);
-  DB.set('seeded',true);
+  DB.set('seeded_v2',true);
 }
 
 // ============================================================
