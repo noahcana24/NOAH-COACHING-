@@ -945,9 +945,19 @@ button{touch-action:manipulation;}
       </div>
       <div class="fg">
         <label>Ton prénom</label>
-        <div class="iw"><i class="fa-solid fa-user"></i><input type="text" id="member-name" placeholder="Prénom"></div>
+        <div class="iw"><i class="fa-solid fa-user"></i><input type="text" id="member-name" placeholder="Prénom" maxlength="40"></div>
       </div>
-      <button type="button" class="btn-login" id="login-btn">Accéder <i class="fa-solid fa-arrow-right"></i></button>
+      <div class="fg" id="pw-wrap" style="display:none">
+        <label id="pw-label">Mot de passe</label>
+        <div class="iw"><i class="fa-solid fa-lock"></i><input type="password" id="login-pw" placeholder="••••••••" autocomplete="current-password"></div>
+      </div>
+      <div class="fg" id="pw2-wrap" style="display:none">
+        <label>Confirme le mot de passe</label>
+        <div class="iw"><i class="fa-solid fa-lock"></i><input type="password" id="login-pw2" placeholder="••••••••" autocomplete="new-password"></div>
+      </div>
+      <div id="login-hint" style="font-size:13px;color:rgba(255,255,255,.55);margin:-4px 0 16px;line-height:1.5"></div>
+      <button type="button" class="btn-login" id="login-btn"><span id="login-btn-txt">Continuer</span> <i class="fa-solid fa-arrow-right"></i></button>
+      <div id="login-back" style="display:none;text-align:center;font-size:13px;color:rgba(255,255,255,.45);cursor:pointer;margin-bottom:12px" onclick="resetLogin()">← Revenir au code</div>
       <div class="login-note">Accès 100% privé · Réservé aux membres</div>
     </div>
     <div class="pillars">
@@ -1164,14 +1174,14 @@ button{touch-action:manipulation;}
     <div class="bs-handle"></div>
     <div class="bs-title">Toutes les sections</div>
     <div class="bs-grid">
-      <button class="bsi" onclick="gotoS('repas');closeBS()"><i class="fa-solid fa-utensils"></i><span>Repas</span></button>
-      <button class="bsi" onclick="gotoS('resources');closeBS()"><i class="fa-solid fa-folder-open"></i><span>Ressources</span></button>
-      <button class="bsi" onclick="gotoS('body');closeBS()"><i class="fa-solid fa-chart-line"></i><span>Suivi corps</span></button>
-      <button class="bsi" onclick="gotoS('transformation');closeBS()"><i class="fa-solid fa-camera"></i><span>Transfo</span></button>
-      <button class="bsi" onclick="gotoS('glossaire');closeBS()"><i class="fa-solid fa-book"></i><span>Glossaire</span></button>
-      <button class="bsi" onclick="gotoS('tips');closeBS()"><i class="fa-solid fa-heart-pulse"></i><span>Tips</span></button>
-      <button class="bsi" onclick="gotoS('faq');closeBS()"><i class="fa-solid fa-circle-question"></i><span>FAQ</span></button>
-      <button class="bsi" onclick="gotoS('temoignage');closeBS()"><i class="fa-solid fa-star"></i><span>Témoignage</span></button>
+      <button class="bsi" data-s="repas" onclick="gotoS('repas');closeBS()"><i class="fa-solid fa-utensils"></i><span>Repas</span></button>
+      <button class="bsi" data-s="resources" onclick="gotoS('resources');closeBS()"><i class="fa-solid fa-folder-open"></i><span>Ressources</span></button>
+      <button class="bsi" data-s="body" onclick="gotoS('body');closeBS()"><i class="fa-solid fa-chart-line"></i><span>Suivi corps</span></button>
+      <button class="bsi" data-s="transformation" onclick="gotoS('transformation');closeBS()"><i class="fa-solid fa-camera"></i><span>Transfo</span></button>
+      <button class="bsi" data-s="glossaire" onclick="gotoS('glossaire');closeBS()"><i class="fa-solid fa-book"></i><span>Glossaire</span></button>
+      <button class="bsi" data-s="tips" onclick="gotoS('tips');closeBS()"><i class="fa-solid fa-heart-pulse"></i><span>Tips</span></button>
+      <button class="bsi" data-s="faq" onclick="gotoS('faq');closeBS()"><i class="fa-solid fa-circle-question"></i><span>FAQ</span></button>
+      <button class="bsi" data-s="temoignage" onclick="gotoS('temoignage');closeBS()"><i class="fa-solid fa-star"></i><span>Témoignage</span></button>
       <button class="bsi" onclick="toggleTheme();closeBS()"><i class="fa-solid fa-moon"></i><span>Thème</span></button>
       <button class="bsi" onclick="logout()" style="color:var(--red)"><i class="fa-solid fa-right-from-bracket"></i><span>Déconnexion</span></button>
     </div>
@@ -1193,6 +1203,7 @@ button{touch-action:manipulation;}
       <button class="nav-item" data-as="arepas"><i class="fa-solid fa-utensils"></i><span>Repas</span></button>
       <button class="nav-item" data-as="adefis"><i class="fa-solid fa-trophy"></i><span>Défis</span></button>
       <button class="nav-item" data-as="ainvites"><i class="fa-solid fa-envelope"></i><span>Invitations</span></button>
+      <button class="nav-item" data-as="aformules"><i class="fa-solid fa-layer-group"></i><span>Formules</span></button>
       <button class="nav-item" data-as="amembers"><i class="fa-solid fa-users"></i><span>Membres</span></button>
       <button class="nav-item" data-as="acommunity"><i class="fa-solid fa-comments"></i><span>Communauté</span></button>
       <button class="nav-item" data-as="aresources"><i class="fa-solid fa-folder-open"></i><span>Ressources</span></button>
@@ -1276,10 +1287,22 @@ button{touch-action:manipulation;}
         <div class="afc">
           <h3>Générer un code</h3>
           <div class="r2"><div class="fg2"><label>Prénom</label><input type="text" id="inv-name" placeholder="Ex: Karim"></div><div class="fg2"><label>Note</label><input type="text" id="inv-note" placeholder="Ex: Pack 3 mois"></div></div>
+          <div class="fg2"><label>Formule (accès appliqué à la 1re connexion)</label><select id="inv-formule"><option value="">Accès complet (par défaut)</option></select></div>
           <button class="btn" onclick="generateInvite()"><i class="fa-solid fa-wand-magic-sparkles"></i> Générer</button>
           <div id="inv-result"></div>
         </div>
         <div class="list-title">Codes générés</div><div id="invites-list"></div>
+      </section>
+
+      <section id="section-aformules" class="section">
+        <div class="sec-header"><h2>Formules & accès</h2><p>Définis ce que chaque formule de coaching débloque, puis applique-la aux membres</p></div>
+        <div class="afc">
+          <h3>Nouvelle formule</h3>
+          <div class="r2"><div class="fg2"><label>Nom</label><input type="text" id="formule-name" placeholder="Ex: Premium"></div><div class="fg2"><label>Icône</label><input type="text" id="formule-icon" placeholder="🥇" maxlength="4"></div></div>
+          <button class="btn" onclick="saveFormuleNew()"><i class="fa-solid fa-plus"></i> Créer la formule</button>
+        </div>
+        <div class="list-title">Formules existantes</div>
+        <div id="admin-formules-list"></div>
       </section>
 
       <section id="section-amembers" class="section">
@@ -1366,6 +1389,7 @@ button{touch-action:manipulation;}
     <div class="bs-title">Admin</div>
     <div class="bs-grid">
       <button class="bsi" onclick="gotoAS('arepas');closeABS()"><i class="fa-solid fa-utensils"></i><span>Repas</span></button>
+      <button class="bsi" onclick="gotoAS('aformules');closeABS()"><i class="fa-solid fa-layer-group"></i><span>Formules</span></button>
       <button class="bsi" onclick="gotoAS('adefis');closeABS()"><i class="fa-solid fa-trophy"></i><span>Défis</span></button>
       <button class="bsi" onclick="gotoAS('acommunity');closeABS()"><i class="fa-solid fa-comments"></i><span>Modération</span></button>
       <button class="bsi" onclick="gotoAS('aresources');closeABS()"><i class="fa-solid fa-folder-open"></i><span>Ressources</span></button>
@@ -1471,7 +1495,7 @@ const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZ
 let SB=null;
 try{if(window.supabase)SB=window.supabase.createClient(SB_URL,SB_KEY);}catch(e){console.warn('Supabase init fail',e);}
 // Clés synchronisées dans le cloud (le reste = purement local : theme, session, sb_mini, checklist...)
-const CLOUD_KEYS=['members','invites','modules','repas','defis','resources','glossaire','tips','faq','posts','coach_message','notifs'];
+const CLOUD_KEYS=['members','invites','modules','repas','defis','resources','glossaire','tips','faq','posts','coach_message','notifs','formules','admin_auth'];
 function isCloudKey(k){
   if(CLOUD_KEYS.includes(k))return true;
   // données par client : body_, transfo_, temo_, comments_
@@ -1498,6 +1522,15 @@ async function cloudRefresh(){
   _refreshing=true;
   try{
     await cloudPullAll();
+    if(CU&&!CU.isAdmin&&!CU.isPreview){
+      const mm=DB.getArr('members');const me=mm.find(x=>x.code===CU.code);
+      if(mm.length&&!me){logout();_refreshing=false;return;}
+      if(me){
+        const chg=JSON.stringify(me.access||null)!==JSON.stringify(CU.access||null);
+        CU.access=me.access;CU.pwHash=me.pwHash;CU.pwSalt=me.pwSalt;DB.set('session',CU);
+        if(chg){applyAccessUI();const act=document.querySelector('#page-member .section.active');const cur=act?act.id.replace('section-',''):'';if(GATED_SECTIONS.includes(cur))gotoS(cur);}
+      }
+    }
     if(document.getElementById('focus-mode-el')||document.getElementById('modal-ov')?.classList.contains('active')){_refreshing=false;return;}
     const active=document.querySelector('#page-member .section.active');
     if(active&&active.id==='section-community')renderPosts();
@@ -1553,10 +1586,11 @@ function fireConfetti(){const c=document.getElementById('confetti-c');const cols
 document.addEventListener('DOMContentLoaded',async()=>{
   // Tire les données partagées du cloud AVANT d'afficher (si Supabase dispo)
   await cloudPullAll();
-  seedData();
+  seedData();seedFormules();
   document.getElementById('login-btn').addEventListener('click',handleLogin);
   document.getElementById('invite-code').addEventListener('keypress',e=>{if(e.key==='Enter')handleLogin();});
   document.getElementById('member-name').addEventListener('keypress',e=>{if(e.key==='Enter')handleLogin();});
+  ['login-pw','login-pw2'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('keypress',e=>{if(e.key==='Enter')handleLogin();});});
   const t=DB.get('theme')||'light';document.documentElement.setAttribute('data-theme',t);updateThemeIcons(t);
   miniSB=DB.get('sb_mini')||false;if(miniSB)applMini();
   const s=DB.get('session');if(s){CU=s;s.isAdmin?showAdmin():showMember();}
@@ -2360,40 +2394,258 @@ function isValidNCCode(code){
   const base=core.slice(0,6),chk=core.slice(6);
   return codeChecksum(base)===chk;
 }
-function handleLogin(){
-  const code=cleanCode(document.getElementById('invite-code').value);
-  const name=(document.getElementById('member-name').value||'').trim();
+// ============================================================
+// LOT 1 — AUTHENTIFICATION PAR MOT DE PASSE (PBKDF2 via Web Crypto)
+// Limite assumée : app 100% front → le hachage protège les mots de passe
+// stockés, mais ne remplace pas une vraie auth serveur (voir Supabase Auth).
+// ============================================================
+function randSalt(){const a=new Uint8Array(16);crypto.getRandomValues(a);return Array.from(a,b=>b.toString(16).padStart(2,'0')).join('');}
+async function hashPw(salt,pw){
+  const enc=new TextEncoder();
+  const key=await crypto.subtle.importKey('raw',enc.encode(pw),'PBKDF2',false,['deriveBits']);
+  const bits=await crypto.subtle.deriveBits({name:'PBKDF2',salt:enc.encode('nc|'+salt),iterations:120000,hash:'SHA-256'},key,256);
+  return Array.from(new Uint8Array(bits),b=>b.toString(16).padStart(2,'0')).join('');
+}
+function pwPolicy(pw){return typeof pw==='string'&&pw.length>=8;}
+// Anti force brute (couche cosmétique côté client : 5 échecs → 60 s)
+function tooManyFails(id){let f=null;try{f=JSON.parse(localStorage.getItem('nc3_pwfail_'+id));}catch(e){}
+  if(!f)return 0;if(f.count>=5&&Date.now()-f.t<60000)return Math.ceil((60000-(Date.now()-f.t))/1000);return 0;}
+function notePwFail(id){let f=null;try{f=JSON.parse(localStorage.getItem('nc3_pwfail_'+id));}catch(e){}
+  if(!f||Date.now()-f.t>60000)f={count:0,t:0};f.count++;f.t=Date.now();localStorage.setItem('nc3_pwfail_'+id,JSON.stringify(f));}
+function clearPwFails(id){localStorage.removeItem('nc3_pwfail_'+id);}
+
+let loginStep='id',pendingLogin=null;
+function setLoginUI(step,hint){
+  loginStep=step;
+  const show=(id,on)=>{const el=document.getElementById(id);if(el)el.style.display=on?'':'none';};
+  show('pw-wrap',step!=='id');show('pw2-wrap',step==='create');show('login-back',step!=='id');
+  const codeFg=document.getElementById('invite-code')?.closest('.fg');if(codeFg)codeFg.style.display=step==='id'?'':'none';
+  const nameFg=document.getElementById('member-name')?.closest('.fg');if(nameFg)nameFg.style.display=step==='id'?'':'none';
+  const lbl=document.getElementById('pw-label');if(lbl)lbl.textContent=step==='create'?'Crée ton mot de passe (8 caractères min.)':'Mot de passe';
+  const ht=document.getElementById('login-hint');if(ht)ht.textContent=hint||'';
+  const bt=document.getElementById('login-btn-txt');if(bt)bt.textContent=step==='create'?'Créer et accéder':(step==='password'?'Se connecter':'Continuer');
+  const errEl=document.getElementById('login-error');if(errEl)errEl.textContent='';
+  if(step!=='id')setTimeout(()=>document.getElementById('login-pw')?.focus(),60);
+}
+function resetLogin(){pendingLogin=null;const p1=document.getElementById('login-pw'),p2=document.getElementById('login-pw2');if(p1)p1.value='';if(p2)p2.value='';setLoginUI('id','');}
+
+async function handleLogin(){
   const err=document.getElementById('login-error');
-  if(!name){err.textContent='Entre ton prénom';return;}
-  if(!code){err.textContent='Entre ton code';return;}
-  if(code===ADMIN_CODE){CU={name:'Noah Cana',isAdmin:true};DB.set('session',CU);err.textContent='';showAdmin();return;}
+  try{
+    if(loginStep==='id'){
+      const code=cleanCode(document.getElementById('invite-code').value);
+      const name=(document.getElementById('member-name').value||'').trim().slice(0,40);
+      if(!name){err.textContent='Entre ton prénom';return;}
+      if(!code){err.textContent='Entre ton code';return;}
+      if(code===ADMIN_CODE){
+        const aa=DB.get('admin_auth');
+        pendingLogin={type:aa?'admin':'admin-create',code,name};
+        setLoginUI(aa?'password':'create',aa?'Espace coach — entre ton mot de passe admin.':'Première connexion coach : crée ton mot de passe admin (à garder précieusement).');
+        return;
+      }
+      const m=DB.getArr('members').find(x=>x.code===code);
+      if(m&&m.pwHash){
+        pendingLogin={type:'member',code,name};
+        setLoginUI('password','Content de te revoir, '+h((m.name||name).split(' ')[0])+' ! Entre ton mot de passe.');
+        return;
+      }
+      const inv=DB.getArr('invites').find(i=>i.code===code);
+      if(!m&&!inv&&!isValidNCCode(code)){err.textContent='Code invalide. Vérifie bien les lettres et chiffres.';return;}
+      pendingLogin={type:m?'member-setpw':'member-new',code,name};
+      setLoginUI('create',(m?'Ton compte passe en mode sécurisé : ':'Bienvenue ! ')+'crée ton mot de passe personnel. Tu l’utiliseras à chaque connexion.');
+      return;
+    }
+    if(!pendingLogin){resetLogin();return;}
+    const pw=document.getElementById('login-pw').value;
+    const lockId=pendingLogin.code;
+    const wait=tooManyFails(lockId);
+    if(wait){err.textContent='Trop de tentatives. Réessaie dans '+wait+' s.';return;}
+    if(loginStep==='create'){
+      const pw2=document.getElementById('login-pw2').value;
+      if(!pwPolicy(pw)){err.textContent='8 caractères minimum.';return;}
+      if(pw!==pw2){err.textContent='Les deux mots de passe ne correspondent pas.';return;}
+      const salt=randSalt();const hash=await hashPw(salt,pw);
+      if(pendingLogin.type==='admin-create'){
+        DB.set('admin_auth',{salt,hash,createdAt:new Date().toISOString()});
+        loginAsAdmin();return;
+      }
+      finishMemberLogin(pendingLogin.code,pendingLogin.name,{salt,hash});return;
+    }
+    // étape vérification du mot de passe
+    if(pendingLogin.type==='admin'){
+      const aa=DB.get('admin_auth');
+      if(!aa){resetLogin();return;}
+      const hash=await hashPw(aa.salt,pw);
+      if(hash!==aa.hash){notePwFail(lockId);err.textContent='Mot de passe incorrect.';return;}
+      clearPwFails(lockId);loginAsAdmin();return;
+    }
+    const m=DB.getArr('members').find(x=>x.code===pendingLogin.code);
+    if(!m||!m.pwSalt){err.textContent='Compte introuvable. Recommence.';resetLogin();return;}
+    const hash=await hashPw(m.pwSalt,pw);
+    if(hash!==m.pwHash){notePwFail(lockId);err.textContent='Mot de passe incorrect. Oublié ? Contacte ton coach pour le réinitialiser.';return;}
+    clearPwFails(lockId);finishMemberLogin(pendingLogin.code,pendingLogin.name,null);
+  }catch(e){console.warn('login',e);if(err)err.textContent='Erreur inattendue. Réessaie.';}
+}
+function loginAsAdmin(){CU={name:'Noah Cana',isAdmin:true};DB.set('session',CU);resetLogin();showAdmin();}
+function finishMemberLogin(code,name,newPw){
   const invs=DB.getArr('invites');let inv=invs.find(i=>i.code===code);
-  if(!inv){
-    if(!isValidNCCode(code)){err.textContent='Code invalide. Vérifie bien les lettres et chiffres.';return;}
-    inv={code,name:'',note:'',used:false,createdAt:new Date().toISOString()};invs.push(inv);
-  }
+  if(!inv){inv={code,name:'',note:'',used:false,createdAt:new Date().toISOString()};invs.push(inv);}
   inv.used=true;inv.usedBy=name;inv.usedAt=new Date().toISOString();DB.set('invites',invs);
   const members=DB.getArr('members');let m=members.find(x=>x.code===code);
   const today=new Date().toDateString();
-  if(!m){m={id:Date.now(),name,code,joinedAt:new Date().toISOString(),xp:0,completedLessons:[],completedDefis:[],badges:['first_login'],postCount:0,streak:1,lastLogin:today,favRepas:[],favTips:[],objectif:'',onboarded:false,lessonNotes:{}};members.push(m);DB.set('members',members);}
-  else{if(m.lastLogin!==today){const y=new Date(Date.now()-86400000).toDateString();m.streak=m.lastLogin===y?(m.streak||0)+1:1;m.lastLogin=today;}}
-  CU={...m,isAdmin:false};DB.set('session',CU);err.textContent='';checkBadges();
+  if(!m){
+    m={id:Date.now(),name,code,joinedAt:new Date().toISOString(),xp:0,completedLessons:[],completedDefis:[],badges:['first_login'],postCount:0,streak:1,lastLogin:today,favRepas:[],favTips:[],objectif:'',onboarded:false,lessonNotes:{},access:accessFromFormule(inv.formule)};
+    members.push(m);
+  }else if(m.lastLogin!==today){
+    const y=new Date(Date.now()-86400000).toDateString();m.streak=m.lastLogin===y?(m.streak||0)+1:1;m.lastLogin=today;
+  }
+  if(newPw){m.pwSalt=newPw.salt;m.pwHash=newPw.hash;}
+  DB.set('members',members);
+  CU={...m,isAdmin:false};DB.set('session',CU);resetLogin();checkBadges();
   addNotif('👋','Connexion','Bienvenue '+name.split(' ')[0]+' !');
   showMember();
   if(!CU.onboarded)setTimeout(()=>document.getElementById('ob-ov').style.display='flex',600);
 }
-function logout(){DB.set('session',null);CU=null;isPreview=false;showPage('login');document.getElementById('invite-code').value='';document.getElementById('member-name').value='';document.getElementById('login-error').textContent='';}
+function logout(){DB.set('session',null);CU=null;isPreview=false;showPage('login');document.getElementById('invite-code').value='';document.getElementById('member-name').value='';document.getElementById('login-error').textContent='';resetLogin();}
+
+// ============================================================
+// LOT 1 — FORMULES & CONTRÔLE D'ACCÈS PAR CLIENT
+// access = {formule:id|null, sections:{cle:false=bloqué}, modules:'all'|[ids], repas:'all'|[ids]}
+// Absence d'access (membres existants) = accès complet → zéro régression.
+// ============================================================
+const GATED_SECTIONS=['modules','repas','defis','community','resources','body','transformation','temoignage','glossaire','tips','faq'];
+const SECTION_LABELS={modules:'Modules',repas:'Repas',defis:'Défis',community:'Communauté',resources:'Ressources',body:'Suivi corporel',transformation:'Transformation',temoignage:'Témoignage',glossaire:'Glossaire',tips:'Tips & Récup',faq:'FAQ'};
+function getAccess(){const a=(CU&&CU.access)||{};return{formule:a.formule||null,sections:a.sections||{},modules:(a.modules===undefined||a.modules===null)?'all':a.modules,repas:(a.repas===undefined||a.repas===null)?'all':a.repas};}
+function canSection(s){if(!CU||CU.isAdmin||CU.isPreview)return true;if(!GATED_SECTIONS.includes(s))return true;return getAccess().sections[s]!==false;}
+function filterByAccess(list,kind){if(!CU||CU.isAdmin||CU.isPreview)return list;const sel=getAccess()[kind];if(sel==='all')return list;return list.filter(x=>(sel||[]).includes(x.id));}
+function accessFromFormule(fid){
+  const f=DB.getArr('formules').find(x=>x.id===fid);
+  if(!f)return null;
+  return{formule:f.id,sections:{...(f.sections||{})},modules:Array.isArray(f.modules)?[...f.modules]:'all',repas:Array.isArray(f.repas)?[...f.repas]:'all'};
+}
+function applyAccessUI(){
+  GATED_SECTIONS.forEach(s=>{
+    const ok=canSection(s);
+    document.querySelectorAll('#sidebar .nav-item[data-s="'+s+'"],#bnav .bni[data-s="'+s+'"],#bsheet .bsi[data-s="'+s+'"]').forEach(el=>{el.style.display=ok?'':'none';});
+  });
+}
+function renderLocked(name){
+  let sec=document.getElementById('section-locked');
+  if(!sec){sec=document.createElement('section');sec.id='section-locked';sec.className='section';document.querySelector('#page-member .main-content').appendChild(sec);}
+  sec.innerHTML='<div class="empty" style="padding:80px 24px"><i class="fa-solid fa-lock"></i><p style="font-size:17px;font-weight:600;color:var(--text)">« '+h(SECTION_LABELS[name]||name)+' » n’est pas inclus dans ta formule</p><p style="margin-top:8px">Disponible avec une formule supérieure — contacte ton coach pour en savoir plus 💬</p></div>';
+  document.querySelectorAll('#page-member .section').forEach(s=>s.classList.remove('active'));
+  sec.classList.add('active');
+  const bc=document.getElementById('bc-current');if(bc)bc.textContent=SECTION_LABELS[name]||name;
+}
+function seedFormules(){
+  if(DB.getArr('formules').length)return;
+  DB.set('formules',[
+    {id:1,name:'Essentiel',icon:'🥉',sections:{defis:false,community:false,resources:false,transformation:false,tips:false},modules:'all',repas:'all'},
+    {id:2,name:'Avancé',icon:'🥈',sections:{community:false},modules:'all',repas:'all'},
+    {id:3,name:'Premium',icon:'🥇',sections:{},modules:'all',repas:'all'}
+  ]);
+}
+// Validation d'URL (anti javascript: et data:text/html dans les href/src)
+function safeUrl(u){u=String(u||'').trim();if(!u||u==='#')return'#';if(/^(https?:|data:image\/|\/)/i.test(u))return u;return'#';}
+
+// ---- Admin : gestion des formules ----
+function renderAFormules(){
+  const fsel=document.getElementById('inv-formule');
+  if(fsel){const cur=fsel.value;fsel.innerHTML='<option value="">Accès complet (par défaut)</option>'+DB.getArr('formules').map(f=>'<option value="'+f.id+'">'+(f.icon||'')+' '+h(f.name)+'</option>').join('');fsel.value=cur;}
+  const list=document.getElementById('admin-formules-list');if(!list)return;
+  const fs=DB.getArr('formules');
+  if(!fs.length){list.innerHTML='<div class="empty"><i class="fa-solid fa-layer-group"></i><p>Aucune formule. Crée ta première formule ci-dessus.</p></div>';return;}
+  const nMods=DB.getArr('modules').length,nRep=DB.getArr('repas').length;
+  list.innerHTML=fs.map(f=>{
+    const blocked=GATED_SECTIONS.filter(s=>(f.sections||{})[s]===false);
+    const mTxt=Array.isArray(f.modules)?f.modules.length+'/'+nMods+' modules':'tous les modules';
+    const rTxt=Array.isArray(f.repas)?f.repas.length+'/'+nRep+' repas':'tous les repas';
+    return'<div class="ali"><div class="ali-icon">'+(f.icon||'🎫')+'</div><div><div class="ali-title">'+h(f.name)+'</div><div class="ali-meta">'+(blocked.length?'Bloqué : '+blocked.map(s=>SECTION_LABELS[s]).join(', '):'Toutes les sections')+' · '+mTxt+' · '+rTxt+'</div></div><div class="ali-actions"><button class="btn-edit btn-sm" onclick="editFormule('+f.id+')" title="Régler les accès"><i class="fa-solid fa-pen"></i></button><button class="btn-del btn-sm" onclick="delFormule('+f.id+')"><i class="fa-solid fa-trash"></i></button></div></div>';
+  }).join('');
+}
+function saveFormuleNew(){
+  const name=(document.getElementById('formule-name').value||'').trim().slice(0,40);
+  if(!name){toast('Nom requis','error');return;}
+  const fs=DB.getArr('formules');
+  fs.push({id:Date.now(),name,icon:(document.getElementById('formule-icon').value||'🎫').trim().slice(0,4)||'🎫',sections:{},modules:'all',repas:'all'});
+  DB.set('formules',fs);
+  document.getElementById('formule-name').value='';document.getElementById('formule-icon').value='';
+  renderAFormules();toast('Formule créée ✅ Clique sur ✏️ pour régler ses accès','success');
+}
+function delFormule(id){
+  if(!confirm('Supprimer cette formule ?\n\nLes accès déjà appliqués aux membres ne changent pas.'))return;
+  DB.set('formules',DB.getArr('formules').filter(f=>f.id!==id));renderAFormules();toast('Formule supprimée');
+}
+// ---- Éditeur d'accès partagé (formule + membre) ----
+function accessEditorHTML(acc){
+  const lbl='font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin:16px 0 6px;display:flex;align-items:center;gap:10px';
+  const row='display:flex;align-items:center;gap:9px;padding:6px 0;font-size:14px;cursor:pointer';
+  const secs=GATED_SECTIONS.map(s=>'<label style="'+row+'"><input type="checkbox" class="ae-sec" data-s="'+s+'" '+(((acc.sections||{})[s]!==false)?'checked':'')+' style="width:18px;height:18px;accent-color:var(--blue)"> '+SECTION_LABELS[s]+'</label>').join('');
+  const mods=DB.getArr('modules'),rep=DB.getArr('repas');
+  const mAll=!Array.isArray(acc.modules),rAll=!Array.isArray(acc.repas);
+  const box='max-height:170px;overflow-y:auto;border:1px solid var(--border);border-radius:10px;padding:8px 14px;background:var(--bg2)';
+  const mBoxes=mods.map(m=>'<label style="'+row+';font-size:13px"><input type="checkbox" class="ae-mod" data-id="'+m.id+'" '+((mAll||acc.modules.includes(m.id))?'checked':'')+' style="width:16px;height:16px;accent-color:var(--blue)"> '+(m.icon||'')+' '+h(m.title)+'</label>').join('');
+  const rBoxes=rep.map(r=>'<label style="'+row+';font-size:13px"><input type="checkbox" class="ae-rep" data-id="'+r.id+'" '+((rAll||acc.repas.includes(r.id))?'checked':'')+' style="width:16px;height:16px;accent-color:var(--blue)"> '+h(r.nom)+'</label>').join('');
+  return'<div style="'+lbl+'">Sections accessibles</div><div style="columns:2;gap:18px">'+secs+'</div>'
+    +'<div style="'+lbl+'">Modules autorisés <button class="btn-sec btn-sm" onclick="aeToggleAll(\'ae-mod\')" style="text-transform:none;letter-spacing:0">Tout cocher / décocher</button></div><div style="'+box+'">'+(mBoxes||'<span style="font-size:13px;color:var(--text3)">Aucun module</span>')+'</div>'
+    +'<div style="'+lbl+'">Repas autorisés <button class="btn-sec btn-sm" onclick="aeToggleAll(\'ae-rep\')" style="text-transform:none;letter-spacing:0">Tout cocher / décocher</button></div><div style="'+box+'">'+(rBoxes||'<span style="font-size:13px;color:var(--text3)">Aucun repas</span>')+'</div>';
+}
+function aeToggleAll(cls){const boxes=Array.from(document.querySelectorAll('input.'+cls));const allOn=boxes.every(b=>b.checked);boxes.forEach(b=>{b.checked=!allOn;});}
+function readAccessEditor(){
+  const sections={};document.querySelectorAll('.ae-sec').forEach(b=>{if(!b.checked)sections[b.dataset.s]=false;});
+  const mB=Array.from(document.querySelectorAll('.ae-mod')),rB=Array.from(document.querySelectorAll('.ae-rep'));
+  const mSel=mB.filter(b=>b.checked).map(b=>parseInt(b.dataset.id)),rSel=rB.filter(b=>b.checked).map(b=>parseInt(b.dataset.id));
+  return{sections,modules:(mB.length&&mSel.length===mB.length)?'all':mSel,repas:(rB.length&&rSel.length===rB.length)?'all':rSel};
+}
+function editFormule(id){
+  const f=DB.getArr('formules').find(x=>x.id===id);if(!f)return;
+  document.getElementById('modal-content').innerHTML='<h3 style="font-family:var(--fd);font-size:19px;margin-bottom:4px">'+(f.icon||'🎫')+' Formule « '+h(f.name)+' »</h3><p style="font-size:13px;color:var(--text3)">Coche ce que cette formule débloque. Elle s’applique aux membres via leur fiche ou à la génération du code.</p>'+accessEditorHTML(f)+'<button class="btn" style="margin-top:18px" onclick="saveFormuleEdit('+id+')"><i class="fa-solid fa-save"></i> Enregistrer la formule</button>';
+  openModal();
+}
+function saveFormuleEdit(id){
+  const fs=DB.getArr('formules');const f=fs.find(x=>x.id===id);if(!f)return;
+  Object.assign(f,readAccessEditor());DB.set('formules',fs);closeModal();renderAFormules();toast('Formule enregistrée ✅','success');
+}
+// ---- Admin : accès d'un membre ----
+function openAccessEditor(code){
+  const m=DB.getArr('members').find(x=>x.code===code);if(!m)return;
+  const acc=m.access||{sections:{},modules:'all',repas:'all'};
+  const fs=DB.getArr('formules');
+  document.getElementById('modal-content').innerHTML='<h3 style="font-family:var(--fd);font-size:19px;margin-bottom:4px"><i class="fa-solid fa-key" style="color:var(--gold)"></i> Accès — '+h(m.name)+'</h3><p style="font-size:13px;color:var(--text3)">Applique une formule puis ajuste finement, ou coche directement.</p><div style="display:flex;gap:8px;align-items:center;margin:14px 0"><select id="ae-formule" class="pc-cat" style="flex:1;min-width:0">'+'<option value="">— Sans formule (personnalisé) —</option>'+fs.map(f=>'<option value="'+f.id+'" '+(acc.formule===f.id?'selected':'')+'>'+(f.icon||'')+' '+h(f.name)+'</option>').join('')+'</select><button class="btn-sec btn-sm" onclick="applyFormuleToEditor()">Appliquer</button></div>'+accessEditorHTML(acc)+'<button class="btn" style="margin-top:18px" onclick="saveMemberAccess(\''+code+'\')"><i class="fa-solid fa-save"></i> Enregistrer les accès</button>';
+  openModal();
+}
+function applyFormuleToEditor(){
+  const fid=parseInt(document.getElementById('ae-formule').value);
+  const f=DB.getArr('formules').find(x=>x.id===fid);
+  if(!f){toast('Choisis une formule à appliquer','error');return;}
+  document.querySelectorAll('.ae-sec').forEach(b=>{b.checked=(f.sections||{})[b.dataset.s]!==false;});
+  document.querySelectorAll('.ae-mod').forEach(b=>{b.checked=!Array.isArray(f.modules)||f.modules.includes(parseInt(b.dataset.id));});
+  document.querySelectorAll('.ae-rep').forEach(b=>{b.checked=!Array.isArray(f.repas)||f.repas.includes(parseInt(b.dataset.id));});
+  toast('Formule « '+f.name+' » appliquée — ajuste puis enregistre');
+}
+function saveMemberAccess(code){
+  const members=DB.getArr('members');const m=members.find(x=>x.code===code);if(!m)return;
+  const acc=readAccessEditor();acc.formule=parseInt(document.getElementById('ae-formule').value)||null;
+  m.access=acc;DB.set('members',members);closeModal();renderAMembers();
+  toast('Accès de '+m.name+' mis à jour ✅ (effectif sur ses appareils en ~15 s)','success');
+}
+function resetMemberPw(code,name){
+  if(!confirm('Réinitialiser le mot de passe de '+name+' ?\n\nIl créera un nouveau mot de passe à sa prochaine connexion avec son code '+code+'.'))return;
+  const members=DB.getArr('members');const m=members.find(x=>x.code===code);if(!m)return;
+  delete m.pwHash;delete m.pwSalt;DB.set('members',members);renderAMembers();toast('Mot de passe réinitialisé ✅','success');
+}
 
 // ============================================================
 // PAGES & NAV
 // ============================================================
 function showPage(n){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById('page-'+n).classList.add('active');}
-function showMember(){showPage('member');renderNavProfile();renderNotifs();gotoS('dashboard');document.getElementById('bnav').style.display='block';document.getElementById('admin-bnav').style.display='none';}
+function showMember(){showPage('member');renderNavProfile();renderNotifs();applyAccessUI();gotoS('dashboard');document.getElementById('bnav').style.display='block';document.getElementById('admin-bnav').style.display='none';}
 function showAdmin(){showPage('admin');gotoAS('adashboard');document.getElementById('admin-bnav').style.display='block';document.getElementById('bnav').style.display='none';}
 function renderNavProfile(){const init=initials(CU.name);const lv=getLevel(CU.xp||0);document.getElementById('tb-name').textContent='Bonjour '+CU.name.split(' ')[0]+' 👋';document.getElementById('tb-xp-val').textContent=(CU.xp||0)+' XP';document.getElementById('sb-profile').innerHTML='<div class="sbp-av">'+init+'</div><div class="sbp-info"><div class="sbp-name">'+h(CU.name)+'</div><div style="margin-top:3px"><span class="lv-pill lv-'+lv.name+'" style="font-size:10px;padding:3px 12px">'+lv.name+'</span></div></div>';}
 
 const SNAMES={dashboard:'Dashboard',modules:'Modules',repas:'Repas',defis:'Défis',community:'Communauté',resources:'Ressources',body:'Suivi corporel',transformation:'Transformation',temoignage:'Témoignage',glossaire:'Glossaire',tips:'Tips & Récup',faq:'FAQ','module-detail':'Module'};
 function gotoS(name){
+  if(CU&&!CU.isAdmin&&!CU.isPreview&&!canSection(name)){renderLocked(name);closeSB();window.scrollTo(0,0);return;}
   document.querySelectorAll('#page-member .section').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('#sidebar .nav-item').forEach(n=>n.classList.remove('active'));
   const sec=document.getElementById('section-'+name);if(sec)sec.classList.add('active');
@@ -2407,7 +2659,7 @@ function gotoAS(name){
   document.querySelectorAll('#admin-sidebar .nav-item').forEach(n=>n.classList.remove('active'));
   const sec=document.getElementById('section-'+name);if(sec)sec.classList.add('active');
   const nav=document.querySelector('#admin-sidebar .nav-item[data-as="'+name+'"]');if(nav)nav.classList.add('active');
-  if(name==='adashboard')renderAdminDash();if(name==='amodules')renderAMods();if(name==='arepas')renderARepas();if(name==='adefis')renderADefis();if(name==='ainvites')renderAInvites();if(name==='amembers')renderAMembers();if(name==='acommunity')renderAComm();if(name==='aresources')renderARes();if(name==='aglossaire')renderAGlos();if(name==='atips')renderATips();if(name==='afaq')renderAFAQ();if(name==='amessage'){const m=DB.get('coach_message');if(m)document.getElementById('coach-msg').value=m;}
+  if(name==='adashboard')renderAdminDash();if(name==='amodules')renderAMods();if(name==='arepas')renderARepas();if(name==='adefis')renderADefis();if(name==='aformules')renderAFormules();if(name==='ainvites')renderAInvites();if(name==='amembers')renderAMembers();if(name==='acommunity')renderAComm();if(name==='aresources')renderARes();if(name==='aglossaire')renderAGlos();if(name==='atips')renderATips();if(name==='afaq')renderAFAQ();if(name==='amessage'){const m=DB.get('coach_message');if(m)document.getElementById('coach-msg').value=m;}
   closeASB();window.scrollTo(0,0);
 }
 function updateFAB(s){const fab=document.getElementById('fab');fab.style.display=['community','body','transformation'].includes(s)&&window.innerWidth<=768?'flex':'none';fab.dataset.s=s;}
@@ -2440,11 +2692,11 @@ function closeGS(){document.getElementById('gs-ov').classList.remove('active');}
 function doGS(q){
   if(!q.trim()){document.getElementById('gs-results').innerHTML='<div class="gs-empty">Commence à taper...</div>';return;}
   const ql=q.toLowerCase(),res=[];
-  DB.getArr('modules').forEach(m=>{if(m.title.toLowerCase().includes(ql)||(m.desc||'').toLowerCase().includes(ql))res.push({icon:m.icon||'📚',title:m.title,sub:m.domain,action:"gotoS('modules');viewMod("+m.id+")"});});
-  DB.getArr('repas').forEach(r=>{if(r.nom.toLowerCase().includes(ql))res.push({icon:'🍽️',title:r.nom,sub:r.cal+' kcal',action:"gotoS('repas')"});});
-  DB.getArr('glossaire').forEach(g=>{if(g.term.toLowerCase().includes(ql)||(g.def||'').toLowerCase().includes(ql))res.push({icon:g.emoji||'📖',title:g.term,sub:g.cat,action:"gotoS('glossaire')"});});
-  DB.getArr('faq').forEach(f=>{if(f.q.toLowerCase().includes(ql)||(f.a||'').toLowerCase().includes(ql))res.push({icon:'❓',title:f.q,sub:f.theme,action:"gotoS('faq')"});});
-  DB.getArr('resources').forEach(r=>{if(r.title.toLowerCase().includes(ql))res.push({icon:'📁',title:r.title,sub:r.cat,action:"gotoS('resources')"});});
+  (canSection('modules')?filterByAccess(DB.getArr('modules'),'modules'):[]).forEach(m=>{if(m.title.toLowerCase().includes(ql)||(m.desc||'').toLowerCase().includes(ql))res.push({icon:m.icon||'📚',title:m.title,sub:m.domain,action:"gotoS('modules');viewMod("+m.id+")"});});
+  (canSection('repas')?filterByAccess(DB.getArr('repas'),'repas'):[]).forEach(r=>{if(r.nom.toLowerCase().includes(ql))res.push({icon:'🍽️',title:r.nom,sub:r.cal+' kcal',action:"gotoS('repas')"});});
+  (canSection('glossaire')?DB.getArr('glossaire'):[]).forEach(g=>{if(g.term.toLowerCase().includes(ql)||(g.def||'').toLowerCase().includes(ql))res.push({icon:g.emoji||'📖',title:g.term,sub:g.cat,action:"gotoS('glossaire')"});});
+  (canSection('faq')?DB.getArr('faq'):[]).forEach(f=>{if(f.q.toLowerCase().includes(ql)||(f.a||'').toLowerCase().includes(ql))res.push({icon:'❓',title:f.q,sub:f.theme,action:"gotoS('faq')"});});
+  (canSection('resources')?DB.getArr('resources'):[]).forEach(r=>{if(r.title.toLowerCase().includes(ql))res.push({icon:'📁',title:r.title,sub:r.cat,action:"gotoS('resources')"});});
   const el=document.getElementById('gs-results');
   if(!res.length){el.innerHTML='<div class="gs-empty">Aucun résultat</div>';return;}
   el.innerHTML=res.slice(0,8).map(r=>'<div class="gs-row" onclick="'+r.action+';closeGS()"><div class="gs-ri">'+r.icon+'</div><div><div class="gs-rt">'+h(r.title)+'</div><div class="gs-rs">'+h(r.sub||'')+'</div></div></div>').join('');
@@ -2463,7 +2715,7 @@ function exitPreview(){isPreview=false;CU=DB.get('session')||{name:'Noah Cana',i
 // DASHBOARD
 // ============================================================
 function renderDash(){
-  const mods=DB.getArr('modules');const totalL=mods.reduce((s,m)=>s+m.lessons.length,0);const doneL=(CU.completedLessons||[]).length;const pct=totalL?Math.round(doneL/totalL*100):0;
+  const mods=filterByAccess(DB.getArr('modules'),'modules');const totalL=mods.reduce((s,m)=>s+m.lessons.length,0);const doneL=(CU.completedLessons||[]).length;const pct=totalL?Math.round(doneL/totalL*100):0;
   const defis=DB.getArr('defis');const doneD=(CU.completedDefis||[]).length;
   const xp=CU.xp||0;const lv=getLevel(xp);const nlv=LEVELS[LEVELS.indexOf(lv)+1];const xpPct=nlv?Math.round((xp-lv.min)/(nlv.min-lv.min)*100):100;
   const badges=(CU.badges||[]).map(bid=>{const b=BADGES.find(x=>x.id===bid);return b?'<div class="badge-pill">'+b.icon+' '+b.label+'</div>':'';}).join('');
@@ -2493,13 +2745,13 @@ function toggleCk(key){const k='ck_'+(CU.code||'')+'_'+new Date().toISOString().
 // ============================================================
 // MODULES
 // ============================================================
-function renderMods(filter){filter=filter||activeGF;activeGF=filter;const mods=DB.getArr('modules');document.querySelectorAll('#mods-filter .ftab').forEach(b=>{b.classList.toggle('active',b.dataset.f===filter);b.onclick=()=>renderMods(b.dataset.f);});const filtered=filter==='all'?mods:mods.filter(m=>m.domain===filter);const grid=document.getElementById('mods-grid');if(!filtered.length){grid.innerHTML='<div class="empty"><i class="fa-solid fa-graduation-cap"></i><p>Aucun module disponible.</p></div>';return;}grid.innerHTML=filtered.map(m=>{const done=m.lessons.filter(l=>(CU.completedLessons||[]).includes(m.id+'-'+l.id)).length;const total=m.lessons.length;const pct=total?Math.round(done/total*100):0;return '<div class="mod-card" onclick="viewMod('+m.id+')"><div class="mod-banner dom-'+m.domain+'">'+(m.icon||'📚')+'</div><div class="mod-body"><div class="mod-dom">'+m.domain+'</div><div class="mod-title">'+h(m.title)+'</div><div class="mod-desc">'+h(m.desc||'')+'</div><div class="pbw" style="max-width:none"><div class="pbf" style="width:'+pct+'%"></div></div><div style="font-size:11px;color:var(--text3);margin-top:5px">'+done+'/'+total+' leçons · '+pct+'%</div></div><div class="mod-footer"><span><i class="fa-solid fa-book-open"></i> '+total+' leçon'+(total>1?'s':'')+'</span>'+(pct===100?'<span class="mod-done">✅ Terminé</span>':(done>0?'<button class="mod-resume"><i class="fa-solid fa-play"></i> Reprendre</button>':'<span class="mod-start">Commencer <i class="fa-solid fa-arrow-right"></i></span>'))+'</div></div>';}).join('');}
+function renderMods(filter){filter=filter||activeGF;activeGF=filter;const mods=filterByAccess(DB.getArr('modules'),'modules');document.querySelectorAll('#mods-filter .ftab').forEach(b=>{b.classList.toggle('active',b.dataset.f===filter);b.onclick=()=>renderMods(b.dataset.f);});const filtered=filter==='all'?mods:mods.filter(m=>m.domain===filter);const grid=document.getElementById('mods-grid');if(!filtered.length){grid.innerHTML='<div class="empty"><i class="fa-solid fa-graduation-cap"></i><p>Aucun module disponible.</p></div>';return;}grid.innerHTML=filtered.map(m=>{const done=m.lessons.filter(l=>(CU.completedLessons||[]).includes(m.id+'-'+l.id)).length;const total=m.lessons.length;const pct=total?Math.round(done/total*100):0;return '<div class="mod-card" onclick="viewMod('+m.id+')"><div class="mod-banner dom-'+m.domain+'">'+(m.icon||'📚')+'</div><div class="mod-body"><div class="mod-dom">'+m.domain+'</div><div class="mod-title">'+h(m.title)+'</div><div class="mod-desc">'+h(m.desc||'')+'</div><div class="pbw" style="max-width:none"><div class="pbf" style="width:'+pct+'%"></div></div><div style="font-size:11px;color:var(--text3);margin-top:5px">'+done+'/'+total+' leçons · '+pct+'%</div></div><div class="mod-footer"><span><i class="fa-solid fa-book-open"></i> '+total+' leçon'+(total>1?'s':'')+'</span>'+(pct===100?'<span class="mod-done">✅ Terminé</span>':(done>0?'<button class="mod-resume"><i class="fa-solid fa-play"></i> Reprendre</button>':'<span class="mod-start">Commencer <i class="fa-solid fa-arrow-right"></i></span>'))+'</div></div>';}).join('');}
 
-function viewMod(id){const mods=DB.getArr('modules');const m=mods.find(x=>x.id===id);if(!m)return;gotoS('module-detail');const done=m.lessons.filter(l=>(CU.completedLessons||[]).includes(m.id+'-'+l.id)).length;const total=m.lessons.length;const pct=total?Math.round(done/total*100):0;const toc=m.lessons.map((l,i)=>{const isDone=(CU.completedLessons||[]).includes(m.id+'-'+l.id);return '<div class="mdtoc-item '+(isDone?'done':'')+'" onclick="openLesson('+m.id+',\''+l.id+'\')"><div class="mdtoc-num">'+(isDone?'✓':(i+1))+'</div><span>'+h(l.title)+'</span></div>';}).join('');
+function viewMod(id){const mods=DB.getArr('modules');const m=mods.find(x=>x.id===id);if(!m)return;if(CU&&!CU.isAdmin&&!CU.isPreview&&(!canSection('modules')||!filterByAccess([m],'modules').length)){gotoS('modules');return;}gotoS('module-detail');const done=m.lessons.filter(l=>(CU.completedLessons||[]).includes(m.id+'-'+l.id)).length;const total=m.lessons.length;const pct=total?Math.round(done/total*100):0;const toc=m.lessons.map((l,i)=>{const isDone=(CU.completedLessons||[]).includes(m.id+'-'+l.id);return '<div class="mdtoc-item '+(isDone?'done':'')+'" onclick="openLesson('+m.id+',\''+l.id+'\')"><div class="mdtoc-num">'+(isDone?'✓':(i+1))+'</div><span>'+h(l.title)+'</span></div>';}).join('');
   document.getElementById('mod-detail-wrap').innerHTML='<div style="position:sticky;top:60px;z-index:50;background:var(--surface);border-bottom:1px solid var(--border);padding:8px 4px;margin-bottom:20px"><div style="display:flex;align-items:center;gap:12px"><span style="font-size:12px;color:var(--text3);font-weight:600">'+pct+'% complété</span><div class="pbw" style="flex:1;margin:0;max-width:none"><div class="pbf" style="width:'+pct+'%"></div></div><span style="font-size:12px;color:var(--text3)">'+done+'/'+total+'</span></div></div><div class="mdw"><div class="mdm"><div class="mod-detail-hdr"><div class="mdh-icon">'+(m.icon||'📚')+'</div><div><div class="mdh-dom">'+m.domain+'</div><div class="mdh-title">'+h(m.title)+'</div><div class="mdh-desc">'+h(m.desc||'')+'</div></div></div>'+(pct===100&&total>0?'<div class="cert-banner"><div class="cert-icon">🏅</div><div class="cert-t"><h4>Module complété !</h4><p>Toutes les leçons validées. Bravo !</p></div></div>':'')+'<div class="lessons-list">'+m.lessons.map((l,i)=>{const isDone=(CU.completedLessons||[]).includes(m.id+'-'+l.id);const words=((l.content||'').split(' ').length);const mins=Math.max(1,Math.ceil(words/200));return '<div class="lesson-item" onclick="openLesson('+m.id+',\''+l.id+'\')"><div class="lesson-num '+(isDone?'done':'')+'">'+(isDone?'<i class="fa-solid fa-check"></i>':(i+1))+'</div><div><div class="lesson-title">'+h(l.title)+'</div><div class="lesson-meta"><span><i class="fa-regular fa-clock"></i> '+(l.duration||'~'+mins+' min')+'</span>'+(l.videoUrl?'<span><i class="fa-solid fa-video"></i> Vidéo</span>':'')+'</div></div><div style="margin-left:auto;font-size:20px">'+(isDone?'✅':'▶️')+'</div></div>';}).join('')+'</div></div><div class="mdtoc"><div class="mdtoc-card"><div class="mdtoc-title">Table des matières</div>'+toc+'</div></div></div>';
   document.querySelectorAll('#sidebar .nav-item').forEach(n=>n.classList.remove('active'));}
 
-function openLesson(modId,lesId){const mods=DB.getArr('modules');const m=mods.find(x=>x.id===modId);if(!m)return;const l=m.lessons.find(x=>x.id===lesId);if(!l)return;const isDone=(CU.completedLessons||[]).includes(m.id+'-'+l.id);const nk=m.id+'-'+l.id;const savedNote=(CU.lessonNotes||{})[nk]||'';const videoHtml=l.videoUrl?'<iframe class="lesson-video" src="'+l.videoUrl+'" allowfullscreen></iframe>':'';const quizHtml=l.quiz&&l.quiz.question?'<div class="lesson-quiz"><div class="lq-title">📝 '+h(l.quiz.question)+'</div><div class="lq-opts">'+(l.quiz.options||[]).map((o,i)=>'<button class="lq-opt" onclick="answerQuiz(this,'+i+','+l.quiz.correct+')">'+h(o)+'</button>').join('')+'</div></div>':'';const fm=document.createElement('div');fm.className='focus-mode';fm.id='focus-mode-el';fm.innerHTML='<div class="fm-hdr"><div class="fm-title">'+h(l.title)+'</div><button class="fm-close" onclick="document.getElementById(\'focus-mode-el\').remove()"><i class="fa-solid fa-xmark"></i> Fermer</button></div><div class="fm-body">'+videoHtml+'<div class="lesson-body">'+h(l.content||'Contenu à venir.')+'</div>'+quizHtml+'<div class="lesson-notes"><button class="ln-toggle" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display===\'none\'?\'block\':\'none\'"><i class="fa-solid fa-pen"></i> Mes notes</button><textarea class="ln-area" id="ln-area" placeholder="Prends des notes ici..." style="display:none">'+h(savedNote)+'</textarea></div><button class="btn-done '+(isDone?'undone':'')+'" onclick="toggleLessonDone('+modId+',\''+lesId+'\')">'+(isDone?'<i class="fa-solid fa-rotate-left"></i> Marquer non complété':'<i class="fa-solid fa-check"></i> Marquer comme complété')+'</button></div>';document.body.appendChild(fm);const na=document.getElementById('ln-area');if(na)na.addEventListener('input',()=>{if(!CU.lessonNotes)CU.lessonNotes={};CU.lessonNotes[nk]=na.value;saveCU();});}
+function openLesson(modId,lesId){const mods=DB.getArr('modules');const m=mods.find(x=>x.id===modId);if(!m)return;if(CU&&!CU.isAdmin&&!CU.isPreview&&(!canSection('modules')||!filterByAccess([m],'modules').length))return;const l=m.lessons.find(x=>x.id===lesId);if(!l)return;const isDone=(CU.completedLessons||[]).includes(m.id+'-'+l.id);const nk=m.id+'-'+l.id;const savedNote=(CU.lessonNotes||{})[nk]||'';const videoHtml=l.videoUrl?'<iframe class="lesson-video" src="'+escA(safeUrl(l.videoUrl))+'" allowfullscreen></iframe>':'';const quizHtml=l.quiz&&l.quiz.question?'<div class="lesson-quiz"><div class="lq-title">📝 '+h(l.quiz.question)+'</div><div class="lq-opts">'+(l.quiz.options||[]).map((o,i)=>'<button class="lq-opt" onclick="answerQuiz(this,'+i+','+l.quiz.correct+')">'+h(o)+'</button>').join('')+'</div></div>':'';const fm=document.createElement('div');fm.className='focus-mode';fm.id='focus-mode-el';fm.innerHTML='<div class="fm-hdr"><div class="fm-title">'+h(l.title)+'</div><button class="fm-close" onclick="document.getElementById(\'focus-mode-el\').remove()"><i class="fa-solid fa-xmark"></i> Fermer</button></div><div class="fm-body">'+videoHtml+'<div class="lesson-body">'+h(l.content||'Contenu à venir.')+'</div>'+quizHtml+'<div class="lesson-notes"><button class="ln-toggle" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display===\'none\'?\'block\':\'none\'"><i class="fa-solid fa-pen"></i> Mes notes</button><textarea class="ln-area" id="ln-area" placeholder="Prends des notes ici..." style="display:none">'+h(savedNote)+'</textarea></div><button class="btn-done '+(isDone?'undone':'')+'" onclick="toggleLessonDone('+modId+',\''+lesId+'\')">'+(isDone?'<i class="fa-solid fa-rotate-left"></i> Marquer non complété':'<i class="fa-solid fa-check"></i> Marquer comme complété')+'</button></div>';document.body.appendChild(fm);const na=document.getElementById('ln-area');if(na)na.addEventListener('input',()=>{if(!CU.lessonNotes)CU.lessonNotes={};CU.lessonNotes[nk]=na.value;saveCU();});}
 
 function answerQuiz(btn,idx,correct){const opts=btn.closest('.lq-opts').querySelectorAll('.lq-opt');opts.forEach(o=>o.disabled=true);if(idx===correct){btn.classList.add('correct');toast('✅ Bonne réponse !','success');}else{btn.classList.add('wrong');opts[correct].classList.add('correct');toast('❌ Mauvaise réponse','error');}}
 
@@ -2508,11 +2760,11 @@ function toggleLessonDone(modId,lesId){const key=modId+'-'+lesId;if(!CU.complete
 // ============================================================
 // REPAS
 // ============================================================
-function renderRepas(){const q=(document.getElementById('repas-search')?.value||'').toLowerCase();let list=DB.getArr('repas');if(activeRepF==='favoris')list=list.filter(r=>(CU.favRepas||[]).includes(r.id));else if(activeRepF!=='all')list=list.filter(r=>r.cat===activeRepF);if(q)list=list.filter(r=>r.nom.toLowerCase().includes(q));document.querySelectorAll('#repas-filter .ftab').forEach(b=>{b.classList.toggle('active',b.dataset.f===activeRepF);b.onclick=()=>{activeRepF=b.dataset.f;renderRepas();};});const grid=document.getElementById('repas-grid');const catL={'petit-dejeuner':'Petit-déjeuner','dejeuner':'Déjeuner','diner':'Dîner','snack':'Snack','collation':'Collation'};if(!list.length){grid.innerHTML='<div class="empty"><i class="fa-solid fa-utensils"></i><p>Aucun repas.</p></div>';return;}grid.innerHTML=list.map(r=>{const fav=(CU.favRepas||[]).includes(r.id);const prot=parseFloat(r.prot)||0,gluc=parseFloat(r.gluc)||0,lip=parseFloat(r.lip)||0;const tot=prot+gluc+lip||1;const pa=Math.round(prot/tot*100),ga=Math.round(gluc/tot*100),la=100-pa-ga;return '<div class="repas-card" onclick="openRepasDetail('+r.id+')">'+(r.photo?'<img src="'+r.photo+'" class="repas-img" alt="" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'"><div class="repas-ph" style="display:none">🍽️</div>':'<div class="repas-ph">🍽️</div>')+'<div class="repas-body"><div class="repas-cat">'+(catL[r.cat]||r.cat)+'</div><div class="repas-name">'+h(r.nom)+'</div><div class="mr-wrap">'+drawRing(pa,ga,la)+'<div class="ml"><div class="ml-item"><div class="ml-dot" style="background:#1a6bbf"></div><span class="ml-v">'+r.prot+'g</span><span class="ml-l">Prot.</span></div><div class="ml-item"><div class="ml-dot" style="background:#d35400"></div><span class="ml-v">'+r.gluc+'g</span><span class="ml-l">Gluc.</span></div><div class="ml-item"><div class="ml-dot" style="background:#c9972a"></div><span class="ml-v">'+r.lip+'g</span><span class="ml-l">Lip.</span></div></div></div><div class="repas-kcal"><i class="fa-solid fa-fire" style="color:var(--orange)"></i> '+r.cal+' kcal</div><button class="fav-btn '+(fav?'act':'')+'" onclick="event.stopPropagation();toggleFavRepas('+r.id+',this)"><i class="fa-'+(fav?'solid':'regular')+' fa-star"></i> '+(fav?'Favori':'Favoris')+'</button></div></div>';}).join('');}
+function renderRepas(){const q=(document.getElementById('repas-search')?.value||'').toLowerCase();let list=filterByAccess(DB.getArr('repas'),'repas');if(activeRepF==='favoris')list=list.filter(r=>(CU.favRepas||[]).includes(r.id));else if(activeRepF!=='all')list=list.filter(r=>r.cat===activeRepF);if(q)list=list.filter(r=>r.nom.toLowerCase().includes(q));document.querySelectorAll('#repas-filter .ftab').forEach(b=>{b.classList.toggle('active',b.dataset.f===activeRepF);b.onclick=()=>{activeRepF=b.dataset.f;renderRepas();};});const grid=document.getElementById('repas-grid');const catL={'petit-dejeuner':'Petit-déjeuner','dejeuner':'Déjeuner','diner':'Dîner','snack':'Snack','collation':'Collation'};if(!list.length){grid.innerHTML='<div class="empty"><i class="fa-solid fa-utensils"></i><p>Aucun repas.</p></div>';return;}grid.innerHTML=list.map(r=>{const fav=(CU.favRepas||[]).includes(r.id);const prot=parseFloat(r.prot)||0,gluc=parseFloat(r.gluc)||0,lip=parseFloat(r.lip)||0;const tot=prot+gluc+lip||1;const pa=Math.round(prot/tot*100),ga=Math.round(gluc/tot*100),la=100-pa-ga;return '<div class="repas-card" onclick="openRepasDetail('+r.id+')">'+(r.photo?'<img src="'+escA(safeUrl(r.photo))+'" class="repas-img" alt="" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'"><div class="repas-ph" style="display:none">🍽️</div>':'<div class="repas-ph">🍽️</div>')+'<div class="repas-body"><div class="repas-cat">'+(catL[r.cat]||r.cat)+'</div><div class="repas-name">'+h(r.nom)+'</div><div class="mr-wrap">'+drawRing(pa,ga,la)+'<div class="ml"><div class="ml-item"><div class="ml-dot" style="background:#1a6bbf"></div><span class="ml-v">'+r.prot+'g</span><span class="ml-l">Prot.</span></div><div class="ml-item"><div class="ml-dot" style="background:#d35400"></div><span class="ml-v">'+r.gluc+'g</span><span class="ml-l">Gluc.</span></div><div class="ml-item"><div class="ml-dot" style="background:#c9972a"></div><span class="ml-v">'+r.lip+'g</span><span class="ml-l">Lip.</span></div></div></div><div class="repas-kcal"><i class="fa-solid fa-fire" style="color:var(--orange)"></i> '+r.cal+' kcal</div><button class="fav-btn '+(fav?'act':'')+'" onclick="event.stopPropagation();toggleFavRepas('+r.id+',this)"><i class="fa-'+(fav?'solid':'regular')+' fa-star"></i> '+(fav?'Favori':'Favoris')+'</button></div></div>';}).join('');}
 
 function drawRing(p,g,l){const r=24,cx=28,cy=28,C=2*Math.PI*r;const ap=C*(p/100),ag=C*(g/100),al=C*(l/100);return '<svg width="56" height="56" viewBox="0 0 56 56" style="flex-shrink:0"><circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="var(--border2)" stroke-width="7"/><circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="#1a6bbf" stroke-width="7" stroke-dasharray="'+ap+' '+C+'" stroke-dashoffset="'+(C/4)+'" style="transform:rotate(-90deg);transform-origin:50% 50%"/><circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="#d35400" stroke-width="7" stroke-dasharray="'+ag+' '+C+'" stroke-dashoffset="'+(C/4-ap)+'" style="transform:rotate(-90deg);transform-origin:50% 50%"/><circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="#c9972a" stroke-width="7" stroke-dasharray="'+al+' '+C+'" stroke-dashoffset="'+(C/4-ap-ag)+'" style="transform:rotate(-90deg);transform-origin:50% 50%"/></svg>';}
 
-function openRepasDetail(id){const r=DB.getArr('repas').find(x=>x.id===id);if(!r)return;document.getElementById('modal-content').innerHTML='<h3 style="font-family:var(--fd);font-size:20px;margin-bottom:8px">'+h(r.nom)+'</h3>'+(r.photo?'<img src="'+r.photo+'" style="width:100%;height:180px;object-fit:cover;border-radius:var(--r);margin:12px 0" alt="">':'')+'<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:16px 0">'+[['🔥','Calories',r.cal+' kcal'],['💪','Protéines',r.prot+'g'],['🌾','Glucides',r.gluc+'g'],['💧','Lipides',r.lip+'g']].map(a=>'<div style="background:var(--bg2);border-radius:var(--r);padding:12px;text-align:center"><div style="font-size:20px;margin-bottom:6px">'+a[0]+'</div><div style="font-size:15px;font-weight:700">'+a[2]+'</div><div style="font-size:11px;color:var(--text3)">'+a[1]+'</div></div>').join('')+'</div>'+(r.desc?'<div style="font-size:14px;color:var(--text2);line-height:1.75;border-top:1px solid var(--border);padding-top:14px">'+h(r.desc)+'</div>':'');openModal();}
+function openRepasDetail(id){const r=DB.getArr('repas').find(x=>x.id===id);if(!r)return;if(CU&&!CU.isAdmin&&!CU.isPreview&&(!canSection('repas')||!filterByAccess([r],'repas').length))return;document.getElementById('modal-content').innerHTML='<h3 style="font-family:var(--fd);font-size:20px;margin-bottom:8px">'+h(r.nom)+'</h3>'+(r.photo?'<img src="'+escA(safeUrl(r.photo))+'" style="width:100%;height:180px;object-fit:cover;border-radius:var(--r);margin:12px 0" alt="">':'')+'<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:16px 0">'+[['🔥','Calories',r.cal+' kcal'],['💪','Protéines',r.prot+'g'],['🌾','Glucides',r.gluc+'g'],['💧','Lipides',r.lip+'g']].map(a=>'<div style="background:var(--bg2);border-radius:var(--r);padding:12px;text-align:center"><div style="font-size:20px;margin-bottom:6px">'+a[0]+'</div><div style="font-size:15px;font-weight:700">'+a[2]+'</div><div style="font-size:11px;color:var(--text3)">'+a[1]+'</div></div>').join('')+'</div>'+(r.desc?'<div style="font-size:14px;color:var(--text2);line-height:1.75;border-top:1px solid var(--border);padding-top:14px">'+h(r.desc)+'</div>':'');openModal();}
 
 function toggleFavRepas(id,btn){if(!CU.favRepas)CU.favRepas=[];const i=CU.favRepas.indexOf(id);if(i>=0){CU.favRepas.splice(i,1);btn.classList.remove('act');btn.innerHTML='<i class="fa-regular fa-star"></i> Favoris';}else{CU.favRepas.push(id);btn.classList.add('act');btn.innerHTML='<i class="fa-solid fa-star"></i> Favori';}saveCU();}
 
@@ -2532,17 +2784,17 @@ function renderPosts(){let posts=DB.getArr('posts');if(activeCF!=='all')posts=po
 
 function reactPost(pid,rxn){const posts=DB.getArr('posts');const p=posts.find(x=>x.id===pid);if(!p)return;if(!p.reactions)p.reactions={};if(!p.myReactions)p.myReactions={};if(!p.myReactions[CU.code])p.myReactions[CU.code]={};const mine=p.myReactions[CU.code][rxn];if(mine){p.reactions[rxn]=Math.max(0,(p.reactions[rxn]||1)-1);p.myReactions[CU.code][rxn]=false;}else{p.reactions[rxn]=(p.reactions[rxn]||0)+1;p.myReactions[CU.code][rxn]=true;}DB.set('posts',posts);renderPosts();}
 function toggleComments(id){document.getElementById('pc-'+id).classList.toggle('open');}
-function submitComment(pid){const inp=document.getElementById('ci-'+pid);if(!inp||!inp.value.trim())return;const c=DB.getArr('comments_'+pid);const replyTo=inp.dataset.replyto||'';c.push({id:Date.now(),author:CU.isAdmin?'Noah (Coach)':CU.name,isCoach:!!CU.isAdmin,text:inp.value.trim(),replyTo:replyTo,createdAt:new Date().toISOString()});DB.set('comments_'+pid,c);inp.value='';inp.dataset.replyto='';renderPosts();document.getElementById('pc-'+pid).classList.add('open');}
+function submitComment(pid){const inp=document.getElementById('ci-'+pid);if(!inp||!inp.value.trim())return;const c=DB.getArr('comments_'+pid);const replyTo=inp.dataset.replyto||'';c.push({id:Date.now(),author:CU.isAdmin?'Noah (Coach)':CU.name,isCoach:!!CU.isAdmin,text:inp.value.trim().slice(0,600),replyTo:replyTo,createdAt:new Date().toISOString()});DB.set('comments_'+pid,c);inp.value='';inp.dataset.replyto='';renderPosts();document.getElementById('pc-'+pid).classList.add('open');}
 function replyToComment(pid,author){const inp=document.getElementById('ci-'+pid);if(!inp)return;document.getElementById('pc-'+pid).classList.add('open');inp.dataset.replyto=author;inp.value='@'+author+' ';inp.focus();}
 function handlePostImg(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{pendingImg=e.target.result;document.getElementById('pc-img-prev').innerHTML='<img src="'+e.target.result+'" style="max-height:50px;border-radius:6px">';};r.readAsDataURL(f);}
-function publishPost(){const text=(document.getElementById('post-text')?.value||'').trim();const cat=document.getElementById('post-cat')?.value||'Motivation';if(!text&&!pendingImg)return;const posts=DB.getArr('posts');posts.push({id:Date.now(),author:CU.name,authorCode:CU.code,authorId:CU.id||0,body:text,cat,image:pendingImg||null,createdAt:new Date().toISOString(),likes:0,likedBy:[],pinned:false,reactions:{},myReactions:{}});DB.set('posts',posts);if(!CU.isPreview){CU.postCount=(CU.postCount||0)+1;CU.xp=(CU.xp||0)+10;saveCU();checkBadges();}pendingImg=null;document.getElementById('tb-xp-val').textContent=(CU.xp||0)+' XP';toast('Post publié ! +10 XP 🔥','success');renderComm();}
+function publishPost(){const text=(document.getElementById('post-text')?.value||'').trim().slice(0,3000);const cat=document.getElementById('post-cat')?.value||'Motivation';if(!text&&!pendingImg)return;const posts=DB.getArr('posts');posts.push({id:Date.now(),author:CU.name,authorCode:CU.code,authorId:CU.id||0,body:text,cat,image:pendingImg||null,createdAt:new Date().toISOString(),likes:0,likedBy:[],pinned:false,reactions:{},myReactions:{}});DB.set('posts',posts);if(!CU.isPreview){CU.postCount=(CU.postCount||0)+1;CU.xp=(CU.xp||0)+10;saveCU();checkBadges();}pendingImg=null;document.getElementById('tb-xp-val').textContent=(CU.xp||0)+' XP';toast('Post publié ! +10 XP 🔥','success');renderComm();}
 function likePost(id){const posts=DB.getArr('posts');const p=posts.find(x=>x.id===id);if(!p)return;if(!p.likedBy)p.likedBy=[];const i=p.likedBy.indexOf(CU.code);if(i>=0){p.likedBy.splice(i,1);p.likes=Math.max(0,(p.likes||1)-1);}else{p.likedBy.push(CU.code);p.likes=(p.likes||0)+1;}DB.set('posts',posts);renderPosts();}
 function deletePost(id){DB.set('posts',DB.getArr('posts').filter(p=>p.id!==id));renderPosts();toast('Post supprimé');}
 
 // ============================================================
 // RESOURCES
 // ============================================================
-function renderResources(){const q=(document.getElementById('res-search')?.value||'').toLowerCase();let list=DB.getArr('resources');const af=document.querySelector('#res-filter .ftab.active')?.dataset.f||'all';if(af!=='all')list=list.filter(r=>r.cat===af);if(q)list=list.filter(r=>r.title.toLowerCase().includes(q)||(r.desc||'').toLowerCase().includes(q));document.querySelectorAll('#res-filter .ftab').forEach(b=>{b.onclick=()=>{document.querySelectorAll('#res-filter .ftab').forEach(x=>x.classList.remove('active'));b.classList.add('active');renderResources();};});const icons={pdf:'📄',video:'🎥',excel:'📊',link:'🔗'};const grid=document.getElementById('res-grid');if(!list.length){grid.innerHTML='<div class="empty"><i class="fa-solid fa-folder-open"></i><p>Aucune ressource.</p></div>';return;}grid.innerHTML=list.map(r=>'<div class="res-card"><div class="res-icon ri-'+r.type+'">'+(icons[r.type]||'📎')+'</div><div><div class="res-title">'+h(r.title)+'</div><div class="res-desc">'+h(r.desc||'')+'</div><a href="'+r.url+'" target="_blank" class="res-dl"><i class="fa-solid fa-arrow-up-right-from-square"></i> Ouvrir</a></div></div>').join('');}
+function renderResources(){const q=(document.getElementById('res-search')?.value||'').toLowerCase();let list=DB.getArr('resources');const af=document.querySelector('#res-filter .ftab.active')?.dataset.f||'all';if(af!=='all')list=list.filter(r=>r.cat===af);if(q)list=list.filter(r=>r.title.toLowerCase().includes(q)||(r.desc||'').toLowerCase().includes(q));document.querySelectorAll('#res-filter .ftab').forEach(b=>{b.onclick=()=>{document.querySelectorAll('#res-filter .ftab').forEach(x=>x.classList.remove('active'));b.classList.add('active');renderResources();};});const icons={pdf:'📄',video:'🎥',excel:'📊',link:'🔗'};const grid=document.getElementById('res-grid');if(!list.length){grid.innerHTML='<div class="empty"><i class="fa-solid fa-folder-open"></i><p>Aucune ressource.</p></div>';return;}grid.innerHTML=list.map(r=>'<div class="res-card"><div class="res-icon ri-'+r.type+'">'+(icons[r.type]||'📎')+'</div><div><div class="res-title">'+h(r.title)+'</div><div class="res-desc">'+h(r.desc||'')+'</div><a href="'+escA(safeUrl(r.url))+'" target="_blank" rel="noopener" class="res-dl"><i class="fa-solid fa-arrow-up-right-from-square"></i> Ouvrir</a></div></div>').join('');}
 
 // ============================================================
 // BODY TRACKING
@@ -2629,13 +2881,13 @@ function generateInvite(){const name=(document.getElementById('inv-name').value|
   const cs='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';let base='';for(let i=0;i<6;i++)base+=cs[Math.floor(Math.random()*cs.length)];
   const full=base+codeChecksum(base);
   const code='NC-'+full.slice(0,4)+'-'+full.slice(4,8);
-  const invs=DB.getArr('invites');invs.push({code,name,note,used:false,createdAt:new Date().toISOString()});DB.set('invites',invs);document.getElementById('inv-result').innerHTML='<div class="inv-result"><div class="inv-code">'+code+'</div><div style="font-size:13px;color:var(--text2);margin-bottom:10px">Donne ce code à '+(name?h(name):'ton client')+'. Il fonctionne sur ordi ET téléphone, il se connecte avec ce code + son prénom.</div><button class="btn-copy" onclick="copyCode(\''+code+'\')"><i class="fa-solid fa-copy"></i> Copier le code</button></div>';document.getElementById('inv-name').value='';document.getElementById('inv-note').value='';renderAInvites();toast('Code généré ✅','success');}
+  const fid=parseInt(document.getElementById('inv-formule')?.value)||null;const invs=DB.getArr('invites');invs.push({code,name,note,formule:fid,used:false,createdAt:new Date().toISOString()});DB.set('invites',invs);document.getElementById('inv-result').innerHTML='<div class="inv-result"><div class="inv-code">'+code+'</div><div style="font-size:13px;color:var(--text2);margin-bottom:10px">Donne ce code à '+(name?h(name):'ton client')+'. Il fonctionne sur ordi ET téléphone, il se connecte avec ce code + son prénom.</div><button class="btn-copy" onclick="copyCode(\''+code+'\')"><i class="fa-solid fa-copy"></i> Copier le code</button></div>';document.getElementById('inv-name').value='';document.getElementById('inv-note').value='';renderAInvites();toast('Code généré ✅','success');}
 function copyCode(code){navigator.clipboard?.writeText(code).then(()=>toast('Code copié ✅','success')).catch(()=>toast('Code : '+code));}
 function delInvite(code){DB.set('invites',DB.getArr('invites').filter(i=>i.code!==code));renderAInvites();}
-function renderAInvites(){const list=document.getElementById('invites-list');const invs=DB.getArr('invites');if(!invs.length){list.innerHTML='<div class="empty"><i class="fa-solid fa-envelope"></i><p>Aucun code généré.</p></div>';return;}list.innerHTML=invs.slice().reverse().map(i=>'<div class="inv-item"><span class="ii-code">'+i.code+'</span><div style="font-size:12px;color:var(--text3)">'+(i.name?h(i.name):'')+(i.note?' · '+h(i.note):'')+'</div><span class="ii-status '+(i.used?'ii-used':'ii-unused')+'">'+(i.used?'✅ Utilisé'+(i.usedBy?' ('+h(i.usedBy)+')':''):'⏳ En attente')+'</span><button class="be-del" onclick="delInvite(\''+i.code+'\')" style="margin-left:8px"><i class="fa-solid fa-xmark"></i></button></div>').join('');}
+function renderAInvites(){const fsel=document.getElementById('inv-formule');if(fsel){const cur=fsel.value;fsel.innerHTML='<option value="">Accès complet (par défaut)</option>'+DB.getArr('formules').map(f=>'<option value="'+f.id+'">'+(f.icon||'')+' '+h(f.name)+'</option>').join('');fsel.value=cur;}const list=document.getElementById('invites-list');const invs=DB.getArr('invites');if(!invs.length){list.innerHTML='<div class="empty"><i class="fa-solid fa-envelope"></i><p>Aucun code généré.</p></div>';return;}list.innerHTML=invs.slice().reverse().map(i=>'<div class="inv-item"><span class="ii-code">'+i.code+'</span><div style="font-size:12px;color:var(--text3)">'+(i.name?h(i.name):'')+(i.note?' · '+h(i.note):'')+(i.formule?' · 🎫 '+h((DB.getArr('formules').find(f=>f.id===i.formule)||{}).name||''):'')+'</div><span class="ii-status '+(i.used?'ii-used':'ii-unused')+'">'+(i.used?'✅ Utilisé'+(i.usedBy?' ('+h(i.usedBy)+')':''):'⏳ En attente')+'</span><button class="be-del" onclick="delInvite(\''+i.code+'\')" style="margin-left:8px"><i class="fa-solid fa-xmark"></i></button></div>').join('');}
 
 // ADMIN MEMBERS
-function renderAMembers(){const q=(document.getElementById('member-search')?.value||'').toLowerCase();let members=DB.getArr('members');if(q)members=members.filter(m=>m.name.toLowerCase().includes(q)||(m.code||'').toLowerCase().includes(q));const list=document.getElementById('members-list');if(!members.length){list.innerHTML='<div class="empty"><i class="fa-solid fa-users"></i><p>Aucun membre'+(q?' trouvé':' inscrit')+'.</p></div>';return;}const mods=DB.getArr('modules');const totalL=mods.reduce((s,m)=>s+m.lessons.length,0);list.innerHTML=members.map(m=>{const lv=getLevel(m.xp||0);const doneL=(m.completedLessons||[]).length;const pct=totalL?Math.round(doneL/totalL*100):0;const temo=DB.get('temo_'+m.code);const lastLogin=m.lastLogin||'—';const nBody=DB.getArr('body_'+m.code).length;const nTransfo=DB.getArr('transfo_'+m.code).length;return '<div class="member-card"><div class="mc-hdr"><div class="mc-av">'+initials(m.name)+'</div><div style="flex:1"><div class="mc-name">'+h(m.name)+(temo&&!temo.read?' <span style="background:var(--red);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px">⭐ Nouveau témo</span>':'')+'</div><div class="mc-meta">Code: '+m.code+' · Inscrit le '+fmtDate(m.joinedAt)+'</div></div><span class="lv-pill lv-'+lv.name+'">'+lv.name+'</span></div><div class="mc-stats"><div class="mc-stat">⚡ <strong>'+(m.xp||0)+'</strong> XP</div><div class="mc-stat">📚 <strong>'+doneL+'</strong> leçons ('+pct+'%)</div><div class="mc-stat">🏆 <strong>'+((m.completedDefis||[]).length)+'</strong> défis</div><div class="mc-stat">🔥 <strong>'+(m.streak||0)+'</strong> j streak</div><div class="mc-stat">📅 '+(lastLogin==='—'?'—':lastLogin)+'</div></div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:1px solid var(--border2)"><button class="btn-edit btn-sm" onclick="viewClientBody(\''+m.code+'\')"><i class="fa-solid fa-chart-line"></i> Suivi corporel'+(nBody?' ('+nBody+')':'')+'</button><button class="btn-edit btn-sm" onclick="viewClientTransfo(\''+m.code+'\')"><i class="fa-solid fa-camera"></i> Transformations'+(nTransfo?' ('+nTransfo+')':'')+'</button><button class="btn-edit btn-sm" onclick="viewTemo(\''+m.code+'\')" '+(temo?'':'disabled style="opacity:.4;cursor:default"')+'><i class="fa-solid fa-star"></i> Témoignage'+(temo?' ('+temo.note+'/5)':'')+'</button><button class="btn-del btn-sm" style="margin-left:auto" onclick="deleteMember(\''+m.code+'\',\''+escA(m.name)+'\')"><i class="fa-solid fa-trash"></i> Supprimer le compte</button></div></div>';}).join('');}
+function renderAMembers(){const q=(document.getElementById('member-search')?.value||'').toLowerCase();let members=DB.getArr('members');if(q)members=members.filter(m=>m.name.toLowerCase().includes(q)||(m.code||'').toLowerCase().includes(q));const list=document.getElementById('members-list');if(!members.length){list.innerHTML='<div class="empty"><i class="fa-solid fa-users"></i><p>Aucun membre'+(q?' trouvé':' inscrit')+'.</p></div>';return;}const mods=DB.getArr('modules');const totalL=mods.reduce((s,m)=>s+m.lessons.length,0);list.innerHTML=members.map(m=>{const lv=getLevel(m.xp||0);const doneL=(m.completedLessons||[]).length;const pct=totalL?Math.round(doneL/totalL*100):0;const temo=DB.get('temo_'+m.code);const lastLogin=m.lastLogin||'—';const nBody=DB.getArr('body_'+m.code).length;const nTransfo=DB.getArr('transfo_'+m.code).length;return '<div class="member-card"><div class="mc-hdr"><div class="mc-av">'+initials(m.name)+'</div><div style="flex:1"><div class="mc-name">'+h(m.name)+(temo&&!temo.read?' <span style="background:var(--red);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px">⭐ Nouveau témo</span>':'')+'</div><div class="mc-meta">Code: '+m.code+' · Inscrit le '+fmtDate(m.joinedAt)+(m.pwHash?'':' · <span style="color:var(--orange);font-weight:600">mot de passe non créé</span>')+'</div></div><span class="lv-pill lv-'+lv.name+'">'+lv.name+'</span></div><div class="mc-stats"><div class="mc-stat">⚡ <strong>'+(m.xp||0)+'</strong> XP</div><div class="mc-stat">📚 <strong>'+doneL+'</strong> leçons ('+pct+'%)</div><div class="mc-stat">🏆 <strong>'+((m.completedDefis||[]).length)+'</strong> défis</div><div class="mc-stat">🔥 <strong>'+(m.streak||0)+'</strong> j streak</div><div class="mc-stat">📅 '+(lastLogin==='—'?'—':lastLogin)+'</div></div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:1px solid var(--border2)"><button class="btn-edit btn-sm" onclick="viewClientBody(\''+m.code+'\')"><i class="fa-solid fa-chart-line"></i> Suivi corporel'+(nBody?' ('+nBody+')':'')+'</button><button class="btn-edit btn-sm" onclick="viewClientTransfo(\''+m.code+'\')"><i class="fa-solid fa-camera"></i> Transformations'+(nTransfo?' ('+nTransfo+')':'')+'</button><button class="btn-edit btn-sm" onclick="viewTemo(\''+m.code+'\')" '+(temo?'':'disabled style="opacity:.4;cursor:default"')+'><i class="fa-solid fa-star"></i> Témoignage'+(temo?' ('+temo.note+'/5)':'')+'</button><button class="btn-edit btn-sm" onclick="openAccessEditor(\''+m.code+'\')"><i class="fa-solid fa-key"></i> Accès'+(m.access&&m.access.formule?' · '+h((DB.getArr('formules').find(f=>f.id===m.access.formule)||{}).name||''):'')+'</button><button class="btn-edit btn-sm" onclick="resetMemberPw(\''+m.code+'\',\''+escA(m.name)+'\')"><i class="fa-solid fa-rotate-left"></i> Mdp</button><button class="btn-del btn-sm" style="margin-left:auto" onclick="deleteMember(\''+m.code+'\',\''+escA(m.name)+'\')"><i class="fa-solid fa-trash"></i> Supprimer le compte</button></div></div>';}).join('');}
 
 function viewClientBody(code){const m=DB.getArr('members').find(x=>x.code===code);const entries=DB.getArr('body_'+code).sort((a,b)=>new Date(b.date)-new Date(a.date));let html='<h3 style="font-family:var(--fd);font-size:20px;margin-bottom:16px"><i class="fa-solid fa-chart-line" style="color:var(--blue)"></i> Suivi corporel — '+h(m?m.name:'')+'</h3>';if(!entries.length){html+='<div class="empty"><i class="fa-solid fa-chart-line"></i><p>Aucune mesure enregistrée par ce client.</p></div>';}else{html+='<div style="display:flex;flex-direction:column;gap:10px">'+entries.map(e=>'<div class="body-entry" style="margin:0"><span class="be-date">'+fmtDate(e.date)+'</span><div class="be-metrics">'+(e.poids?'<span class="be-metric"><strong>'+e.poids+'</strong> kg</span>':'')+(e.taille?' <span class="be-metric">Taille: <strong>'+e.taille+'</strong>cm</span>':'')+(e.bras?' <span class="be-metric">Bras: <strong>'+e.bras+'</strong>cm</span>':'')+(e.cuisse?' <span class="be-metric">Cuisse: <strong>'+e.cuisse+'</strong>cm</span>':'')+(e.hanches?' <span class="be-metric">Hanches: <strong>'+e.hanches+'</strong>cm</span>':'')+(e.mg?' <span class="be-metric">MG: <strong>'+e.mg+'</strong>%</span>':'')+'</div></div>').join('')+'</div>';}document.getElementById('modal-content').innerHTML=html;openModal();}
 
