@@ -917,6 +917,88 @@ button{touch-action:manipulation;}
   .main-content{max-width:1320px;margin:0 auto;width:100%;}
 }
 
+/* ---- LOT 4 : LANDING PAGE ---- */
+#page-landing{display:none;background:var(--bg);}
+#page-landing.active{display:block;animation:none;}
+.ld-hero{position:relative;overflow:hidden;background:linear-gradient(160deg,#0d1b2a 0%,#0a1626 55%,#070b12 100%);padding:0 22px 70px;}
+.ld-nav{position:relative;z-index:5;display:flex;align-items:center;justify-content:space-between;padding:20px 6px;max-width:1080px;margin:0 auto;}
+.ld-login-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);color:#fff;border-radius:30px;padding:9px 18px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;transition:all var(--t);}
+.ld-login-btn:hover{background:rgba(255,255,255,.16);}
+.ld-hero-inner{position:relative;z-index:5;max-width:780px;margin:0 auto;text-align:center;padding-top:54px;}
+.ld-badge{display:inline-block;background:rgba(201,151,42,.14);border:1px solid rgba(201,151,42,.35);color:#e6b93a;font-size:12px;font-weight:700;padding:7px 18px;border-radius:30px;margin-bottom:24px;letter-spacing:.03em;}
+.ld-hero-inner h1{font-family:var(--fd);font-size:clamp(34px,6.5vw,58px);font-weight:800;color:#fff;line-height:1.12;letter-spacing:-.02em;margin-bottom:20px;}
+.ld-hero-inner h1 span{background:linear-gradient(90deg,#e6b93a,#c9972a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+.ld-hero-inner>p{font-size:16px;color:rgba(255,255,255,.6);line-height:1.7;max-width:600px;margin:0 auto 30px;}
+.ld-cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:30px;}
+.ld-cta{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#0d1b2a;border:none;border-radius:14px;padding:15px 30px;font-size:15px;font-weight:700;display:inline-flex;align-items:center;gap:10px;cursor:pointer;transition:all var(--t);box-shadow:0 6px 28px rgba(201,151,42,.4);}
+.ld-cta:hover{transform:translateY(-2px);box-shadow:0 10px 36px rgba(201,151,42,.55);}
+.ld-cta-sec{background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.18);color:#fff;border-radius:14px;padding:14px 26px;font-size:14px;font-weight:600;cursor:pointer;transition:all var(--t);}
+.ld-cta-sec:hover{background:rgba(255,255,255,.14);}
+.ld-proof-pills{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;}
+.ld-proof-pills span{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:30px;padding:7px 15px;font-size:12px;color:rgba(255,255,255,.65);}
+.ld-sec{max-width:1080px;margin:0 auto;padding:74px 22px;}
+.ld-sec.ld-dark{max-width:none;background:linear-gradient(160deg,#0d1b2a,#0a1322);}
+.ld-sec.ld-dark>*{max-width:1080px;margin-left:auto;margin-right:auto;}
+.ld-h2{font-family:var(--fd);font-size:clamp(26px,4.5vw,38px);font-weight:800;text-align:center;letter-spacing:-.02em;line-height:1.2;margin-bottom:14px;}
+.ld-sub{text-align:center;font-size:15px;color:var(--text3);margin-bottom:36px;}
+.ld-grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:34px;}
+.ld-grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;margin-top:38px;}
+.ld-card,.ld-feat{background:var(--surface);border:1px solid var(--border);border-radius:var(--rxl);padding:26px;transition:all .25s;}
+.ld-dark .ld-feat{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.1);}
+.ld-card:hover,.ld-feat:hover{transform:translateY(-4px);box-shadow:var(--shm);}
+.ld-ic{font-size:34px;margin-bottom:14px;}
+.ld-card h3,.ld-feat h3{font-family:var(--fd);font-size:17px;font-weight:700;margin-bottom:9px;}
+.ld-dark .ld-feat h3{color:#fff;}
+.ld-card p,.ld-feat p{font-size:13.5px;color:var(--text2);line-height:1.65;}
+.ld-dark .ld-feat p{color:rgba(255,255,255,.55);}
+.ld-price{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rxl);padding:28px;position:relative;display:flex;flex-direction:column;transition:all .25s;}
+.ld-price:hover{transform:translateY(-4px);box-shadow:var(--shm);}
+.ld-price-hot{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold),0 12px 40px rgba(201,151,42,.18);}
+.ld-price-tag{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#0d1b2a;font-size:11px;font-weight:800;padding:5px 16px;border-radius:20px;white-space:nowrap;}
+.ld-price-name{font-family:var(--fd);font-size:19px;font-weight:800;margin-bottom:8px;}
+.ld-price-amt{font-family:var(--fd);font-size:36px;font-weight:800;color:var(--blue);margin-bottom:16px;}
+.ld-price-amt span{font-size:14px;color:var(--text3);font-weight:500;font-family:var(--fb);}
+.ld-price ul{list-style:none;margin:0 0 22px;flex:1;}
+.ld-price li{font-size:13.5px;color:var(--text2);padding:7px 0 7px 26px;position:relative;line-height:1.45;}
+.ld-price li::before{content:'✓';position:absolute;left:2px;color:var(--green);font-weight:800;}
+.ld-price .ld-cta-sec{background:var(--bg2);border-color:var(--border);color:var(--text);width:100%;}
+.ld-temo{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:var(--rxl);padding:26px;}
+.ld-stars{color:var(--gold);font-size:17px;letter-spacing:3px;margin-bottom:12px;}
+.ld-temo p{font-size:14px;color:rgba(255,255,255,.72);line-height:1.7;font-style:italic;}
+.ld-temo-name{margin-top:14px;font-size:13px;font-weight:700;color:#fff;}
+.ld-coach{display:flex;gap:30px;align-items:flex-start;background:var(--surface);border:1px solid var(--border);border-radius:var(--rxl);padding:36px;box-shadow:var(--sh);}
+.ld-coach-av{width:96px;height:96px;border-radius:28px;background:linear-gradient(135deg,var(--blue-mid),var(--blue));color:#fff;font-family:var(--fd);font-size:44px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 8px 30px rgba(26,107,191,.4);}
+.ld-coach-txt{font-size:14.5px;color:var(--text2);line-height:1.75;}
+.ld-faq{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:0;margin-bottom:10px;overflow:hidden;}
+.ld-faq summary{padding:17px 20px;font-size:14.5px;font-weight:600;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;}
+.ld-faq summary::after{content:'+';font-size:20px;color:var(--text3);font-weight:400;}
+.ld-faq[open] summary::after{content:'–';}
+.ld-faq p{padding:0 20px 17px;font-size:14px;color:var(--text2);line-height:1.7;}
+.ld-final{background:linear-gradient(160deg,#0d1b2a,#070b12);text-align:center;padding:84px 22px;}
+.ld-final h2{font-family:var(--fd);font-size:clamp(26px,5vw,40px);font-weight:800;color:#fff;letter-spacing:-.02em;margin-bottom:16px;line-height:1.2;}
+.ld-final p{font-size:15px;color:rgba(255,255,255,.55);max-width:540px;margin:0 auto 30px;line-height:1.7;}
+.lv{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s cubic-bezier(.22,1,.36,1);}
+.lv.lv-vis{opacity:1;transform:none;}
+@media(max-width:900px){.ld-grid4{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media(max-width:768px){
+  .ld-grid3,.ld-grid4{grid-template-columns:1fr;}
+  .ld-sec{padding:52px 18px;}
+  .ld-coach{flex-direction:column;align-items:center;text-align:center;padding:26px;}
+  .ld-coach .ld-h2{text-align:center !important;}
+  .ld-price-hot{order:-1;}
+  .ld-nav{padding:16px 2px;}
+  .ld-login-btn{padding:8px 13px;font-size:12px;}
+}
+
+/* ---- LOT 4 : FIX BARRE DU BAS (le contenu ne passe plus dessous) ---- */
+@media(max-width:768px){
+  .main-wrap{padding-bottom:calc(100px + env(safe-area-inset-bottom)) !important;}
+  .focus-mode{padding-bottom:calc(110px + env(safe-area-inset-bottom));}
+  .modal-box{max-height:84vh;}
+  .gs-results{max-height:48vh;}
+  .bsheet{max-height:78vh;overflow-y:auto;}
+}
+
 /* ---- 12. ACCESSIBILITÉ : reduced motion ---- */
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;}
@@ -927,6 +1009,108 @@ button{touch-action:manipulation;}
 <body>
 <!-- BOOT LOADER -->
 <div id="boot-loader" aria-hidden="true"><div style="text-align:center"><div class="boot-mark">N</div><div class="boot-bar"><span></span></div></div></div>
+<!-- ============================================================
+     PAGE DE VENTE (landing) — ✏️ TEXTES À PERSONNALISER :
+     cherche les commentaires ✏️ ci-dessous (titres, prix, témoignages,
+     section "qui suis-je"). Les liens de contact se changent dans le
+     JS : constante LANDING_CONTACT (vers la fin du fichier).
+     ============================================================ -->
+<div id="page-landing" class="page">
+  <div class="ld-hero">
+    <div class="mesh-blob"></div><div class="mesh-blob"></div><div class="mesh-blob"></div>
+    <nav class="ld-nav">
+      <div class="login-logo" style="margin:0;justify-content:flex-start"><div class="logo-mark sm"><span>N</span></div><span class="login-title" style="font-size:18px">NoahCana Coaching</span></div>
+      <button class="ld-login-btn" onclick="goLogin()"><i class="fa-solid fa-user"></i> J'ai déjà un compte</button>
+    </nav>
+    <div class="ld-hero-inner lv">
+      <div class="ld-badge">🏆 Coaching premium · Places limitées</div>
+      <!-- ✏️ TITRE PRINCIPAL -->
+      <h1>Transforme ton corps.<br><span>Garde-le pour la vie.</span></h1>
+      <!-- ✏️ SOUS-TITRE -->
+      <p>Coaching sportif et nutrition 100 % personnalisé, avec une application privée de suivi complet. Pas de programme générique, pas de promesse magique : une méthode fondée sur la science et un coach qui te suit vraiment.</p>
+      <div class="ld-cta-row">
+        <button class="ld-cta" onclick="openContactModal()">Rejoindre le coaching <i class="fa-solid fa-arrow-right"></i></button>
+        <button class="ld-cta-sec" onclick="document.getElementById('ld-method').scrollIntoView({behavior:'smooth'})">Découvrir la méthode</button>
+      </div>
+      <div class="ld-proof-pills">
+        <span>💪 Programmes sur mesure</span><span>🥗 Nutrition personnalisée</span><span>📱 App de suivi privée</span><span>🤝 Coach disponible</span>
+      </div>
+    </div>
+  </div>
+
+  <section class="ld-sec lv">
+    <h2 class="ld-h2">Tu reconnais cette situation ?</h2>
+    <div class="ld-grid3">
+      <div class="ld-card"><div class="ld-ic">😤</div><h3>Tu t'entraînes... sans résultats</h3><p>Des mois d'efforts, des programmes piochés à droite à gauche, et un physique qui ne change pas. Le problème n'est pas ton sérieux — c'est l'absence de plan structuré et progressif.</p></div>
+      <div class="ld-card"><div class="ld-ic">🌀</div><h3>Tu es perdu·e dans les infos</h3><p>Jeûne ? Low carb ? 5 séances ? Un influenceur dit blanc, l'autre dit noir. Tu as besoin d'UNE méthode claire, basée sur la science, adaptée à TOI.</p></div>
+      <div class="ld-card"><div class="ld-ic">📉</div><h3>Tu commences... puis t'arrêtes</h3><p>La motivation s'évapore toujours vers la 3e semaine. Ce qu'il te manque, ce n'est pas de la volonté : c'est un cadre, un suivi et quelqu'un à qui rendre des comptes.</p></div>
+    </div>
+  </section>
+
+  <section class="ld-sec ld-dark lv" id="ld-method">
+    <h2 class="ld-h2" style="color:#fff">La solution : un coaching complet,<br>pas juste un PDF</h2>
+    <div class="ld-grid4">
+      <div class="ld-feat"><div class="ld-ic">🏋️</div><h3>Programme sur mesure</h3><p>Construit pour ton niveau, ton matériel, ton emploi du temps — et ajusté chaque semaine selon tes retours.</p></div>
+      <div class="ld-feat"><div class="ld-ic">🥗</div><h3>Nutrition sans frustration</h3><p>Calories et macros calculées, bibliothèque de repas avec recettes guidées, journal alimentaire et liste de courses automatique.</p></div>
+      <div class="ld-feat"><div class="ld-ic">📱</div><h3>Ton app privée</h3><p>Modules de formation, suivi du poids, du sommeil, photos avant/après, bilans mensuels : tout ton parcours au même endroit.</p></div>
+      <div class="ld-feat"><div class="ld-ic">🧠</div><h3>Un coach, pas un robot</h3><p>Je suis ta progression en direct (mesures, sommeil, blessures, cycle) et j'adapte. Tu n'es jamais seul·e face à ton écran.</p></div>
+    </div>
+  </section>
+
+  <section class="ld-sec lv">
+    <h2 class="ld-h2">Les formules</h2>
+    <p class="ld-sub">Trois niveaux d'accompagnement selon tes besoins et ton autonomie.</p>
+    <div class="ld-grid3">
+      <!-- ✏️ FORMULE 1 : nom, prix (XX €), contenu -->
+      <div class="ld-price"><div class="ld-price-name">🥉 Essentiel</div><div class="ld-price-amt">XX €<span>/mois</span></div><ul><li>Programme d'entraînement personnalisé</li><li>Accès aux modules de formation</li><li>Bibliothèque de repas + macros</li><li>Suivi via l'application</li></ul><button class="ld-cta-sec" onclick="openContactModal()">En savoir plus</button></div>
+      <!-- ✏️ FORMULE 2 -->
+      <div class="ld-price ld-price-hot"><div class="ld-price-tag">Le plus choisi</div><div class="ld-price-name">🥈 Avancé</div><div class="ld-price-amt">XX €<span>/mois</span></div><ul><li>Tout Essentiel, plus :</li><li>Plan nutrition 100 % personnalisé</li><li>Check-in hebdomadaire avec moi</li><li>Ajustements illimités du programme</li><li>Défis, communauté et suivi santé complet</li></ul><button class="ld-cta" style="width:100%;justify-content:center" onclick="openContactModal()">Commencer</button></div>
+      <!-- ✏️ FORMULE 3 -->
+      <div class="ld-price"><div class="ld-price-name">🥇 Premium</div><div class="ld-price-amt">XX €<span>/mois</span></div><ul><li>Tout Avancé, plus :</li><li>Contact direct 7 j/7</li><li>Appels visio réguliers</li><li>Bilan mensuel approfondi</li><li>Priorité absolue sur le suivi</li></ul><button class="ld-cta-sec" onclick="openContactModal()">En savoir plus</button></div>
+    </div>
+  </section>
+
+  <section class="ld-sec ld-dark lv">
+    <h2 class="ld-h2" style="color:#fff">Ils ont transformé leur physique</h2>
+    <div class="ld-grid3">
+      <!-- ✏️ TÉMOIGNAGE 1 : remplace prénom + texte -->
+      <div class="ld-temo"><div class="ld-stars">★★★★★</div><p>« Remplace ce texte par un vrai témoignage client : résultat obtenu, durée, ce qui a changé pour lui. »</p><div class="ld-temo-name">— Prénom, objectif atteint</div></div>
+      <!-- ✏️ TÉMOIGNAGE 2 -->
+      <div class="ld-temo"><div class="ld-stars">★★★★★</div><p>« Deuxième témoignage : idéalement avec des chiffres concrets (kg perdus, force gagnée) et une émotion. »</p><div class="ld-temo-name">— Prénom, objectif atteint</div></div>
+      <!-- ✏️ TÉMOIGNAGE 3 -->
+      <div class="ld-temo"><div class="ld-stars">★★★★★</div><p>« Troisième témoignage : ce que le coaching a changé au-delà du physique (énergie, confiance, habitudes). »</p><div class="ld-temo-name">— Prénom, objectif atteint</div></div>
+    </div>
+  </section>
+
+  <section class="ld-sec lv">
+    <div class="ld-coach">
+      <div class="ld-coach-av">N</div>
+      <div>
+        <h2 class="ld-h2" style="text-align:left;margin-bottom:10px">Qui est ton coach ?</h2>
+        <!-- ✏️ TA PRÉSENTATION : remplace par ton histoire, tes diplômes, ta méthode -->
+        <p class="ld-coach-txt">Je suis Noah, coach sportif. Remplace ce texte par ta présentation : ton parcours, tes certifications, ta philosophie d'entraînement, et pourquoi tu fais ce métier. Deux ou trois phrases authentiques valent mieux qu'un CV — les gens achètent un accompagnement humain, pas une liste de diplômes.</p>
+        <p class="ld-coach-txt" style="margin-top:10px">Ma méthode tient en trois mots : <strong>science, constance, accompagnement</strong>. Pas de recettes miracles — un plan clair, un suivi réel, des résultats durables.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="ld-sec lv" style="max-width:760px">
+    <h2 class="ld-h2">Questions fréquentes</h2>
+    <details class="ld-faq"><summary>Je suis débutant·e, c'est pour moi ?</summary><p>C'est même le meilleur moment : tu progresseras vite et tu apprendras les bons gestes dès le départ, sans mauvaises habitudes à corriger. Le programme s'adapte à ton niveau exact.</p></details>
+    <details class="ld-faq"><summary>Combien de temps avant de voir des résultats ?</summary><p>Tu sentiras la différence (énergie, force) dès 2-3 semaines. Les changements visibles arrivent entre 8 et 12 semaines de régularité. Je te donne des attentes honnêtes, pas du marketing.</p></details>
+    <details class="ld-faq"><summary>Je n'ai pas de matériel / pas de salle ?</summary><p>Aucun problème : le programme se construit autour de TON contexte — salle complète, haltères à la maison ou simple poids du corps avec élastiques.</p></details>
+    <details class="ld-faq"><summary>Combien de temps par semaine faut-il ?</summary><p>À partir de 3 séances de 45 minutes à 1 h. Le meilleur programme est celui qui rentre dans ta vie réelle — on le calibre ensemble.</p></details>
+    <details class="ld-faq"><summary>Et si ça ne me convient pas ?</summary><p><!-- ✏️ TA POLITIQUE (garantie, résiliation...) -->Parle-m'en simplement : on ajuste la formule, le programme ou on arrête — sans engagement caché ni piège.</p></details>
+  </section>
+
+  <section class="ld-final lv">
+    <h2>Prêt·e à devenir la meilleure version de toi-même ?</h2>
+    <p>Les places de coaching sont limitées pour garantir un vrai suivi. Écris-moi aujourd'hui : on parle de tes objectifs, et je te dis honnêtement si je peux t'aider.</p>
+    <button class="ld-cta" style="font-size:17px;padding:18px 38px" onclick="openContactModal()">Réserver mon appel découverte <i class="fa-solid fa-arrow-right"></i></button>
+    <div style="margin-top:26px"><span onclick="goLogin()" style="color:rgba(255,255,255,.45);font-size:14px;cursor:pointer;text-decoration:underline">Déjà membre ? Me connecter</span></div>
+  </section>
+</div>
+
 <!-- LOGIN -->
 <div id="page-login" class="page active">
   <div class="mesh-blob"></div><div class="mesh-blob"></div><div class="mesh-blob"></div>
@@ -959,6 +1143,7 @@ button{touch-action:manipulation;}
       <button type="button" class="btn-login" id="login-btn"><span id="login-btn-txt">Continuer</span> <i class="fa-solid fa-arrow-right"></i></button>
       <div id="login-back" style="display:none;text-align:center;font-size:13px;color:rgba(255,255,255,.45);cursor:pointer;margin-bottom:12px" onclick="resetLogin()">← Revenir au code</div>
       <div class="login-note">Accès 100% privé · Réservé aux membres</div>
+      <div style="text-align:center;margin-top:14px"><span onclick="showLanding()" style="font-size:12px;color:rgba(255,255,255,.35);cursor:pointer">← Découvrir le coaching NoahCana</span></div>
     </div>
     <div class="pillars">
       <div class="pill-tag"><i class="fa-solid fa-dumbbell"></i><span>Musculation</span></div>
@@ -1075,7 +1260,7 @@ button{touch-action:manipulation;}
       </section>
 
       <section id="section-defis" class="section">
-        <div class="sec-header"><h2>Défis</h2><p>Relève des défis, gagne des XP</p></div>
+        <div class="sec-header"><h2>Défis & Trophées</h2><p>Relève des défis, gagne des XP, collectionne les trophées</p></div>
         <div id="xp-card-wrap"></div>
         <div class="defis-grid" id="defis-grid"></div>
         <div id="defi-hist-wrap"></div>
@@ -1404,6 +1589,11 @@ button{touch-action:manipulation;}
           <button class="btn" onclick="saveCoachMsg()"><i class="fa-solid fa-paper-plane"></i> Envoyer à tous</button>
           <div id="msg-saved" style="margin-top:10px;font-size:13px;color:var(--green)"></div>
         </div>
+        <div class="afc">
+          <h3>Mes citations du jour</h3>
+          <div class="fg2"><label>Une citation par ligne (ajoutées à la banque de 60 citations)</label><textarea id="coach-quotes" placeholder="La constance bat le talent.&#10;Chaque jour compte." style="min-height:110px"></textarea></div>
+          <button class="btn" onclick="saveCitations()"><i class="fa-solid fa-quote-left"></i> Enregistrer mes citations</button>
+        </div>
       </section>
     </main>
   </div>
@@ -1530,11 +1720,11 @@ const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZ
 let SB=null;
 try{if(window.supabase)SB=window.supabase.createClient(SB_URL,SB_KEY);}catch(e){console.warn('Supabase init fail',e);}
 // Clés synchronisées dans le cloud (le reste = purement local : theme, session, sb_mini, checklist...)
-const CLOUD_KEYS=['members','invites','modules','repas','defis','resources','glossaire','tips','faq','posts','coach_message','notifs','formules','admin_auth'];
+const CLOUD_KEYS=['members','invites','modules','repas','defis','resources','glossaire','tips','faq','posts','coach_message','notifs','formules','admin_auth','citations'];
 function isCloudKey(k){
   if(CLOUD_KEYS.includes(k))return true;
   // données par client : body_, transfo_, temo_, comments_
-  return /^(body_|transfo_|temo_|comments_|journal_|hydra_|cycle_|sleep_|blessures_|bilans_|courses_)/.test(k);
+  return /^(body_|transfo_|temo_|comments_|journal_|hydra_|cycle_|sleep_|blessures_|bilans_|courses_|quetes_)/.test(k);
 }
 // Pousse une clé vers Supabase (sans bloquer l'interface)
 function cloudPush(key,val){
@@ -1628,7 +1818,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
   ['login-pw','login-pw2'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('keypress',e=>{if(e.key==='Enter')handleLogin();});});
   const t=DB.get('theme')||'light';document.documentElement.setAttribute('data-theme',t);updateThemeIcons(t);
   miniSB=DB.get('sb_mini')||false;if(miniSB)applMini();
-  const s=DB.get('session');if(s){CU=s;s.isAdmin?showAdmin():showMember();}else{initLoginScreen();}
+  const s=DB.get('session');if(s){CU=s;s.isAdmin?showAdmin():showMember();}else if(!localStorage.getItem('nc3_last_user')&&!localStorage.getItem('nc3_seen_landing')){showPage('landing');setTimeout(initLanding,80);}else{initLoginScreen();}
   document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();openGS();}if(e.key==='Escape'){closeModal();closeGS();closeBS();closeABS();}});
   document.querySelectorAll('#sidebar .nav-item').forEach(b=>b.addEventListener('click',()=>gotoS(b.dataset.s)));
   document.querySelectorAll('#bnav .bni').forEach(b=>b.addEventListener('click',()=>{gotoS(b.dataset.s);setBN(b);}));
@@ -2588,7 +2778,7 @@ function finishMemberLogin(code,name,newPw){
   showMember();
   if(!CU.onboarded)setTimeout(()=>document.getElementById('ob-ov').style.display='flex',600);
 }
-function logout(){DB.set('session',null);CU=null;isPreview=false;showPage('login');document.getElementById('invite-code').value='';document.getElementById('member-name').value='';document.getElementById('login-error').textContent='';initLoginScreen();}
+function logout(){DB.set('session',null);CU=null;isPreview=false;const b1=document.getElementById('bnav'),b2=document.getElementById('admin-bnav');if(b1)b1.style.display='none';if(b2)b2.style.display='none';showPage('login');document.getElementById('invite-code').value='';document.getElementById('member-name').value='';document.getElementById('login-error').textContent='';initLoginScreen();}
 
 // ============================================================
 // LOT 1 — FORMULES & CONTRÔLE D'ACCÈS PAR CLIENT
@@ -2741,7 +2931,7 @@ function gotoAS(name){
   document.querySelectorAll('#admin-sidebar .nav-item').forEach(n=>n.classList.remove('active'));
   const sec=document.getElementById('section-'+name);if(sec)sec.classList.add('active');
   const nav=document.querySelector('#admin-sidebar .nav-item[data-as="'+name+'"]');if(nav)nav.classList.add('active');
-  if(name==='adashboard')renderAdminDash();if(name==='amodules')renderAMods();if(name==='arepas')renderARepas();if(name==='adefis')renderADefis();if(name==='aformules')renderAFormules();if(name==='ainvites')renderAInvites();if(name==='amembers')renderAMembers();if(name==='acommunity')renderAComm();if(name==='aresources')renderARes();if(name==='aglossaire')renderAGlos();if(name==='atips')renderATips();if(name==='afaq')renderAFAQ();if(name==='amessage'){const m=DB.get('coach_message');if(m)document.getElementById('coach-msg').value=m;}
+  if(name==='adashboard')renderAdminDash();if(name==='amodules')renderAMods();if(name==='arepas')renderARepas();if(name==='adefis')renderADefis();if(name==='aformules')renderAFormules();if(name==='ainvites')renderAInvites();if(name==='amembers')renderAMembers();if(name==='acommunity')renderAComm();if(name==='aresources')renderARes();if(name==='aglossaire')renderAGlos();if(name==='atips')renderATips();if(name==='afaq')renderAFAQ();if(name==='amessage'){const m=DB.get('coach_message');if(m)document.getElementById('coach-msg').value=m;const cq=document.getElementById('coach-quotes');if(cq)cq.value=DB.getArr('citations').join('\n');}
   closeASB();window.scrollTo(0,0);
 }
 function updateFAB(s){const fab=document.getElementById('fab');fab.style.display=['community','body','transformation'].includes(s)&&window.innerWidth<=768?'flex':'none';fab.dataset.s=s;}
@@ -3796,6 +3986,328 @@ function openSanteClient(code){
    +'<div style="border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:12px"><div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text2);margin-bottom:8px">😴 Sommeil</div>'+sleepCardHTML(code,true)+'</div>'
    +'<div style="border:1px solid var(--border);border-radius:12px;padding:14px"><div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text2);margin-bottom:8px">🩹 Blessures</div>'+blFormHTML(code)+'<div style="margin-top:10px">'+blListHTML(code,true)+'</div></div>';
   openModal();
+}
+// ============================================================
+// LOT 4 — Quêtes, Trophées, Prestige, Citation du jour, Landing
+// Nouvelle clé cloud par membre : quetes_<code> ; clé partagée : citations
+// ============================================================
+
+// ✏️✏️✏️ LIENS DE CONTACT DE LA PAGE DE VENTE — MODIFIE ICI ✏️✏️✏️
+const LANDING_CONTACT={
+  instagram:'https://instagram.com/TON_INSTAGRAM',   // ← ton Instagram
+  whatsapp:'https://wa.me/33600000000',              // ← ton numéro WhatsApp (format international)
+  email:'mailto:ton@email.com'                       // ← ton email
+};
+
+// ---------- CITATION DU JOUR ----------
+const QUOTES=[
+"La discipline, c’est choisir entre ce que tu veux maintenant et ce que tu veux le plus.",
+"Tu n’as pas besoin d’être motivé. Tu as besoin d’être constant.",
+"Le corps abandonne bien après la tête. Entraîne les deux.",
+"Chaque séance honorée est un vote pour la personne que tu deviens.",
+"Le programme parfait n’existe pas. La régularité, si.",
+"Un an, c’est 52 lundis. Combien vas-tu en gagner ?",
+"La sueur d’aujourd’hui est la confiance de demain.",
+"Tu ne trouveras jamais le temps. Tu dois le créer.",
+"Les résultats vivent là où le confort s’arrête.",
+"Petit progrès chaque jour. Gros changement chaque année.",
+"Personne ne viendra le faire à ta place. Bonne nouvelle : tu en es capable.",
+"Le plus dur, c’est d’enfiler les chaussures.",
+"Sois plus fort que ta meilleure excuse.",
+"On ne rate pas une transformation. On l’abandonne.",
+"Ton futur toi te regarde t’entraîner. Rends-le fier.",
+"L’intensité impressionne. La constance transforme.",
+"Le muscle se construit dans la salle, se révèle en cuisine, se répare la nuit.",
+"Commence où tu es. Utilise ce que tu as. Fais ce que tu peux.",
+"Une mauvaise séance vaut toujours mieux que pas de séance.",
+"Si c’était facile, tout le monde l’aurait fait.",
+"Compare-toi à celui que tu étais hier, pas à un inconnu sur Instagram.",
+"La faim de réussir doit être plus forte que la peur d’échouer.",
+"Chaque répétition compte, surtout celles que personne ne voit.",
+"Tu n’es pas fatigué. Tu es en train de devenir plus fort.",
+"Le secret ? Il n’y en a pas. Travaille.",
+"La balance mesure ton poids, pas ta valeur. Le carnet mesure tes progrès.",
+"Six mois de constance battent six ans d’hésitation.",
+"Le repos fait partie du programme. La paresse, non.",
+"Ce que tu fais aujourd’hui, ton corps s’en souviendra dans dix ans.",
+"Les champions s’entraînent les jours sans envie.",
+"Une heure de sport, c’est 4 % de ta journée. Zéro excuse.",
+"Le découragement est temporaire. L’abandon est définitif.",
+"Construis des habitudes si solides que la motivation devienne optionnelle.",
+"Ta seule compétition : la version d’hier de toi-même.",
+"Les courbatures passent. La fierté reste.",
+"Mange comme quelqu’un qui s’aime. Entraîne-toi comme quelqu’un qui y croit.",
+"Pas de raccourci. Juste un chemin, et tes pieds dessus.",
+"La régularité est une superpuissance que tout le monde peut avoir.",
+"Aujourd’hui, fais juste un peu mieux qu’hier.",
+"Quand tu veux abandonner, rappelle-toi pourquoi tu as commencé.",
+"Le gras se perd en silence, kilomètre après kilomètre, assiette après assiette.",
+"Sois le projet sur lequel tu travailles le plus dur.",
+"Une série de plus. Toujours une série de plus.",
+"Les excuses brûlent zéro calorie.",
+"Ton corps peut le faire. C’est ta tête qu’il faut convaincre.",
+"Plante aujourd’hui. Récolte dans un an.",
+"L’échec, c’est des données. Analyse, ajuste, recommence.",
+"La vraie force, c’est revenir après une mauvaise semaine.",
+"Dors comme un athlète, mange comme un adulte, entraîne-toi comme si ça comptait.",
+"Trois séances par semaine pendant un an, c’est 156 victoires.",
+"Ce n’est pas une punition. C’est un privilège de pouvoir s’entraîner.",
+"Le moment parfait n’arrive jamais. Le moment présent, toujours.",
+"Chaque verre d’eau, chaque heure de sommeil, chaque rep : tout compte.",
+"Tu as survécu à 100 % de tes pires journées. Une séance ne te fera pas peur.",
+"Moins de bruit, plus de barre.",
+"La motivation t’amène au départ. L’habitude t’amène à l’arrivée.",
+"Un objectif sans plan n’est qu’un souhait. Tu as un plan. Exécute.",
+"Le miroir est en retard sur tes efforts. Continue.",
+"Deviens accro au progrès, pas à la perfection.",
+"C’est le jour 1 ou un jour de plus. À toi de choisir."
+];
+function quoteOfDay(){
+  const bank=QUOTES.concat(DB.getArr('citations').filter(q=>typeof q==='string'&&q.trim()));
+  const n=Math.floor(Date.now()/86400000);
+  return bank[n%bank.length];
+}
+function saveCitations(){
+  const lines=(document.getElementById('coach-quotes').value||'').split('\n').map(l=>l.trim()).filter(l=>l.length>4).slice(0,200);
+  DB.set('citations',lines);
+  toast('Citations enregistrées ✅ ('+lines.length+')','success');
+}
+
+// ---------- PRESTIGE ----------
+function getPrestige(xp){
+  if(xp<5000)return null;
+  const p=Math.floor((xp-2500)/2500);
+  const tiers=[null,['Prestige I','⭐','#c9972a'],['Prestige II','💠','#7ea4c9'],['Prestige III','💎','#5ec3d8'],['Prestige IV','👑','#a78bfa']];
+  const t=tiers[Math.min(4,p)]||tiers[4];
+  return{p,name:p<=4?t[0]:'Prestige '+(p>9?p:['V','VI','VII','VIII','IX','X'][p-5]),icon:t[1],color:t[2]};
+}
+const __navProfBase=renderNavProfile;
+renderNavProfile=function(){
+  __navProfBase();
+  const pr=getPrestige(CU.xp||0);
+  if(!pr)return;
+  const inf=document.querySelector('#sb-profile .sbp-info div[style]');
+  if(inf)inf.insertAdjacentHTML('beforeend',' <span style="display:inline-block;padding:3px 12px;border-radius:30px;font-size:10px;font-weight:700;background:'+pr.color+'33;color:'+pr.color+';border:1px solid '+pr.color+'66">'+pr.icon+' '+pr.name+'</span>');
+  const xpv=document.getElementById('tb-xp-val');
+  if(xpv)xpv.textContent=(CU.xp||0)+' XP '+pr.icon;
+};
+
+// ---------- QUÊTES ----------
+function qKey(){return 'quetes_'+(CU&&CU.code||'');}
+function isoWeek(){const d=new Date();const day=(d.getDay()+6)%7;d.setDate(d.getDate()-day);return localDate(d);}
+function getQuetes(){
+  let q=DB.get(qKey())||{};
+  const today=localDate(),week=isoWeek();
+  if(q.day!==today){q.day=today;q.done={};}
+  if(q.week!==week){q.week=week;q.wdone={};}
+  if(typeof q.perfects!=='number')q.perfects=0;
+  return q;
+}
+function questAward(xp,label){
+  if(!CU||CU.isPreview)return;
+  CU.xp=(CU.xp||0)+xp;saveCU();
+  const x=document.getElementById('tb-xp-val');if(x)x.textContent=(CU.xp||0)+' XP';
+  toast('🎯 Quête validée : '+label+' +'+xp+' XP','gold');
+}
+function dailyQuests(){
+  const today=localDate();
+  const hy=getHydra();
+  const jr=getDay(today);const nMeals=['matin','midi','soir','collation'].reduce((s,k)=>s+(jr[k]||[]).length,0);
+  const sl=(DB.get(slKey())||{days:{}}).days||{};
+  let ck={};try{ck=JSON.parse(localStorage.getItem('nc3_ck_'+(CU.code||'')+'_'+today))||{};}catch(e){}
+  return[
+    {id:'eau',icon:'💧',label:'Boire 6 verres d’eau (1,5 L)',xp:10,auto:true,ok:(hy.days[today]||0)>=6,go:"gotoS('repas')"},
+    {id:'journal',icon:'📒',label:'Remplir ton journal (2 repas min.)',xp:10,auto:true,ok:nMeals>=2,go:"gotoS('repas')"},
+    {id:'sommeil',icon:'😴',label:'Noter ta nuit de sommeil',xp:10,auto:true,ok:!!sl[today],go:"gotoS('sante')"},
+    {id:'seance',icon:'🏋️',label:'Cocher ta séance du jour',xp:15,auto:true,ok:!!ck.s1,go:"gotoS('dashboard')"},
+    {id:'mobilite',icon:'🧘',label:'10 min de mobilité ou d’étirements',xp:10,auto:false}
+  ];
+}
+function weeklyQuests(){
+  const week=isoWeek();
+  let seances=0,jDays=0;
+  const jr=DB.get('journal_'+(CU.code||''))||{};
+  for(let i=0;i<7;i++){
+    const d=new Date(week+'T12:00:00');d.setDate(d.getDate()+i);const ds=localDate(d);
+    try{const ck=JSON.parse(localStorage.getItem('nc3_ck_'+(CU.code||'')+'_'+ds));if(ck&&ck.s1)seances++;}catch(e){}
+    const day=jr[ds];if(day&&['matin','midi','soir','collation'].some(k=>(day[k]||[]).length))jDays++;
+  }
+  return[
+    {id:'w_seances',icon:'🔥',label:'4 séances cette semaine ('+Math.min(4,seances)+'/4)',xp:50,auto:true,ok:seances>=4},
+    {id:'w_journal',icon:'🍽️',label:'Journal rempli 5 jours sur 7 ('+Math.min(5,jDays)+'/5)',xp:40,auto:true,ok:jDays>=5},
+    {id:'w_lecons',icon:'📚',label:'Terminer 3 leçons de module',xp:60,auto:false}
+  ];
+}
+function checkQuest(id,isWeekly){
+  const q=getQuetes();
+  const store=isWeekly?q.wdone:q.done;
+  if(store[id])return;
+  const quest=(isWeekly?weeklyQuests():dailyQuests()).find(x=>x.id===id);
+  if(!quest)return;
+  store[id]=true;
+  DB.set(qKey(),q);
+  questAward(quest.xp,quest.label.replace(/\s*\(.*\)$/,''));
+  if(!isWeekly&&dailyQuests().every(d=>q.done[d.id])&&!q['pf_'+q.day]){
+    q['pf_'+q.day]=true;q.perfects=(q.perfects||0)+1;DB.set(qKey(),q);
+    questAward(15,'Journée parfaite 🌟');fireConfetti();
+  }
+  checkBadges();renderQuests();
+}
+function renderQuests(){
+  const sec=document.getElementById('section-dashboard');if(!sec||!CU||CU.isAdmin)return;
+  const q=getQuetes();
+  let changed=false;
+  dailyQuests().forEach(d=>{if(d.auto&&d.ok&&!q.done[d.id]){q.done[d.id]=true;changed=true;questAward(d.xp,d.label.replace(/\s*\(.*\)$/,''));}});
+  weeklyQuests().forEach(w=>{if(w.auto&&w.ok&&!q.wdone[w.id]){q.wdone[w.id]=true;changed=true;questAward(w.xp,w.label.replace(/\s*\(.*\)$/,''));}});
+  if(changed){
+    if(dailyQuests().every(d=>q.done[d.id])&&!q['pf_'+q.day]){q['pf_'+q.day]=true;q.perfects=(q.perfects||0)+1;questAward(15,'Journée parfaite 🌟');fireConfetti();}
+    DB.set(qKey(),q);
+    checkBadges();
+  }
+  const dq=dailyQuests(),wq=weeklyQuests();
+  const nd=dq.filter(d=>q.done[d.id]).length,nw=wq.filter(w=>q.wdone[w.id]).length;
+  const row=(quest,done,isWeekly)=>'<div style="display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid var(--border2)">'
+   +'<div onclick="'+(done?'':(quest.auto?(quest.go||''):'checkQuest(\''+quest.id+'\','+(isWeekly?'true':'false')+')'))+'" style="width:24px;height:24px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;'+(done?'background:var(--green);color:#fff':'border:2px solid var(--border)')+'">'+(done?'<i class="fa-solid fa-check" style="font-size:11px"></i>':'')+'</div>'
+   +'<span style="flex:1;font-size:13px;'+(done?'text-decoration:line-through;color:var(--text3)':'')+'">'+quest.icon+' '+quest.label+(quest.auto&&!done?' <span style="font-size:10px;color:var(--text3)">(auto)</span>':'')+'</span>'
+   +'<span style="font-size:12px;font-weight:700;color:var(--gold);flex-shrink:0">+'+quest.xp+'</span></div>';
+  let el=document.getElementById('quests-wrap');
+  if(!el){el=document.createElement('div');el.id='quests-wrap';const kp=document.getElementById('kpi-wrap');if(kp)kp.insertAdjacentElement('afterend',el);else sec.appendChild(el);}
+  el.innerHTML='<div class="dbg" style="margin-top:4px">'
+   +'<div class="streak-cal" style="margin-bottom:0"><div class="sc-title" style="display:flex;justify-content:space-between"><span><i class="fa-solid fa-bullseye" style="color:var(--blue)"></i> Quêtes du jour</span><span style="font-size:12px;color:'+(nd===dq.length?'var(--green)':'var(--text3)')+';font-weight:700">'+nd+'/'+dq.length+'</span></div>'
+   +'<div class="pbw" style="max-width:none;margin:0 0 8px"><div class="pbf" style="width:'+Math.round(nd/dq.length*100)+'%"></div></div>'
+   +dq.map(d=>row(d,!!q.done[d.id],false)).join('')
+   +(nd===dq.length?'<div style="font-size:12px;color:var(--green);font-weight:700;padding-top:8px">🌟 Journée parfaite — bonus +15 XP encaissé !</div>':'<div style="font-size:11px;color:var(--text3);padding-top:8px">Termine les 5 quêtes pour le bonus « journée parfaite » (+15 XP)</div>')+'</div>'
+   +'<div class="streak-cal" style="margin-bottom:0"><div class="sc-title" style="display:flex;justify-content:space-between"><span><i class="fa-solid fa-calendar-week" style="color:var(--purple)"></i> Quêtes de la semaine</span><span style="font-size:12px;color:'+(nw===wq.length?'var(--green)':'var(--text3)')+';font-weight:700">'+nw+'/'+wq.length+'</span></div>'
+   +wq.map(w=>row(w,!!q.wdone[w.id],true)).join('')
+   +'<div style="font-size:11px;color:var(--text3);padding-top:8px">Remise à zéro chaque lundi. Les quêtes (auto) se valident toutes seules.</div></div></div>';
+}
+function injectQuote(){
+  const sec=document.getElementById('section-dashboard');if(!sec||!CU)return;
+  let el=document.getElementById('quote-wrap');
+  if(!el){el=document.createElement('div');el.id='quote-wrap';sec.insertAdjacentElement('afterbegin',el);}
+  el.innerHTML='<div style="background:linear-gradient(135deg,var(--dark2),var(--dark3));border-radius:var(--rl);padding:18px 22px;margin-bottom:18px;display:flex;gap:14px;align-items:flex-start;border:1px solid rgba(255,255,255,.06)"><div style="font-family:var(--fd);font-size:42px;color:var(--gold);line-height:1">“</div><div><div style="font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.08em;font-weight:600;margin-bottom:4px">Citation du jour</div><div style="font-size:15px;color:#fff;font-weight:500;line-height:1.55;font-style:italic">'+h(quoteOfDay())+'</div></div></div>';
+}
+
+// ---------- TROPHÉES ----------
+const RARITY={commun:{l:'Commun',c:'#6b7f95'},rare:{l:'Rare',c:'#2e86de'},epique:{l:'Épique',c:'#8b5cf6'},legendaire:{l:'Légendaire',c:'#d6a63c'}};
+function _journalDays(u){const jr=DB.get('journal_'+(u.code||''))||{};return Object.keys(jr).filter(d=>['matin','midi','soir','collation'].some(k=>(jr[d][k]||[]).length)).length;}
+function _sleepNights(u){return Object.keys((DB.get('sleep_'+(u.code||''))||{days:{}}).days||{}).length;}
+function _hydraDays(u){const hd=(DB.get('hydra_'+(u.code||''))||{days:{}}).days||{};return Object.values(hd).filter(n=>n>=8).length;}
+function _activeDays(u){return DB.getArr('logins_'+(u.code||'')).length;}
+function _modsDone(u){const mods=DB.getArr('modules');return mods.filter(m=>m.lessons.length&&m.lessons.every(l=>(u.completedLessons||[]).includes(m.id+'-'+l.id)));}
+function _likesRecus(u){return DB.getArr('posts').filter(p=>p.authorCode===u.code).reduce((s,p)=>{const rx=p.reactions||{};return s+(p.likes||0)+Object.values(rx).reduce((a,b)=>a+(b||0),0);},0);}
+function _earlyBird(u){const sl=(DB.get('sleep_'+(u.code||''))||{days:{}}).days||{};return Object.values(sl).filter(e=>e.wake&&e.wake<='06:30').length;}
+const NC_BADGES=[
+ {id:'first_login',icon:'🚀',label:'Premier pas',r:'commun',need:'Se connecter à la plateforme',c:u=>true},
+ {id:'streak7',icon:'🔥',label:'Une semaine de feu',r:'commun',need:'7 jours de streak de connexion',c:u=>(u.streak||0)>=7},
+ {id:'streak30',icon:'🌋',label:'Mois incassable',r:'rare',need:'30 jours de streak',c:u=>(u.streak||0)>=30},
+ {id:'streak100',icon:'☄️',label:'Centurion',r:'epique',need:'100 jours de streak',c:u=>(u.streak||0)>=100},
+ {id:'streak365',icon:'🪐',label:'Année légendaire',r:'legendaire',need:'365 jours de streak',c:u=>(u.streak||0)>=365},
+ {id:'actif10',icon:'📆',label:'Habitué',r:'commun',need:'10 jours actifs sur la plateforme',c:u=>_activeDays(u)>=10},
+ {id:'actif50',icon:'🗓️',label:'Pilier',r:'rare',need:'50 jours actifs',c:u=>_activeDays(u)>=50},
+ {id:'actif100',icon:'🏛️',label:'Vétéran',r:'epique',need:'100 jours actifs',c:u=>_activeDays(u)>=100},
+ {id:'actif250',icon:'🗿',label:'Monument',r:'legendaire',need:'250 jours actifs',c:u=>_activeDays(u)>=250},
+ {id:'first_lesson',icon:'📚',label:'Première leçon',r:'commun',need:'Compléter une leçon',c:u=>(u.completedLessons||[]).length>=1},
+ {id:'lecons25',icon:'🎓',label:'Étudiant assidu',r:'rare',need:'25 leçons complétées',c:u=>(u.completedLessons||[]).length>=25},
+ {id:'module1',icon:'🏅',label:'Module bouclé',r:'commun',need:'Terminer un module entier',c:u=>_modsDone(u).length>=1},
+ {id:'domaine',icon:'🧠',label:'Expert du domaine',r:'epique',need:'Terminer tous les modules d’un domaine',c:u=>{const mods=DB.getArr('modules');const doneIds=_modsDone(u).map(m=>m.id);return['Musculation','Nutrition','Mental','Lifestyle'].some(d=>{const all=mods.filter(m=>m.domain===d);return all.length&&all.every(m=>doneIds.includes(m.id));});}},
+ {id:'tousmodules',icon:'🎖️',label:'Encyclopédie vivante',r:'legendaire',need:'Terminer 100 % des modules',c:u=>{const mods=DB.getArr('modules');return mods.length>0&&_modsDone(u).length===mods.length;}},
+ {id:'journal1',icon:'🍽️',label:'Premier repas loggé',r:'commun',need:'Remplir le journal alimentaire 1 jour',c:u=>_journalDays(u)>=1},
+ {id:'journal7',icon:'📒',label:'Semaine au carnet',r:'commun',need:'7 jours de journal alimentaire',c:u=>_journalDays(u)>=7},
+ {id:'journal30',icon:'📔',label:'Maître du journal',r:'rare',need:'30 jours de journal alimentaire',c:u=>_journalDays(u)>=30},
+ {id:'hydra7',icon:'💧',label:'Hydraté',r:'commun',need:'7 jours à 2 L d’eau ou plus',c:u=>_hydraDays(u)>=7},
+ {id:'sleep7',icon:'😴',label:'Dormeur sérieux',r:'commun',need:'Noter 7 nuits de sommeil',c:u=>_sleepNights(u)>=7},
+ {id:'sleep30',icon:'🌙',label:'Gardien de la nuit',r:'rare',need:'Noter 30 nuits de sommeil',c:u=>_sleepNights(u)>=30},
+ {id:'levetot',icon:'🌅',label:'Lève-tôt',r:'rare',need:'5 réveils avant 6 h 30',c:u=>_earlyBird(u)>=5},
+ {id:'first_post',icon:'💬',label:'Première publication',r:'commun',need:'Publier dans la communauté',c:u=>(u.postCount||0)>=1},
+ {id:'posts10',icon:'📣',label:'Voix de la communauté',r:'rare',need:'10 publications',c:u=>(u.postCount||0)>=10},
+ {id:'populaire',icon:'🌟',label:'Populaire',r:'epique',need:'Recevoir 15 réactions sur tes posts',c:u=>_likesRecus(u)>=15},
+ {id:'transfo',icon:'📸',label:'Face à l’objectif',r:'commun',need:'Première photo de transformation',c:u=>DB.getArr('transfo_'+(u.code||'')).length>=1},
+ {id:'bilan1',icon:'📋',label:'Point de départ',r:'commun',need:'Créer ton premier bilan',c:u=>DB.getArr('bilans_'+(u.code||'')).length>=1},
+ {id:'bilans3',icon:'📈',label:'Trimestre suivi',r:'rare',need:'3 bilans enregistrés',c:u=>DB.getArr('bilans_'+(u.code||'')).length>=3},
+ {id:'body',icon:'📏',label:'Suivi corporel',r:'commun',need:'Première mesure corporelle',c:u=>DB.getArr('body_'+(u.code||'')).length>=1},
+ {id:'suivi3mois',icon:'🛤️',label:'Marathonien du suivi',r:'epique',need:'3 mois d’ancienneté et 6 mesures',c:u=>u.joinedAt&&(Date.now()-new Date(u.joinedAt))/86400000>=90&&DB.getArr('body_'+(u.code||'')).length>=6},
+ {id:'first_defi',icon:'🏆',label:'Premier défi',r:'commun',need:'Valider un défi',c:u=>(u.completedDefis||[]).length>=1},
+ {id:'5_defis',icon:'🔱',label:'Chasseur de défis',r:'rare',need:'5 défis validés',c:u=>(u.completedDefis||[]).length>=5},
+ {id:'defis15',icon:'⚔️',label:'Gladiateur',r:'epique',need:'15 défis validés',c:u=>(u.completedDefis||[]).length>=15},
+ {id:'parfait1',icon:'✨',label:'Journée parfaite',r:'commun',need:'Terminer toutes les quêtes d’un jour',c:u=>{const q=DB.get('quetes_'+(u.code||''));return !!(q&&(q.perfects||0)>=1);}},
+ {id:'parfait10',icon:'💫',label:'Perfectionniste',r:'epique',need:'10 journées parfaites',c:u=>{const q=DB.get('quetes_'+(u.code||''));return !!(q&&(q.perfects||0)>=10);}},
+ {id:'elite',icon:'🦁',label:'Élite',r:'epique',need:'Atteindre 2 500 XP (niveau Elite)',c:u=>(u.xp||0)>=2500},
+ {id:'prestige1',icon:'👑',label:'Au-delà de l’élite',r:'legendaire',need:'Atteindre 5 000 XP (Prestige I)',c:u=>(u.xp||0)>=5000}
+];
+let _badgeQueue=[];
+function showBadgeUnlock(b){
+  _badgeQueue.push(b);
+  if(_badgeQueue.length>1)return;
+  const next=()=>{
+    const bb=_badgeQueue[0];if(!bb)return;
+    const r=RARITY[bb.r];
+    const el=document.createElement('div');
+    el.style.cssText='position:fixed;inset:0;z-index:980;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);animation:si .3s ease';
+    el.innerHTML='<div style="background:var(--surface);border:2px solid '+r.c+';border-radius:24px;padding:34px 40px;text-align:center;max-width:320px;box-shadow:0 0 60px '+r.c+'66;animation:bi .5s ease"><div style="font-size:58px;margin-bottom:10px">'+bb.icon+'</div><div style="font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:'+r.c+'">'+r.l+'</div><div style="font-family:var(--fd);font-size:21px;font-weight:800;margin:6px 0 4px">'+h(bb.label)+'</div><div style="font-size:13px;color:var(--text3)">'+h(bb.need)+'</div></div>';
+    document.body.appendChild(el);
+    fireConfetti();
+    const close=()=>{el.remove();_badgeQueue.shift();next();};
+    setTimeout(close,2600);
+    el.onclick=close;
+  };
+  next();
+}
+function checkBadges(){
+  if(!CU||CU.isAdmin||CU.isPreview)return;
+  if(!CU.badges)CU.badges=[];
+  let won=false;
+  for(const b of NC_BADGES){
+    if(CU.badges.includes(b.id))continue;
+    let ok=false;try{ok=b.c(CU);}catch(e){}
+    if(ok){CU.badges.push(b.id);won=true;showBadgeUnlock(b);addNotif('🏅','Trophée débloqué',b.label);}
+  }
+  if(won)saveCU();
+}
+function injectTrophies(){
+  const sec=document.getElementById('section-defis');if(!sec||!CU)return;
+  const owned=new Set(CU.badges||[]);
+  const have=NC_BADGES.filter(b=>owned.has(b.id)).length;
+  let el=document.getElementById('trophies-wrap');
+  if(!el){el=document.createElement('div');el.id='trophies-wrap';sec.appendChild(el);}
+  el.innerHTML='<div class="streak-cal" style="margin-top:20px"><div class="sc-title" style="display:flex;justify-content:space-between"><span><i class="fa-solid fa-medal" style="color:var(--gold)"></i> Trophées</span><span style="font-size:12px;color:var(--text3);font-weight:700">'+have+'/'+NC_BADGES.length+'</span></div>'
+   +'<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px">'
+   +NC_BADGES.map(b=>{const got=owned.has(b.id);const r=RARITY[b.r];
+     return '<div title="'+escA(b.label+' — '+b.need)+'" style="border:2px solid '+(got?r.c:'var(--border)')+';border-radius:14px;padding:12px 6px;text-align:center;'+(got?'box-shadow:0 0 14px '+r.c+'44;':'opacity:.45;filter:grayscale(1);')+'"><div style="font-size:26px">'+b.icon+'</div><div style="font-size:10px;font-weight:700;margin-top:4px;line-height:1.25">'+h(b.label)+'</div><div style="font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:'+r.c+';margin-top:3px">'+r.l+'</div>'+(got?'':'<div style="font-size:9px;color:var(--text3);margin-top:3px;line-height:1.3">'+h(b.need)+'</div>')+'</div>';
+   }).join('')+'</div></div>';
+}
+
+// ---------- BRANCHEMENTS ----------
+const __dashLot3=renderDash;
+renderDash=function(){
+  __dashLot3();
+  try{injectQuote();renderQuests();checkBadges();}catch(e){console.warn('lot4 dash',e);}
+};
+const __defisLot3=renderDefis;
+renderDefis=function(){
+  __defisLot3();
+  try{
+    injectTrophies();
+    const pr=getPrestige((CU&&CU.xp)||0);
+    if(pr){const xc=document.querySelector('#xp-card-wrap .xc-info h3');if(xc)xc.insertAdjacentHTML('beforeend',' <span style="font-size:13px;padding:3px 12px;border-radius:20px;background:'+pr.color+'33;color:'+pr.color+';border:1px solid '+pr.color+'66;vertical-align:middle">'+pr.icon+' '+pr.name+'</span>');}
+  }catch(e){console.warn('lot4 defis',e);}
+};
+
+// ---------- LANDING PAGE ----------
+function goLogin(){try{localStorage.setItem('nc3_seen_landing','1');}catch(e){}showPage('login');initLoginScreen();}
+function showLanding(){showPage('landing');initLanding();}
+function openContactModal(){
+  document.getElementById('modal-content').innerHTML='<h3 style="font-family:var(--fd);font-size:20px;margin-bottom:6px">Parlons de tes objectifs 💬</h3><p style="font-size:14px;color:var(--text2);margin-bottom:18px">Choisis le canal qui te convient — réponse rapide garantie.</p><div style="display:flex;flex-direction:column;gap:10px">'
+  +'<a href="'+escA(LANDING_CONTACT.instagram)+'" target="_blank" rel="noopener" class="btn" style="justify-content:center"><i class="fa-brands fa-instagram"></i> Écris-moi sur Instagram</a>'
+  +'<a href="'+escA(LANDING_CONTACT.whatsapp)+'" target="_blank" rel="noopener" class="btn" style="justify-content:center;background:linear-gradient(135deg,#25d366,#128c7e)"><i class="fa-brands fa-whatsapp"></i> Discutons sur WhatsApp</a>'
+  +'<a href="'+escA(LANDING_CONTACT.email)+'" class="btn-sec" style="justify-content:center;display:inline-flex;align-items:center;gap:8px"><i class="fa-solid fa-envelope"></i> Par email</a></div>';
+  openModal();
+}
+function initLanding(){
+  const els=document.querySelectorAll('#page-landing .lv');
+  if(!('IntersectionObserver' in window)){els.forEach(e=>e.classList.add('lv-vis'));return;}
+  const io=new IntersectionObserver(entries=>{entries.forEach(en=>{if(en.isIntersecting){en.target.classList.add('lv-vis');io.unobserve(en.target);}});},{threshold:.12});
+  els.forEach(e=>io.observe(e));
 }
 </script>
 </body>
