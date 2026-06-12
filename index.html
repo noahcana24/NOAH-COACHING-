@@ -989,6 +989,7 @@ button{touch-action:manipulation;}
       <button class="nav-item" data-s="resources"><i class="fa-solid fa-folder-open"></i><span>Ressources</span></button>
       <div class="nav-group">Mon suivi</div>
       <button class="nav-item" data-s="body"><i class="fa-solid fa-chart-line"></i><span>Suivi corporel</span></button>
+      <button class="nav-item" data-s="sante"><i class="fa-solid fa-heart-circle-check"></i><span>Santé</span></button>
       <button class="nav-item" data-s="transformation"><i class="fa-solid fa-camera"></i><span>Transformation</span></button>
       <button class="nav-item" data-s="temoignage"><i class="fa-solid fa-star"></i><span>Témoignage</span></button>
       <div class="nav-group">Connaissances</div>
@@ -1069,6 +1070,7 @@ button{touch-action:manipulation;}
         </div>
         <div class="sbar"><i class="fa-solid fa-magnifying-glass"></i><input type="text" id="repas-search" placeholder="Rechercher un repas..." oninput="renderRepas()"></div>
         <div id="repas-count" style="font-size:13px;color:var(--text3);margin:-6px 0 14px;font-weight:500"></div>
+        <div id="courses-bar" style="margin-bottom:16px"></div>
         <div class="repas-grid" id="repas-grid"></div>
       </section>
 
@@ -1120,8 +1122,14 @@ button{touch-action:manipulation;}
         <div class="body-entries" id="body-entries"></div>
       </section>
 
+      <section id="section-sante" class="section">
+        <div class="sec-header"><h2>Santé</h2><p>Cycle, sommeil, blessures — adapte ton entraînement à ton corps</p></div>
+        <div id="sante-wrap"></div>
+      </section>
+
       <section id="section-transformation" class="section">
-        <div class="sec-header"><h2>Ma Transformation</h2><p>Avant/Après — visible par toi et ton coach uniquement</p></div>
+        <div class="sec-header"><h2>Ma Transformation</h2><p>Bilans et photos avant/après — visible par toi et ton coach uniquement</p></div>
+        <div id="bilans-wrap"></div>
         <div class="body-actions"><button class="btn" onclick="openTransfoForm()"><i class="fa-solid fa-plus"></i> Ajouter une photo</button></div>
         <div class="transfo-tl" id="transfo-tl"></div>
       </section>
@@ -1192,6 +1200,7 @@ button{touch-action:manipulation;}
       <button class="bsi" data-s="repas" onclick="gotoS('repas');closeBS()"><i class="fa-solid fa-utensils"></i><span>Repas</span></button>
       <button class="bsi" data-s="resources" onclick="gotoS('resources');closeBS()"><i class="fa-solid fa-folder-open"></i><span>Ressources</span></button>
       <button class="bsi" data-s="body" onclick="gotoS('body');closeBS()"><i class="fa-solid fa-chart-line"></i><span>Suivi corps</span></button>
+      <button class="bsi" data-s="sante" onclick="gotoS('sante');closeBS()"><i class="fa-solid fa-heart-circle-check"></i><span>Santé</span></button>
       <button class="bsi" data-s="transformation" onclick="gotoS('transformation');closeBS()"><i class="fa-solid fa-camera"></i><span>Transfo</span></button>
       <button class="bsi" data-s="glossaire" onclick="gotoS('glossaire');closeBS()"><i class="fa-solid fa-book"></i><span>Glossaire</span></button>
       <button class="bsi" data-s="tips" onclick="gotoS('tips');closeBS()"><i class="fa-solid fa-heart-pulse"></i><span>Tips</span></button>
@@ -1525,7 +1534,7 @@ const CLOUD_KEYS=['members','invites','modules','repas','defis','resources','glo
 function isCloudKey(k){
   if(CLOUD_KEYS.includes(k))return true;
   // données par client : body_, transfo_, temo_, comments_
-  return /^(body_|transfo_|temo_|comments_|journal_|hydra_)/.test(k);
+  return /^(body_|transfo_|temo_|comments_|journal_|hydra_|cycle_|sleep_|blessures_|bilans_|courses_)/.test(k);
 }
 // Pousse une clé vers Supabase (sans bloquer l'interface)
 function cloudPush(key,val){
@@ -2586,8 +2595,8 @@ function logout(){DB.set('session',null);CU=null;isPreview=false;showPage('login
 // access = {formule:id|null, sections:{cle:false=bloqué}, modules:'all'|[ids], repas:'all'|[ids]}
 // Absence d'access (membres existants) = accès complet → zéro régression.
 // ============================================================
-const GATED_SECTIONS=['modules','repas','defis','community','resources','body','transformation','temoignage','glossaire','tips','faq'];
-const SECTION_LABELS={modules:'Modules',repas:'Repas',defis:'Défis',community:'Communauté',resources:'Ressources',body:'Suivi corporel',transformation:'Transformation',temoignage:'Témoignage',glossaire:'Glossaire',tips:'Tips & Récup',faq:'FAQ'};
+const GATED_SECTIONS=['modules','repas','defis','community','resources','body','sante','transformation','temoignage','glossaire','tips','faq'];
+const SECTION_LABELS={modules:'Modules',repas:'Repas',defis:'Défis',community:'Communauté',resources:'Ressources',body:'Suivi corporel',sante:'Santé',transformation:'Transformation',temoignage:'Témoignage',glossaire:'Glossaire',tips:'Tips & Récup',faq:'FAQ'};
 function getAccess(){const a=(CU&&CU.access)||{};return{formule:a.formule||null,sections:a.sections||{},modules:(a.modules===undefined||a.modules===null)?'all':a.modules,repas:(a.repas===undefined||a.repas===null)?'all':a.repas};}
 function canSection(s){if(!CU||CU.isAdmin||CU.isPreview)return true;if(!GATED_SECTIONS.includes(s))return true;return getAccess().sections[s]!==false;}
 function filterByAccess(list,kind){if(!CU||CU.isAdmin||CU.isPreview)return list;const sel=getAccess()[kind];if(sel==='all')return list;return list.filter(x=>(sel||[]).includes(x.id));}
@@ -2716,7 +2725,7 @@ function showMember(){showPage('member');renderNavProfile();renderNotifs();apply
 function showAdmin(){showPage('admin');gotoAS('adashboard');document.getElementById('admin-bnav').style.display='block';document.getElementById('bnav').style.display='none';}
 function renderNavProfile(){const init=initials(CU.name);const lv=getLevel(CU.xp||0);document.getElementById('tb-name').textContent='Bonjour '+CU.name.split(' ')[0]+' 👋';document.getElementById('tb-xp-val').textContent=(CU.xp||0)+' XP';document.getElementById('sb-profile').innerHTML='<div class="sbp-av">'+init+'</div><div class="sbp-info"><div class="sbp-name">'+h(CU.name)+'</div><div style="margin-top:3px"><span class="lv-pill lv-'+lv.name+'" style="font-size:10px;padding:3px 12px">'+lv.name+'</span></div></div>';}
 
-const SNAMES={dashboard:'Dashboard',modules:'Modules',repas:'Repas',defis:'Défis',community:'Communauté',resources:'Ressources',body:'Suivi corporel',transformation:'Transformation',temoignage:'Témoignage',glossaire:'Glossaire',tips:'Tips & Récup',faq:'FAQ','module-detail':'Module'};
+const SNAMES={dashboard:'Dashboard',modules:'Modules',repas:'Repas',defis:'Défis',community:'Communauté',resources:'Ressources',body:'Suivi corporel',sante:'Santé',transformation:'Transformation',temoignage:'Témoignage',glossaire:'Glossaire',tips:'Tips & Récup',faq:'FAQ','module-detail':'Module'};
 function gotoS(name){
   if(CU&&!CU.isAdmin&&!CU.isPreview&&!canSection(name)){renderLocked(name);closeSB();window.scrollTo(0,0);return;}
   document.querySelectorAll('#page-member .section').forEach(s=>s.classList.remove('active'));
@@ -2724,7 +2733,7 @@ function gotoS(name){
   const sec=document.getElementById('section-'+name);if(sec)sec.classList.add('active');
   const nav=document.querySelector('#sidebar .nav-item[data-s="'+name+'"]');if(nav)nav.classList.add('active');
   document.getElementById('bc-current').textContent=SNAMES[name]||name;
-  if(name==='dashboard')renderDash();if(name==='modules')renderMods();if(name==='repas')renderRepas();if(name==='defis')renderDefis();if(name==='community')renderComm();if(name==='resources')renderResources();if(name==='body')renderBody();if(name==='transformation')renderTransfo();if(name==='temoignage')renderTemo();if(name==='glossaire')renderGlossaire();if(name==='tips')renderTips();if(name==='faq')renderFAQ();
+  if(name==='dashboard')renderDash();if(name==='modules')renderMods();if(name==='repas')renderRepas();if(name==='defis')renderDefis();if(name==='community')renderComm();if(name==='resources')renderResources();if(name==='body')renderBody();if(name==='sante')renderSante();if(name==='transformation')renderTransfo();if(name==='temoignage')renderTemo();if(name==='glossaire')renderGlossaire();if(name==='tips')renderTips();if(name==='faq')renderFAQ();
   updateFAB(name);closeSB();window.scrollTo(0,0);
 }
 function gotoAS(name){
@@ -2960,7 +2969,7 @@ function delInvite(code){DB.set('invites',DB.getArr('invites').filter(i=>i.code!
 function renderAInvites(){const fsel=document.getElementById('inv-formule');if(fsel){const cur=fsel.value;fsel.innerHTML='<option value="">Accès complet (par défaut)</option>'+DB.getArr('formules').map(f=>'<option value="'+f.id+'">'+(f.icon||'')+' '+h(f.name)+'</option>').join('');fsel.value=cur;}const list=document.getElementById('invites-list');const invs=DB.getArr('invites');if(!invs.length){list.innerHTML='<div class="empty"><i class="fa-solid fa-envelope"></i><p>Aucun code généré.</p></div>';return;}list.innerHTML=invs.slice().reverse().map(i=>'<div class="inv-item"><span class="ii-code">'+i.code+'</span><div style="font-size:12px;color:var(--text3)">'+(i.name?h(i.name):'')+(i.note?' · '+h(i.note):'')+(i.formule?' · 🎫 '+h((DB.getArr('formules').find(f=>f.id===i.formule)||{}).name||''):'')+'</div><span class="ii-status '+(i.used?'ii-used':'ii-unused')+'">'+(i.used?'✅ Utilisé'+(i.usedBy?' ('+h(i.usedBy)+')':''):'⏳ En attente')+'</span><button class="be-del" onclick="delInvite(\''+i.code+'\')" style="margin-left:8px"><i class="fa-solid fa-xmark"></i></button></div>').join('');}
 
 // ADMIN MEMBERS
-function renderAMembers(){const q=(document.getElementById('member-search')?.value||'').toLowerCase();let members=DB.getArr('members');if(q)members=members.filter(m=>m.name.toLowerCase().includes(q)||(m.code||'').toLowerCase().includes(q));const list=document.getElementById('members-list');if(!members.length){list.innerHTML='<div class="empty"><i class="fa-solid fa-users"></i><p>Aucun membre'+(q?' trouvé':' inscrit')+'.</p></div>';return;}const mods=DB.getArr('modules');const totalL=mods.reduce((s,m)=>s+m.lessons.length,0);list.innerHTML=members.map(m=>{const lv=getLevel(m.xp||0);const doneL=(m.completedLessons||[]).length;const pct=totalL?Math.round(doneL/totalL*100):0;const temo=DB.get('temo_'+m.code);const lastLogin=m.lastLogin||'—';const nBody=DB.getArr('body_'+m.code).length;const nTransfo=DB.getArr('transfo_'+m.code).length;return '<div class="member-card"><div class="mc-hdr"><div class="mc-av">'+initials(m.name)+'</div><div style="flex:1"><div class="mc-name">'+h(m.name)+(temo&&!temo.read?' <span style="background:var(--red);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px">⭐ Nouveau témo</span>':'')+'</div><div class="mc-meta">Code: '+m.code+' · Inscrit le '+fmtDate(m.joinedAt)+(m.pwHash?'':' · <span style="color:var(--orange);font-weight:600">mot de passe non créé</span>')+'</div></div><span class="lv-pill lv-'+lv.name+'">'+lv.name+'</span></div><div class="mc-stats"><div class="mc-stat">⚡ <strong>'+(m.xp||0)+'</strong> XP</div><div class="mc-stat">📚 <strong>'+doneL+'</strong> leçons ('+pct+'%)</div><div class="mc-stat">🏆 <strong>'+((m.completedDefis||[]).length)+'</strong> défis</div><div class="mc-stat">🔥 <strong>'+(m.streak||0)+'</strong> j streak</div><div class="mc-stat">📅 '+(lastLogin==='—'?'—':lastLogin)+'</div></div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:1px solid var(--border2)"><button class="btn-edit btn-sm" onclick="viewClientBody(\''+m.code+'\')"><i class="fa-solid fa-chart-line"></i> Suivi corporel'+(nBody?' ('+nBody+')':'')+'</button><button class="btn-edit btn-sm" onclick="viewClientTransfo(\''+m.code+'\')"><i class="fa-solid fa-camera"></i> Transformations'+(nTransfo?' ('+nTransfo+')':'')+'</button><button class="btn-edit btn-sm" onclick="viewTemo(\''+m.code+'\')" '+(temo?'':'disabled style="opacity:.4;cursor:default"')+'><i class="fa-solid fa-star"></i> Témoignage'+(temo?' ('+temo.note+'/5)':'')+'</button><button class="btn-edit btn-sm" onclick="openAccessEditor(\''+m.code+'\')"><i class="fa-solid fa-key"></i> Accès'+(m.access&&m.access.formule?' · '+h((DB.getArr('formules').find(f=>f.id===m.access.formule)||{}).name||''):'')+'</button><button class="btn-edit btn-sm" onclick="resetMemberPw(\''+m.code+'\',\''+escA(m.name)+'\')"><i class="fa-solid fa-rotate-left"></i> Mdp</button><button class="btn-del btn-sm" style="margin-left:auto" onclick="deleteMember(\''+m.code+'\',\''+escA(m.name)+'\')"><i class="fa-solid fa-trash"></i> Supprimer le compte</button></div></div>';}).join('');}
+function renderAMembers(){const q=(document.getElementById('member-search')?.value||'').toLowerCase();let members=DB.getArr('members');if(q)members=members.filter(m=>m.name.toLowerCase().includes(q)||(m.code||'').toLowerCase().includes(q));const list=document.getElementById('members-list');if(!members.length){list.innerHTML='<div class="empty"><i class="fa-solid fa-users"></i><p>Aucun membre'+(q?' trouvé':' inscrit')+'.</p></div>';return;}const mods=DB.getArr('modules');const totalL=mods.reduce((s,m)=>s+m.lessons.length,0);list.innerHTML=members.map(m=>{const lv=getLevel(m.xp||0);const doneL=(m.completedLessons||[]).length;const pct=totalL?Math.round(doneL/totalL*100):0;const temo=DB.get('temo_'+m.code);const lastLogin=m.lastLogin||'—';const nBody=DB.getArr('body_'+m.code).length;const nTransfo=DB.getArr('transfo_'+m.code).length;return '<div class="member-card"><div class="mc-hdr"><div class="mc-av">'+initials(m.name)+'</div><div style="flex:1"><div class="mc-name">'+h(m.name)+(temo&&!temo.read?' <span style="background:var(--red);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px">⭐ Nouveau témo</span>':'')+'</div><div class="mc-meta">Code: '+m.code+' · Inscrit le '+fmtDate(m.joinedAt)+(m.pwHash?'':' · <span style="color:var(--orange);font-weight:600">mot de passe non créé</span>')+'</div></div><span class="lv-pill lv-'+lv.name+'">'+lv.name+'</span></div><div class="mc-stats"><div class="mc-stat">⚡ <strong>'+(m.xp||0)+'</strong> XP</div><div class="mc-stat">📚 <strong>'+doneL+'</strong> leçons ('+pct+'%)</div><div class="mc-stat">🏆 <strong>'+((m.completedDefis||[]).length)+'</strong> défis</div><div class="mc-stat">🔥 <strong>'+(m.streak||0)+'</strong> j streak</div><div class="mc-stat">📅 '+(lastLogin==='—'?'—':lastLogin)+'</div></div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:1px solid var(--border2)"><button class="btn-edit btn-sm" onclick="viewClientBody(\''+m.code+'\')"><i class="fa-solid fa-chart-line"></i> Suivi corporel'+(nBody?' ('+nBody+')':'')+'</button><button class="btn-edit btn-sm" onclick="viewClientTransfo(\''+m.code+'\')"><i class="fa-solid fa-camera"></i> Transformations'+(nTransfo?' ('+nTransfo+')':'')+'</button><button class="btn-edit btn-sm" onclick="viewTemo(\''+m.code+'\')" '+(temo?'':'disabled style="opacity:.4;cursor:default"')+'><i class="fa-solid fa-star"></i> Témoignage'+(temo?' ('+temo.note+'/5)':'')+'</button><button class="btn-edit btn-sm" onclick="openSanteClient(\''+m.code+'\')"><i class="fa-solid fa-heart-pulse"></i> Santé</button><button class="btn-edit btn-sm" onclick="openAccessEditor(\''+m.code+'\')"><i class="fa-solid fa-key"></i> Accès'+(m.access&&m.access.formule?' · '+h((DB.getArr('formules').find(f=>f.id===m.access.formule)||{}).name||''):'')+'</button><button class="btn-edit btn-sm" onclick="resetMemberPw(\''+m.code+'\',\''+escA(m.name)+'\')"><i class="fa-solid fa-rotate-left"></i> Mdp</button><button class="btn-del btn-sm" style="margin-left:auto" onclick="deleteMember(\''+m.code+'\',\''+escA(m.name)+'\')"><i class="fa-solid fa-trash"></i> Supprimer le compte</button></div></div>';}).join('');}
 
 function viewClientBody(code){const m=DB.getArr('members').find(x=>x.code===code);const entries=DB.getArr('body_'+code).sort((a,b)=>new Date(b.date)-new Date(a.date));let html='<h3 style="font-family:var(--fd);font-size:20px;margin-bottom:16px"><i class="fa-solid fa-chart-line" style="color:var(--blue)"></i> Suivi corporel — '+h(m?m.name:'')+'</h3>';if(!entries.length){html+='<div class="empty"><i class="fa-solid fa-chart-line"></i><p>Aucune mesure enregistrée par ce client.</p></div>';}else{html+='<div style="display:flex;flex-direction:column;gap:10px">'+entries.map(e=>'<div class="body-entry" style="margin:0"><span class="be-date">'+fmtDate(e.date)+'</span><div class="be-metrics">'+(e.poids?'<span class="be-metric"><strong>'+e.poids+'</strong> kg</span>':'')+(e.taille?' <span class="be-metric">Taille: <strong>'+e.taille+'</strong>cm</span>':'')+(e.bras?' <span class="be-metric">Bras: <strong>'+e.bras+'</strong>cm</span>':'')+(e.cuisse?' <span class="be-metric">Cuisse: <strong>'+e.cuisse+'</strong>cm</span>':'')+(e.hanches?' <span class="be-metric">Hanches: <strong>'+e.hanches+'</strong>cm</span>':'')+(e.mg?' <span class="be-metric">MG: <strong>'+e.mg+'</strong>%</span>':'')+'</div></div>').join('')+'</div>';}document.getElementById('modal-content').innerHTML=html;openModal();}
 
@@ -3305,6 +3314,488 @@ function renderARepas(){
   const list=document.getElementById('admin-repas-list');const repas=DB.getArr('repas');
   if(!repas.length){list.innerHTML='<div class="empty"><i class="fa-solid fa-utensils"></i><p>Aucun repas.</p></div>';return;}
   list.innerHTML=repas.map(r=>'<div class="ali"><div class="ali-icon">'+(r.photo?'📷':'🍽️')+'</div><div><div class="ali-title">'+h(r.nom)+'</div><div class="ali-meta">'+r.cal+' kcal · P'+r.prot+' G'+r.gluc+' L'+r.lip+(r.tags&&r.tags.length?' · '+r.tags.length+' tag'+(r.tags.length>1?'s':''):'')+(r.steps&&r.steps.length?' · 👨‍🍳 '+r.steps.length+' étapes':'')+'</div></div><div class="ali-actions"><button class="btn-edit btn-sm" onclick="editRepas('+r.id+')" title="Modifier"><i class="fa-solid fa-pen"></i></button><button class="btn-del btn-sm" onclick="delRepas('+r.id+')"><i class="fa-solid fa-trash"></i></button></div></div>').join('');
+}
+// ============================================================
+// LOT 3 — Cycle & Santé, Sommeil, Blessures, KPIs, Bilans,
+// Comparaison photos, Liste de courses.
+// Nouvelles clés cloud par membre : cycle_, sleep_, blessures_, bilans_, courses_
+// ============================================================
+function resizeImg(file,cb){
+  const rd=new FileReader();
+  rd.onload=e=>{const img=new Image();img.onload=()=>{const max=900;let w=img.width,hh=img.height;if(w>max){hh=hh*max/w;w=max;}if(hh>max){w=w*max/hh;hh=max;}const c=document.createElement('canvas');c.width=w;c.height=hh;c.getContext('2d').drawImage(img,0,0,w,hh);cb(c.toDataURL('image/jpeg',0.74));};img.src=e.target.result;};
+  rd.readAsDataURL(file);
+}
+function trendArrow(delta,goodWhenDown){
+  if(delta===null||isNaN(delta))return['→','var(--blue)'];
+  if(Math.abs(delta)<1e-9)return['→','var(--blue)'];
+  const up=delta>0;const good=goodWhenDown?!up:up;
+  return[up?'↑':'↓',good?'var(--green)':'var(--red)'];
+}
+
+// ---------- CYCLE MENSTRUEL ----------
+function cyKey(c){return 'cycle_'+(c||CU&&CU.code||'');}
+const CYCLE_PHASES={
+  menstruelle:{icon:'🌙',nom:'Phase menstruelle',training:'Le repos supplémentaire est légitime si la fatigue ou les douleurs sont là — mais s’entraîner reste sûr et peut même soulager les crampes. Séances plus courtes, charges modérées, marche, mobilité douce : écoute ton corps sans culpabiliser.',nutrition:'Hydrate-toi bien et soigne le fer (viande rouge 1-2x/semaine, légumineuses, épinards + vitamine C pour l’absorption). Le magnésium (oléagineux, chocolat noir) peut aider sur les crampes. Garde tes protéines habituelles.'},
+  folliculaire:{icon:'🌱',nom:'Phase folliculaire',training:'L’énergie remonte : c’est généralement la meilleure fenêtre pour pousser — séances intenses, charges lourdes, tentatives de progression et nouveaux records. Profites-en pour placer tes séances les plus exigeantes.',nutrition:'Tolérance aux glucides souvent au mieux : place tes glucides autour des grosses séances. Alimentation normale riche en protéines (1,6-2,2 g/kg) pour soutenir la progression.'},
+  ovulation:{icon:'☀️',nom:'Ovulation',training:'Pic fréquent d’énergie et de force : bon moment pour tester tes maxs ou viser des records. Attention : certaines données suggèrent une laxité ligamentaire un peu plus élevée — soigne les échauffements et la technique, surtout aux genoux.',nutrition:'Rien de spécial à changer : continue protéines + glucides autour de l’entraînement, hydratation régulière.'},
+  luteale:{icon:'🍂',nom:'Phase lutéale',training:'Énergie et récupération souvent en baisse, température corporelle un peu plus haute : réduis l’intensité si besoin (RPE plutôt que pourcentages), privilégie volume modéré, cardio zone 2, mobilité. Une baisse de perfs ici est NORMALE, pas une régression.',nutrition:'Le métabolisme monte légèrement (+100-300 kcal) et les fringales aussi : prévois des collations protéinées rassasiantes, du magnésium, et ne panique pas si la balance monte de 0,5-1,5 kg (rétention d’eau, ça repart).'}
+};
+function cycleInfo(code){
+  const d=DB.get(cyKey(code));
+  if(!d||!d.lastStart)return null;
+  const cl=Math.min(40,Math.max(20,parseInt(d.cycleLen)||28));
+  const pl=Math.min(10,Math.max(2,parseInt(d.periodLen)||5));
+  const start=new Date(d.lastStart+'T12:00:00');
+  const today=new Date(localDate()+'T12:00:00');
+  let day=Math.floor((today-start)/86400000);
+  if(day<0)return null;
+  day=(day%cl)+1;
+  const ovu=cl-14;
+  let phase='luteale';
+  if(day<=pl)phase='menstruelle';
+  else if(day<ovu-1)phase='folliculaire';
+  else if(day<=ovu+1)phase='ovulation';
+  const next=cl-day+1;
+  return{day,cl,pl,phase,next,bilanOK:phase==='folliculaire'&&day<=pl+4};
+}
+function saveCycle(){
+  const lastStart=document.getElementById('cy-date').value;
+  const cycleLen=parseInt(document.getElementById('cy-len').value)||28;
+  const periodLen=parseInt(document.getElementById('cy-plen').value)||5;
+  if(!lastStart){toast('Indique la date du 1er jour de tes dernières règles','error');return;}
+  DB.set(cyKey(),{lastStart,cycleLen,periodLen});
+  renderSante();toast('Cycle enregistré ✅','success');
+}
+function cycleCardHTML(code,forAdmin){
+  const d=DB.get(cyKey(code));const info=cycleInfo(code);
+  let body='';
+  if(info){
+    const ph=CYCLE_PHASES[info.phase];
+    body='<div style="display:flex;align-items:center;gap:14px;margin-bottom:12px"><div style="font-size:38px">'+ph.icon+'</div><div><div style="font-family:var(--fd);font-size:18px;font-weight:700">'+ph.nom+'</div><div style="font-size:13px;color:var(--text3)">Jour '+info.day+' / '+info.cl+' · prochaines règles dans ~'+info.next+' j</div></div></div>'
+    +'<div class="pbw" style="max-width:none;margin:0 0 14px"><div class="pbf" style="width:'+Math.round(info.day/info.cl*100)+'%"></div></div>'
+    +(info.bilanOK&&!forAdmin?'<div style="background:var(--green-light);border-radius:10px;padding:9px 13px;font-size:13px;color:var(--green);font-weight:600;margin-bottom:12px">📸 Bonne fenêtre pour ton bilan mensuel (hormones stables, peu de rétention).</div>':'')
+    +'<div style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">🏋️ Entraînement</div><div style="font-size:13px;color:var(--text2);line-height:1.65;margin-bottom:10px">'+ph.training+'</div>'
+    +'<div style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">🥗 Nutrition</div><div style="font-size:13px;color:var(--text2);line-height:1.65">'+ph.nutrition+'</div>';
+  }else{
+    body='<p style="font-size:13px;color:var(--text3);margin-bottom:10px">'+(forAdmin?'Cette cliente n’a pas encore renseigné son cycle.':'Renseigne ton cycle pour des recommandations adaptées à chaque phase.')+'</p>';
+  }
+  if(!forAdmin){
+    body+='<details style="margin-top:14px"><summary style="font-size:13px;font-weight:600;color:var(--blue);cursor:pointer">'+(d?'Modifier mes informations':'Renseigner mon cycle')+'</summary><div style="margin-top:12px;display:grid;grid-template-columns:1fr;gap:10px">'
+    +'<div><label style="font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;display:block;margin-bottom:5px">1er jour des dernières règles</label><input type="date" id="cy-date" value="'+((d&&d.lastStart)||'')+'" style="width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:10px;background:var(--bg2);color:var(--text);font-size:16px"></div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><div><label style="font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;display:block;margin-bottom:5px">Durée du cycle (j)</label><input type="number" id="cy-len" value="'+((d&&d.cycleLen)||28)+'" min="20" max="40" style="width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:10px;background:var(--bg2);color:var(--text);font-size:16px"></div><div><label style="font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;display:block;margin-bottom:5px">Durée des règles (j)</label><input type="number" id="cy-plen" value="'+((d&&d.periodLen)||5)+'" min="2" max="10" style="width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:10px;background:var(--bg2);color:var(--text);font-size:16px"></div></div>'
+    +'<button class="btn btn-sm" onclick="saveCycle()"><i class="fa-solid fa-save"></i> Enregistrer</button></div></details>'
+    +'<div style="font-size:11px;color:var(--text3);margin-top:12px;line-height:1.5">Tendances générales issues de la recherche — chaque corps est différent, et sous contraception hormonale ces variations sont largement atténuées. Douleurs inhabituelles ou cycle très irrégulier : parles-en à un professionnel de santé.</div>';
+  }
+  return body;
+}
+
+// ---------- SOMMEIL ----------
+function slKey(c){return 'sleep_'+(c||CU&&CU.code||'');}
+let sleepQ=3;
+function setSleepQ(v){sleepQ=v;document.querySelectorAll('.slq-star').forEach(b=>{b.style.color=parseInt(b.dataset.v)<=v?'var(--gold)':'#9aa3af55';});}
+function sleepDur(bed,wake){
+  if(!bed||!wake)return null;
+  const[bh,bm]=bed.split(':').map(Number);const[wh,wm]=wake.split(':').map(Number);
+  let mins=(wh*60+wm)-(bh*60+bm);if(mins<=0)mins+=1440;
+  return Math.round(mins/6)/10;
+}
+function saveSleep(){
+  const date=document.getElementById('sl-date').value||localDate();
+  const h2=sleepDur(document.getElementById('sl-bed').value,document.getElementById('sl-wake').value);
+  if(!h2||h2<2||h2>16){toast('Vérifie tes heures de coucher/réveil','error');return;}
+  const o=DB.get(slKey())||{days:{}};if(!o.days)o.days={};
+  o.days[date]={h:h2,q:sleepQ,note:(document.getElementById('sl-note').value||'').trim().slice(0,200),bed:document.getElementById('sl-bed').value,wake:document.getElementById('sl-wake').value};
+  DB.set(slKey(),o);renderSante();toast('Nuit enregistrée ✅ ('+String(h2).replace('.',',')+' h)','success');
+}
+function sleepStats(code){
+  const o=DB.get(slKey(code))||{days:{}};const days=o.days||{};
+  const get=(offsetFrom,offsetTo)=>{const a=[];for(let i=offsetFrom;i<offsetTo;i++){const d=new Date();d.setDate(d.getDate()-i);const e=days[localDate(d)];if(e)a.push(e);}return a;};
+  const last7=get(0,7),prev7=get(7,14);
+  const avg=a=>a.length?a.reduce((s,e)=>s+e.h,0)/a.length:null;
+  const avgQ=a=>a.length?a.reduce((s,e)=>s+(e.q||3),0)/a.length:null;
+  const a7=avg(last7),p7=avg(prev7);
+  let trend='stable';if(a7!=null&&p7!=null){if(a7-p7>0.3)trend='hausse';else if(p7-a7>0.3)trend='baisse';}
+  return{days,a7,q7:avgQ(last7),trend,n7:last7.length};
+}
+function sleepChartSVG(code){
+  const o=DB.get(slKey(code))||{days:{}};const days=o.days||{};
+  const pts=[];
+  for(let i=29;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const e=days[localDate(d)];pts.push(e?e.h:null);}
+  const have=pts.filter(x=>x!=null);
+  if(have.length<2)return '<div style="font-size:13px;color:var(--text3);padding:14px 0">Enregistre au moins 2 nuits pour voir ta courbe sur 30 jours.</div>';
+  const W=600,H=110,P=16;const min=4,max=11;
+  const xf=i=>P+(W-2*P)*i/29;const yf=v=>H-P-(H-2*P)*(Math.min(max,Math.max(min,v))-min)/(max-min);
+  let path='',started=false;
+  pts.forEach((v,i)=>{if(v==null){started=false;return;}path+=(started?' L':' M')+xf(i).toFixed(1)+' '+yf(v).toFixed(1);started=true;});
+  const dots=pts.map((v,i)=>v==null?'':'<circle cx="'+xf(i).toFixed(1)+'" cy="'+yf(v).toFixed(1)+'" r="3" fill="var(--blue)"/>').join('');
+  return '<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:auto;overflow:visible"><line x1="'+P+'" y1="'+yf(7)+'" x2="'+(W-P)+'" y2="'+yf(7)+'" stroke="var(--green)" stroke-dasharray="4 5" stroke-width="1.5" opacity=".6"/><line x1="'+P+'" y1="'+yf(9)+'" x2="'+(W-P)+'" y2="'+yf(9)+'" stroke="var(--green)" stroke-dasharray="4 5" stroke-width="1.5" opacity=".6"/><text x="'+(W-P+2)+'" y="'+(yf(8)+4)+'" font-size="11" fill="var(--green)">7-9 h</text><path d="'+path.trim()+'" fill="none" stroke="var(--blue)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>'+dots+'</svg>';
+}
+function sleepCardHTML(code,forAdmin){
+  const st=sleepStats(code);
+  const trendTxt={hausse:['↑ Tu dors plus que la semaine dernière','var(--green)'],baisse:['↓ Tu dors moins que la semaine dernière','var(--red)'],stable:['→ Sommeil stable','var(--blue)']}[st.trend];
+  let html='<div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px">'
+   +'<div style="flex:1;min-width:120px;background:var(--bg2);border-radius:12px;padding:12px;text-align:center"><div style="font-family:var(--fd);font-size:24px;font-weight:800;color:var(--blue)">'+(st.a7!=null?String(Math.round(st.a7*10)/10).replace('.',','):'—')+' h</div><div style="font-size:11px;color:var(--text3)">moyenne 7 jours ('+st.n7+' nuit'+(st.n7>1?'s':'')+')</div></div>'
+   +'<div style="flex:1;min-width:120px;background:var(--bg2);border-radius:12px;padding:12px;text-align:center"><div style="font-family:var(--fd);font-size:24px;font-weight:800;color:var(--gold)">'+(st.q7!=null?(Math.round(st.q7*10)/10+'/5'):'—')+'</div><div style="font-size:11px;color:var(--text3)">qualité moyenne</div></div></div>'
+   +(st.a7!=null?'<div style="font-size:13px;font-weight:600;color:'+trendTxt[1]+';margin-bottom:10px">'+trendTxt[0]+'</div>':'')
+   +sleepChartSVG(code);
+  if(!forAdmin){
+    const today=localDate();
+    html+='<details style="margin-top:14px" open><summary style="font-size:13px;font-weight:600;color:var(--blue);cursor:pointer">📝 Enregistrer une nuit</summary><div style="margin-top:12px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">'
+    +'<div><label style="font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;display:block;margin-bottom:5px">Date (réveil)</label><input type="date" id="sl-date" value="'+today+'" style="width:100%;padding:10px;border:1.5px solid var(--border);border-radius:10px;background:var(--bg2);color:var(--text);font-size:16px"></div>'
+    +'<div><label style="font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;display:block;margin-bottom:5px">Coucher</label><input type="time" id="sl-bed" value="23:00" style="width:100%;padding:10px;border:1.5px solid var(--border);border-radius:10px;background:var(--bg2);color:var(--text);font-size:16px"></div>'
+    +'<div><label style="font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;display:block;margin-bottom:5px">Réveil</label><input type="time" id="sl-wake" value="07:00" style="width:100%;padding:10px;border:1.5px solid var(--border);border-radius:10px;background:var(--bg2);color:var(--text);font-size:16px"></div></div>'
+    +'<div style="margin-top:10px;display:flex;align-items:center;gap:6px;flex-wrap:wrap"><span style="font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase">Qualité :</span>'+[1,2,3,4,5].map(i=>'<button class="slq-star" data-v="'+i+'" onclick="setSleepQ('+i+')" style="background:none;border:none;font-size:24px;cursor:pointer;color:'+(i<=sleepQ?'var(--gold)':'#9aa3af55')+';padding:2px">★</button>').join('')+'</div>'
+    +'<input type="text" id="sl-note" placeholder="Notes (réveils, stress, café tardif...)" maxlength="200" style="width:100%;margin-top:10px;padding:10px 13px;border:1.5px solid var(--border);border-radius:10px;background:var(--bg2);color:var(--text);font-size:16px">'
+    +'<button class="btn btn-sm" style="margin-top:10px" onclick="saveSleep()"><i class="fa-solid fa-save"></i> Enregistrer la nuit</button></details>'
+    +'<div style="font-size:11px;color:var(--text3);margin-top:12px;line-height:1.5">Repère : 7 à 9 h pour la plupart des adultes. Le sommeil pilote ta récupération, ta force et même ta perte de gras (en déficit, dormir court fait perdre plus de muscle). Les lignes vertes du graphique = ta zone cible.</div>';
+  }
+  return html;
+}
+
+// ---------- BLESSURES & REPRISE ----------
+function blKey(c){return 'blessures_'+(c||CU&&CU.code||'');}
+const BL_ZONES=[['cou','Cou / cervicales'],['epaule','Épaule'],['coude','Coude'],['poignet','Poignet / main'],['dos','Bas du dos / lombaires'],['hanche','Hanche'],['genou','Genou'],['cheville','Cheville / pied'],['ischio','Ischio-jambiers'],['mollet','Mollet'],['autre','Autre']];
+const BL_TYPES=['Douleur musculaire','Contracture','Entorse','Tendinite / tendinopathie','Douleur articulaire','Inflammation','Autre'];
+const BL_EXOS={
+  cou:{mob:'Rotations lentes de la tête, inclinaisons douces, étirement trapèzes 30 s/côté, respiration profonde.',renf:'Isométries cervicales légères (pousser la main contre le front/côté 10 s), rétractions de menton 2x10, élévations d’épaules très légères.'},
+  epaule:{mob:'Pendulaires bras relâché, cercles d’épaules, glissés de bras au mur (wall slides) sans douleur.',renf:'Rotations externes élastique léger 2x15, rowing élastique léger, élévations courtes sous le seuil de douleur.'},
+  coude:{mob:'Flexions/extensions douces, rotations de l’avant-bras, étirement fléchisseurs/extenseurs du poignet 30 s.',renf:'Excentriques légers poignet (haltère 1-2 kg), grip souple (balle), curls très légers amplitude indolore.'},
+  poignet:{mob:'Cercles de poignet, flexions/extensions douces, étirements paume vers le haut/bas 20-30 s.',renf:'Excentriques poignet légers, presses de balle souple, appuis progressifs sur table puis genoux.'},
+  dos:{mob:'Marche quotidienne, cat-cow, genoux à la poitrine, rotations couchées douces. Évite la flexion chargée.',renf:'Gainage doux (bird-dog, dead bug, planche genoux), hip hinge au bâton, glute bridge léger.'},
+  hanche:{mob:'Cercles de hanche, fente basse statique douce, figure 4 allongée 30 s/côté.',renf:'Glute bridge 2x12, abductions allongé, squat partiel au poids du corps amplitude indolore.'},
+  genou:{mob:'Flexions/extensions assises douces, vélo sans résistance 5-10 min, étirement quadriceps/ischios légers.',renf:'Leg extension sans charge puis légère, sit-to-stand sur chaise, step-up bas, isométries quadriceps 5x10 s.'},
+  cheville:{mob:'Alphabet avec le pied, cercles, flexions dorsales au mur genou vers l’avant.',renf:'Élévations mollets assis puis debout, équilibre unipodal 3x20 s, marche sur pointes courte.'},
+  ischio:{mob:'Étirement doux jambe tendue 20-30 s, marche, balanciers de jambe contrôlés.',renf:'Glute bridge, leg curl très léger, soulevé de terre roumain au bâton puis charge légère, excentriques progressifs.'},
+  mollet:{mob:'Flexions dorsales douces, étirement mollet au mur 30 s genou tendu puis fléchi.',renf:'Élévations mollets assis, puis debout 2 jambes, puis unilatéral progressif.'},
+  autre:{mob:'Mobilité douce de la zone, sans jamais provoquer la douleur (règle : max 2-3/10 pendant et après).',renf:'Renforcement très progressif de la zone et des muscles voisins, amplitude indolore d’abord, charge ensuite.'}
+};
+function blPhase(b){
+  const sev=Math.min(10,Math.max(1,parseInt(b.sev)||5));
+  const e=Math.floor((new Date(localDate()+'T12:00:00')-new Date(b.date+'T12:00:00'))/86400000);
+  const p1=Math.max(2,Math.round(sev*0.6)),p2=p1+Math.max(3,Math.round(sev*1.1)),p3=p2+Math.max(4,Math.round(sev*1.6)),p4=p3+Math.max(5,Math.round(sev*2));
+  if(e<0)return{n:1,nom:'Repos relatif',range:'jours 1-'+p1,e,fin:p4};
+  if(e<=p1)return{n:1,nom:'Repos relatif & protection',range:'jours 1-'+p1,e,fin:p4};
+  if(e<=p2)return{n:2,nom:'Mobilité douce & respiration',range:'jours '+(p1+1)+'-'+p2,e,fin:p4};
+  if(e<=p3)return{n:3,nom:'Renforcement léger',range:'jours '+(p2+1)+'-'+p3,e,fin:p4};
+  if(e<=p4)return{n:4,nom:'Retour progressif au training',range:'jours '+(p3+1)+'-'+p4,e,fin:p4};
+  return{n:5,nom:'Reprise complète possible',range:'jour '+e,e,fin:p4};
+}
+function blPlanHTML(b){
+  const ph=blPhase(b);const ex=BL_EXOS[b.zone]||BL_EXOS.autre;
+  const steps=[
+    ['1. Repos relatif','Protège la zone, évite ce qui déclenche la douleur, garde le reste du corps actif (marche, haut/bas du corps non touché).'],
+    ['2. Mobilité douce',ex.mob],
+    ['3. Renforcement léger',ex.renf],
+    ['4. Retour progressif','Réintroduis tes exercices habituels à ~50 % des charges, +10-20 % par séance si aucune douleur pendant ni le lendemain.']
+  ];
+  return '<div style="background:var(--blue-xlight);border-radius:10px;padding:10px 14px;font-size:13px;font-weight:600;color:var(--blue);margin:8px 0">Phase actuelle : '+ph.nom+' <span style="font-weight:400;color:var(--text3)">('+ph.range+' · jour '+Math.max(1,ph.e+1)+')</span></div>'
+   +steps.map((s,i)=>'<div style="font-size:13px;line-height:1.6;padding:7px 0;border-bottom:1px solid var(--border2);'+(ph.n===i+1?'':'opacity:.55')+'"><strong>'+s[0]+(ph.n===i+1?' ← tu es ici':'')+'</strong><br><span style="color:var(--text2)">'+s[1]+'</span></div>').join('')
+   +'<div style="font-size:11px;color:var(--text3);margin-top:10px;line-height:1.5">⚠️ Plan indicatif. Douleur vive, gonflement important, instabilité, douleur nocturne ou qui empire après 7-10 jours : consulte un médecin ou kiné avant de continuer.</div>';
+}
+function addBlessure(code){
+  const zone=document.getElementById('bl-zone').value;
+  const type=document.getElementById('bl-type').value;
+  const date=document.getElementById('bl-date').value||localDate();
+  const sev=parseInt(document.getElementById('bl-sev').value)||5;
+  const notes=(document.getElementById('bl-notes').value||'').trim().slice(0,300);
+  const arr=DB.getArr(blKey(code));
+  arr.push({id:Date.now(),zone,type,date,sev,notes,status:'active'});
+  DB.set(blKey(code),arr);
+  if(code===CU?.code||!code){renderSante();}else{openSanteClient(code);}
+  toast('Blessure enregistrée — plan de reprise généré','success');
+}
+function resolveBlessure(code,id){const arr=DB.getArr(blKey(code));const b=arr.find(x=>x.id===id);if(b)b.status='resolue';DB.set(blKey(code),arr);(!code||code===CU?.code)?renderSante():openSanteClient(code);toast('Marquée comme résolue ✅','success');}
+function delBlessure(code,id){if(!confirm('Supprimer cette blessure ?'))return;DB.set(blKey(code),DB.getArr(blKey(code)).filter(x=>x.id!==id));(!code||code===CU?.code)?renderSante():openSanteClient(code);}
+function blFormHTML(code){
+  const zl=Object.fromEntries(BL_ZONES);
+  const iSt='width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:10px;background:var(--bg2);color:var(--text);font-size:16px';
+  return '<details style="margin-top:6px"><summary style="font-size:13px;font-weight:600;color:var(--blue);cursor:pointer">➕ Signaler une blessure / douleur</summary><div style="margin-top:12px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">'
+   +'<div><label style="font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;display:block;margin-bottom:5px">Zone</label><select id="bl-zone" style="'+iSt+'">'+BL_ZONES.map(z=>'<option value="'+z[0]+'">'+z[1]+'</option>').join('')+'</select></div>'
+   +'<div><label style="font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;display:block;margin-bottom:5px">Type</label><select id="bl-type" style="'+iSt+'">'+BL_TYPES.map(t=>'<option>'+t+'</option>').join('')+'</select></div>'
+   +'<div><label style="font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;display:block;margin-bottom:5px">Date</label><input type="date" id="bl-date" value="'+localDate()+'" style="'+iSt+'"></div>'
+   +'<div><label style="font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;display:block;margin-bottom:5px">Sévérité : <span id="bl-sev-v">5</span>/10</label><input type="range" id="bl-sev" min="1" max="10" value="5" oninput="document.getElementById(\'bl-sev-v\').textContent=this.value" style="width:100%;accent-color:var(--red);margin-top:12px"></div></div>'
+   +'<input type="text" id="bl-notes" placeholder="Notes (comment c’est arrivé, ce qui déclenche...)" maxlength="300" style="margin-top:10px;'+iSt+'">'
+   +'<button class="btn btn-sm" style="margin-top:10px" onclick="addBlessure('+(code?'\''+code+'\'':'null')+')"><i class="fa-solid fa-save"></i> Enregistrer</button></details>';
+}
+function blListHTML(code,forAdmin){
+  const arr=DB.getArr(blKey(code));
+  const zl=Object.fromEntries(BL_ZONES);
+  const active=arr.filter(b=>b.status!=='resolue'),past=arr.filter(b=>b.status==='resolue');
+  let html='';
+  if(!arr.length)html='<p style="font-size:13px;color:var(--text3)">Aucune blessure signalée 💪</p>';
+  html+=active.map(b=>{const sevC=b.sev>=7?'var(--red)':b.sev>=4?'var(--orange)':'var(--gold)';
+    return '<div style="border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:10px"><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><strong style="font-size:14px">🩹 '+(zl[b.zone]||b.zone)+'</strong><span style="font-size:12px;color:var(--text3)">'+h(b.type)+' · depuis le '+fmtDate(b.date)+'</span><span style="margin-left:auto;background:'+sevC+'22;color:'+sevC+';font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px">Sévérité '+b.sev+'/10</span></div>'
+    +(b.notes?'<div style="font-size:12px;color:var(--text3);margin-top:6px">'+h(b.notes)+'</div>':'')
+    +blPlanHTML(b)
+    +'<div style="display:flex;gap:8px;margin-top:10px"><button class="btn-sec btn-sm" onclick="resolveBlessure('+(code?'\''+code+'\'':'null')+','+b.id+')"><i class="fa-solid fa-check"></i> Résolue</button><button class="btn-del btn-sm" onclick="delBlessure('+(code?'\''+code+'\'':'null')+','+b.id+')"><i class="fa-solid fa-trash"></i></button></div></div>';}).join('');
+  if(past.length)html+='<details style="margin-top:8px"><summary style="font-size:12px;color:var(--text3);cursor:pointer">Historique ('+past.length+' résolue'+(past.length>1?'s':'')+')</summary>'+past.map(b=>'<div style="font-size:12px;color:var(--text3);padding:6px 0;border-bottom:1px solid var(--border2)">✅ '+(zl[b.zone]||b.zone)+' · '+h(b.type)+' · '+fmtDate(b.date)+'</div>').join('')+'</details>';
+  return html;
+}
+
+// ---------- SECTION SANTÉ (membre) ----------
+function renderSante(){
+  const wrap=document.getElementById('sante-wrap');if(!wrap||!CU)return;
+  const cycleHTML=CU.cycleOff?'' :'<div class="streak-cal" style="margin-bottom:16px"><div class="sc-title"><i class="fa-solid fa-venus" style="color:#d35d8f"></i> Cycle menstruel</div>'+cycleCardHTML(null,false)+'</div>';
+  wrap.innerHTML=cycleHTML
+   +'<div class="streak-cal" style="margin-bottom:16px"><div class="sc-title"><i class="fa-solid fa-moon" style="color:var(--purple)"></i> Sommeil</div>'+sleepCardHTML(null,false)+'</div>'
+   +'<div class="streak-cal" style="margin-bottom:16px"><div class="sc-title"><i class="fa-solid fa-bandage" style="color:var(--red)"></i> Blessures & reprise</div>'+blFormHTML(null)+'<div style="margin-top:12px">'+blListHTML(null,false)+'</div></div>';
+  setTimeout(()=>setSleepQ(sleepQ),50);
+}
+
+// ---------- BILANS ----------
+function biKey(c){return 'bilans_'+(c||CU&&CU.code||'');}
+let pendingBilanImg=null;
+function handleBilanImg(inp){const f=inp.files&&inp.files[0];if(!f)return;resizeImg(f,d=>{pendingBilanImg=d;const pv=document.getElementById('bi-prev');if(pv)pv.innerHTML='<img src="'+d+'" style="max-height:64px;border-radius:8px;margin-top:6px">';});}
+function openBilanForm(code){
+  pendingBilanImg=null;
+  const iSt='width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:10px;background:var(--bg2);color:var(--text);font-size:16px';
+  const lSt='font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;display:block;margin-bottom:5px';
+  const ci=code?null:cycleInfo(null);
+  document.getElementById('modal-content').innerHTML='<h3 style="font-family:var(--fd);font-size:19px;margin-bottom:6px">📋 Nouveau bilan'+(code?' (coach)':'')+'</h3>'
+   +(ci&&!ci.bilanOK?'<div style="background:var(--gold-light);border-radius:10px;padding:9px 13px;font-size:12px;color:var(--gold-dark);margin-bottom:12px">💡 Conseil : pour des comparaisons équitables, fais tes bilans en début de phase folliculaire (juste après les règles) — hormones stables, moins de rétention d’eau.</div>':'')
+   +'<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">'
+   +'<div><label style="'+lSt+'">Date</label><input type="date" id="bi-date" value="'+localDate()+'" style="'+iSt+'"></div>'
+   +'<div><label style="'+lSt+'">Poids (kg)</label><input type="number" step="0.1" id="bi-poids" style="'+iSt+'"></div>'
+   +'<div><label style="'+lSt+'">Tour de taille (cm)</label><input type="number" step="0.5" id="bi-taille" style="'+iSt+'"></div>'
+   +'<div><label style="'+lSt+'">Poitrine (cm)</label><input type="number" step="0.5" id="bi-poitrine" style="'+iSt+'"></div>'
+   +'<div><label style="'+lSt+'">Bras (cm)</label><input type="number" step="0.5" id="bi-bras" style="'+iSt+'"></div>'
+   +'<div><label style="'+lSt+'">Cuisse (cm)</label><input type="number" step="0.5" id="bi-cuisse" style="'+iSt+'"></div></div>'
+   +'<div style="margin-top:10px"><label style="'+lSt+'">Photo</label><input type="file" accept="image/*" onchange="handleBilanImg(this)" style="'+iSt+';padding:9px"><div id="bi-prev"></div></div>'
+   +'<div style="margin-top:10px"><label style="'+lSt+'">Notes</label><textarea id="bi-notes" maxlength="500" placeholder="Énergie, ressenti, contexte..." style="'+iSt+';min-height:70px;resize:vertical"></textarea></div>'
+   +'<button class="btn" style="margin-top:14px" onclick="saveBilan('+(code?'\''+code+'\'':'null')+')"><i class="fa-solid fa-save"></i> Enregistrer le bilan</button>';
+  openModal();
+}
+function saveBilan(code){
+  const g=id=>document.getElementById(id).value;
+  const b={id:Date.now(),date:g('bi-date')||localDate(),poids:g('bi-poids'),taille:g('bi-taille'),poitrine:g('bi-poitrine'),bras:g('bi-bras'),cuisse:g('bi-cuisse'),photo:pendingBilanImg,notes:(g('bi-notes')||'').trim().slice(0,500)};
+  if(!b.poids&&!b.taille&&!b.photo){toast('Renseigne au moins une mesure ou une photo','error');return;}
+  const arr=DB.getArr(biKey(code));arr.push(b);DB.set(biKey(code),arr);
+  if(!code&&CU&&!CU.isPreview){CU.xp=(CU.xp||0)+20;saveCU();const x=document.getElementById('tb-xp-val');if(x)x.textContent=(CU.xp||0)+' XP';}
+  closeModal();pendingBilanImg=null;
+  if(code){viewClientTransfo(code);}else{renderTransfo();}
+  toast('Bilan enregistré ✅'+(code?'':' +20 XP'),'success');
+}
+function delBilan(code,id){if(!confirm('Supprimer ce bilan ?'))return;DB.set(biKey(code),DB.getArr(biKey(code)).filter(x=>x.id!==id));code?viewClientTransfo(code):renderTransfo();}
+function bilansListHTML(code,forAdmin){
+  const arr=DB.getArr(biKey(code)).slice().sort((a,b)=>new Date(b.date)-new Date(a.date));
+  if(!arr.length)return '<p style="font-size:13px;color:var(--text3)">Aucun bilan pour le moment. Le premier bilan = ton point de départ 📍</p>';
+  const fmt=(v,u)=>v?('<strong>'+v+'</strong>'+u):'—';
+  return arr.map((b,i)=>{
+    const prev=arr[i+1];
+    const d=(f)=>{if(!b[f]||!prev||!prev[f])return'';const diff=(parseFloat(b[f])-parseFloat(prev[f])).toFixed(1);if(Math.abs(diff)<0.05)return'';return ' <span style="font-size:11px;color:'+(diff<0?'var(--green)':'var(--orange)')+'">('+(diff>0?'+':'')+diff+')</span>';};
+    return '<div style="border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:10px;display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap">'
+    +(b.photo?'<img src="'+b.photo+'" onclick="openFS(this.src)" style="width:64px;height:64px;object-fit:cover;border-radius:10px;cursor:zoom-in;flex-shrink:0">':'<div style="width:64px;height:64px;border-radius:10px;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">📋</div>')
+    +'<div style="flex:1;min-width:180px"><div style="font-size:13px;font-weight:700;color:var(--blue)">'+fmtDate(b.date)+'</div><div style="font-size:13px;color:var(--text2);margin-top:4px;line-height:1.7">'+(b.poids?'⚖️ '+fmt(b.poids,' kg')+d('poids')+' · ':'')+(b.taille?'Taille '+fmt(b.taille,' cm')+d('taille')+' · ':'')+(b.poitrine?'Poitrine '+fmt(b.poitrine,' cm')+d('poitrine')+' · ':'')+(b.bras?'Bras '+fmt(b.bras,' cm')+d('bras')+' · ':'')+(b.cuisse?'Cuisse '+fmt(b.cuisse,' cm')+d('cuisse'):'')+'</div>'
+    +(b.notes?'<div style="font-size:12px;color:var(--text3);margin-top:4px">'+h(b.notes)+'</div>':'')+'</div>'
+    +'<button class="be-del" onclick="delBilan('+(code?'\''+code+'\'':'null')+','+b.id+')"><i class="fa-solid fa-xmark"></i></button></div>';
+  }).join('');
+}
+
+// ---------- COMPARAISON PHOTOS (slider avant/après) ----------
+function openCompareUI(before,after,l1,l2){
+  let el=document.getElementById('cmp-ov');if(el)el.remove();
+  el=document.createElement('div');el.id='cmp-ov';
+  el.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.96);z-index:960;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;';
+  el.innerHTML='<div style="position:relative;width:min(92vw,560px);height:min(68vh,640px);border-radius:14px;overflow:hidden;touch-action:none;background:#111">'
+   +'<img src="'+escA(after)+'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" alt="">'
+   +'<img id="cmp-before" src="'+escA(before)+'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;clip-path:inset(0 50% 0 0)" alt="">'
+   +'<div id="cmp-line" style="position:absolute;top:0;bottom:0;left:50%;width:3px;background:#fff;box-shadow:0 0 10px rgba(0,0,0,.7);pointer-events:none"></div>'
+   +'<div id="cmp-knob" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:40px;height:40px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;color:#333;font-size:15px;font-weight:700;box-shadow:0 2px 12px rgba(0,0,0,.5);pointer-events:none">⇔</div>'
+   +'<span style="position:absolute;top:10px;left:10px;background:rgba(0,0,0,.6);color:#fff;font-size:12px;font-weight:600;padding:4px 12px;border-radius:20px;pointer-events:none">'+h(l1)+'</span>'
+   +'<span style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,.6);color:#fff;font-size:12px;font-weight:600;padding:4px 12px;border-radius:20px;pointer-events:none">'+h(l2)+'</span>'
+   +'<input type="range" min="0" max="100" value="50" id="cmp-range" aria-label="Comparer" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:ew-resize;margin:0">'
+   +'</div><div style="color:rgba(255,255,255,.55);font-size:12px;margin-top:12px">Glisse pour comparer</div><button class="btn-sec" style="margin-top:12px" onclick="document.getElementById(\'cmp-ov\').remove()"><i class="fa-solid fa-xmark"></i> Fermer</button>';
+  document.body.appendChild(el);
+  const rg=el.querySelector('#cmp-range');
+  rg.addEventListener('input',()=>{const p=rg.value;el.querySelector('#cmp-before').style.clipPath='inset(0 '+(100-p)+'% 0 0)';el.querySelector('#cmp-line').style.left=p+'%';el.querySelector('#cmp-knob').style.left=p+'%';});
+}
+function comparablePhotos(code){
+  const t=DB.getArr('transfo_'+(code||CU&&CU.code||'')).filter(e=>e.image).map(e=>({src:e.image,label:fmtDate(e.date),d:e.date}));
+  const b=DB.getArr(biKey(code)).filter(e=>e.photo).map(e=>({src:e.photo,label:'Bilan '+fmtDate(e.date),d:e.date}));
+  return t.concat(b).sort((a,x)=>new Date(a.d)-new Date(x.d));
+}
+function openComparePicker(code){
+  const ph=comparablePhotos(code);
+  if(ph.length<2){toast('Il faut au moins 2 photos pour comparer','error');return;}
+  const opts=i=>ph.map((p,j)=>'<option value="'+j+'" '+(j===i?'selected':'')+'>'+h(p.label)+'</option>').join('');
+  const iSt='width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:10px;background:var(--bg2);color:var(--text);font-size:16px';
+  document.getElementById('modal-content').innerHTML='<h3 style="font-family:var(--fd);font-size:19px;margin-bottom:12px">🆚 Comparer deux photos</h3>'
+   +'<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px"><div><label style="font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;display:block;margin-bottom:5px">Avant</label><select id="cmp-a" style="'+iSt+'">'+opts(0)+'</select></div><div><label style="font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;display:block;margin-bottom:5px">Après</label><select id="cmp-b" style="'+iSt+'">'+opts(ph.length-1)+'</select></div></div>'
+   +'<button class="btn" style="margin-top:14px;width:100%;justify-content:center" onclick="launchCompare('+(code?'\''+code+'\'':'null')+')"><i class="fa-solid fa-left-right"></i> Comparer</button>';
+  openModal();
+}
+function launchCompare(code){
+  const ph=comparablePhotos(code);
+  const a=ph[parseInt(document.getElementById('cmp-a').value)],b=ph[parseInt(document.getElementById('cmp-b').value)];
+  if(!a||!b)return;closeModal();openCompareUI(a.src,b.src,a.label,b.label);
+}
+// Section Transformation membre enrichie (remplace la version précédente)
+function renderTransfo(){
+  const bw=document.getElementById('bilans-wrap');
+  if(bw&&CU){
+    const nPhotos=comparablePhotos(null).length;
+    bw.innerHTML='<div class="streak-cal" style="margin-bottom:18px"><div class="sc-title" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px"><span><i class="fa-solid fa-clipboard-check" style="color:var(--gold)"></i> Mes bilans</span><span style="display:flex;gap:8px"><button class="btn btn-sm" onclick="openBilanForm(null)"><i class="fa-solid fa-plus"></i> Nouveau bilan</button>'+(nPhotos>=2?'<button class="btn-sec btn-sm" onclick="openComparePicker(null)"><i class="fa-solid fa-left-right"></i> Comparer</button>':'')+'</span></div>'+bilansListHTML(null,false)+'</div>';
+  }
+  const entries=DB.getArr('transfo_'+(CU.code||'')).sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const tl=document.getElementById('transfo-tl');
+  if(!entries.length){tl.innerHTML='<div class="empty"><i class="fa-solid fa-camera"></i><p>Ajoute tes photos avant/après !</p></div>';return;}
+  tl.innerHTML=entries.map(e=>'<div class="tl-item"><div class="tl-dot"></div><div class="transfo-card">'+(e.image?'<img src="'+e.image+'" class="transfo-img" onclick="openFS(\''+e.image+'\')" alt="">':'<div class="transfo-ph">📸</div>')+'<div class="transfo-body"><div class="transfo-date">'+fmtDate(e.date)+'</div><div class="transfo-comment">'+h(e.comment||'')+'</div><button class="btn-del btn-sm" style="margin-top:12px" onclick="delTransfo('+e.id+')"><i class="fa-solid fa-trash"></i> Supprimer</button></div></div></div>').join('');
+}
+
+// ---------- LISTE DE COURSES ----------
+function cartKey(){return 'nc3_cart_'+(CU&&CU.code||'');}
+function getCart(){try{return JSON.parse(localStorage.getItem(cartKey()))||[];}catch(e){return[];}}
+function setCart(a){localStorage.setItem(cartKey(),JSON.stringify(a));renderCoursesBar();}
+function renderCoursesBar(){
+  const el=document.getElementById('courses-bar');if(!el||!CU||CU.isAdmin)return;
+  const n=getCart().length;
+  el.innerHTML='<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:12px 16px"><span style="font-size:14px;font-weight:600">🛒 Ma semaine : '+n+' repas sélectionné'+(n>1?'s':'')+'</span><span style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap"><button class="btn-sec btn-sm" onclick="openCartPicker()">Choisir mes repas</button>'+(n?'<button class="btn btn-sm" onclick="genCourses()"><i class="fa-solid fa-list-check"></i> Générer la liste</button>':'')+'</span></div>';
+}
+function openCartPicker(){
+  const list=filterByAccess(DB.getArr('repas'),'repas');
+  const cart=new Set(getCart());
+  document.getElementById('modal-content').innerHTML='<h3 style="font-family:var(--fd);font-size:19px;margin-bottom:4px">🛒 Mes repas de la semaine</h3><p style="font-size:13px;color:var(--text3);margin-bottom:12px">Coche les repas prévus — la liste de courses sera générée à partir de leurs ingrédients.</p><div style="max-height:360px;overflow-y:auto">'
+   +list.map(r=>'<label style="display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid var(--border2);cursor:pointer;font-size:14px"><input type="checkbox" '+(cart.has(r.id)?'checked':'')+' onchange="toggleCart('+r.id+',this.checked)" style="width:18px;height:18px;accent-color:var(--blue)"><span style="flex:1;min-width:0">'+h(r.nom)+'</span><span style="font-size:12px;color:var(--text3)">'+r.cal+' kcal</span></label>').join('')
+   +'</div><button class="btn" style="margin-top:14px;width:100%;justify-content:center" onclick="closeModal();genCourses()"><i class="fa-solid fa-list-check"></i> Générer la liste (<span id="cart-n">'+cart.size+'</span>)</button>';
+  openModal();
+}
+function toggleCart(id,on){const c=new Set(getCart());on?c.add(id):c.delete(id);setCart(Array.from(c));const n=document.getElementById('cart-n');if(n)n.textContent=c.size;}
+const COURSE_CATS=[
+  ['🥩 Protéines',/poulet|dinde|bœuf|boeuf|steak|jambon|thon|saumon|cabillaud|crevette|poisson|œuf|oeuf|tofu|viande|jerky|protéines de soja/i],
+  ['🥛 Produits laitiers',/skyr|fromage|lait(?! de coco)|yaourt|ricotta|cottage|mozzar|whey|caséine|beurre(?! de)/i],
+  ['🌾 Féculents & céréales',/riz|pâtes|avoine|quinoa|semoule|pain|tortilla|patate|pomme[s]? de terre|nouille|granola|cracker|lentille|pois chiche|haricot[s]? (rouge|blanc)|maïs|farine/i],
+  ['🥦 Fruits & légumes',/banane|pomme(?!s? de terre)|fruit|myrtille|ananas|brocoli|épinard|salade|tomate|courgette|aubergine|poivron|carotte|concombre|oignon|champignon|avocat|citron|haricot[s]? vert|légume|ratatouille|crudité|persil|basilic|gingembre|ail/i],
+  ['🧂 Épicerie & autres',/./]
+];
+function genCourses(){
+  const ids=getCart();
+  const repas=DB.getArr('repas').filter(r=>ids.includes(r.id));
+  if(!repas.length){toast('Sélectionne d’abord des repas','error');return;}
+  const map={};
+  repas.forEach(r=>{
+    String(r.desc||'').split(/[,.\n;]+/).map(s=>s.trim()).filter(s=>s.length>3&&!/^(assaisonne|cuire|mixer|servir|dresser|préparer|mélanger|recette|valeurs|le \w+|la \w+$)/i.test(s)).forEach(frag=>{
+      const key=frag.toLowerCase().replace(/^[\d,.\s]+(g|kg|ml|cl|l)?\s*(de |d’|d')?/,'').trim();
+      if(key.length<3)return;
+      if(!map[key]){const cat=(COURSE_CATS.find(c=>c[1].test(frag))||COURSE_CATS[4])[0];map[key]={t:frag,n:0,cat,done:false};}
+      map[key].n++;
+    });
+  });
+  const items=Object.values(map).sort((a,b)=>a.cat.localeCompare(b.cat)||a.t.localeCompare(b.t));
+  DB.set('courses_'+(CU.code||''),{date:localDate(),nRepas:repas.length,items});
+  showCoursesList();
+}
+function showCoursesList(){
+  const data=DB.get('courses_'+(CU.code||''));
+  if(!data||!data.items||!data.items.length){toast('Aucune liste générée','error');return;}
+  let lastCat='';
+  const rows=data.items.map((it,i)=>{
+    const head=it.cat!==lastCat?'<div style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin:14px 0 4px">'+it.cat+'</div>':'';
+    lastCat=it.cat;
+    return head+'<label style="display:flex;align-items:center;gap:10px;padding:7px 2px;border-bottom:1px solid var(--border2);cursor:pointer;font-size:14px"><input type="checkbox" '+(it.done?'checked':'')+' onchange="toggleCourseItem('+i+',this.checked)" style="width:18px;height:18px;accent-color:var(--green)"><span style="flex:1;'+(it.done?'text-decoration:line-through;color:var(--text3)':'')+'">'+h(it.t)+(it.n>1?' <strong style="color:var(--blue)">×'+it.n+'</strong>':'')+'</span></label>';
+  }).join('');
+  document.getElementById('modal-content').innerHTML='<h3 style="font-family:var(--fd);font-size:19px;margin-bottom:4px">🛒 Liste de courses</h3><p style="font-size:13px;color:var(--text3)">Générée le '+fmtDate(data.date)+' à partir de '+data.nRepas+' repas. Coche au fur et à mesure — c’est sauvegardé.</p>'+rows
+   +'<div style="display:flex;gap:8px;margin-top:16px"><button class="btn" onclick="copyCoursesList()"><i class="fa-solid fa-copy"></i> Copier la liste</button><button class="btn-sec" onclick="closeModal()">Fermer</button></div>';
+  openModal();
+}
+function toggleCourseItem(i,on){const data=DB.get('courses_'+(CU.code||''));if(!data)return;data.items[i].done=on;DB.set('courses_'+(CU.code||''),data);showCoursesList();}
+function copyCoursesList(){
+  const data=DB.get('courses_'+(CU.code||''));if(!data)return;
+  let lastCat='',txt='🛒 Liste de courses — '+fmtDate(data.date)+'\n';
+  data.items.forEach(it=>{if(it.cat!==lastCat){txt+='\n'+it.cat+'\n';lastCat=it.cat;}txt+=(it.done?'☑︎ ':'☐ ')+it.t+(it.n>1?' ×'+it.n:'')+'\n';});
+  (navigator.clipboard?navigator.clipboard.writeText(txt).then(()=>toast('Liste copiée ✅ — colle-la où tu veux','success')):Promise.reject()).catch(()=>toast('Copie impossible sur ce navigateur','error'));
+}
+
+// ---------- DASHBOARD KPIs (injectés après le héros) ----------
+const __dashBase=renderDash;
+renderDash=function(){
+  __dashBase();
+  try{injectKPIs();}catch(e){console.warn('kpi',e);}
+};
+function injectKPIs(){
+  const sec=document.getElementById('section-dashboard');if(!sec||!CU)return;
+  const body=DB.getArr('body_'+(CU.code||'')).slice().sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const objGoal=(CU.tdee&&CU.tdee.objectif)||((CU.objectif||'').includes('Perte')?'perte':(CU.objectif||'').includes('masse')?'prise':'maintien');
+  const W=[];
+  // Poids
+  if(body.length){
+    const now=parseFloat(body[0].poids)||null;
+    const old=body.find(e=>(new Date(body[0].date)-new Date(e.date))/86400000>=27)||body[body.length-1];
+    const delta=(now!=null&&old&&old.poids)?+(now-parseFloat(old.poids)).toFixed(1):null;
+    const[ar,col]=trendArrow(delta,objGoal!=='prise');
+    W.push({i:'⚖️',v:(now!=null?String(now).replace('.',','):'—')+' kg',l:'Poids'+(delta!=null?' · '+ar+' '+(delta>0?'+':'')+String(delta).replace('.',',')+' kg / 30 j':''),c:col,go:"gotoS('body')"});
+    if(body[0].taille){
+      const oldT=body.find(e=>e.taille&&(new Date(body[0].date)-new Date(e.date))/86400000>=27)||body[body.length-1];
+      const dT=oldT&&oldT.taille?+(parseFloat(body[0].taille)-parseFloat(oldT.taille)).toFixed(1):null;
+      const[ar2,col2]=trendArrow(dT,true);
+      W.push({i:'📏',v:body[0].taille+' cm',l:'Tour de taille'+(dT!=null&&dT!==0?' · '+ar2+' '+(dT>0?'+':'')+dT+' cm':''),c:col2,go:"gotoS('body')"});
+    }
+  }else{
+    W.push({i:'⚖️',v:'—',l:'Renseigne ton poids pour suivre ta progression →',c:'var(--text3)',go:"gotoS('body')"});
+  }
+  // Sommeil
+  const st=sleepStats(null);
+  if(st.a7!=null){const c=st.a7>=7?'var(--green)':st.a7>=6?'var(--orange)':'var(--red)';W.push({i:'😴',v:String(Math.round(st.a7*10)/10).replace('.',',')+' h',l:'Sommeil 7 j · qualité '+(st.q7?Math.round(st.q7*10)/10+'/5':'—'),c,go:"gotoS('sante')"});}
+  else W.push({i:'😴',v:'—',l:'Note tes nuits pour suivre ton sommeil →',c:'var(--text3)',go:"gotoS('sante')"});
+  // Nutrition (adhérence 7 j)
+  const tgt=CU.tdee&&CU.tdee.target;
+  if(tgt){
+    const jr=DB.get('journal_'+(CU.code||''))||{};let n=0,score=0;
+    for(let i=0;i<7;i++){const d=new Date();d.setDate(d.getDate()-i);const day=jr[localDate(d)];if(!day)continue;const cal=['matin','midi','soir','collation'].reduce((s,k)=>s+(day[k]||[]).reduce((x,e)=>x+e.cal,0),0);if(cal>200){n++;score+=Math.min(cal,tgt)/Math.max(cal,tgt);}}
+    if(n){const pct=Math.round(score/n*100);W.push({i:'🍽️',v:pct+' %',l:'Respect des calories ('+n+' j suivis / 7)',c:pct>=85?'var(--green)':pct>=70?'var(--orange)':'var(--red)',go:"gotoS('repas')"});}
+    else W.push({i:'🍽️',v:'—',l:'Remplis ton journal pour suivre tes calories →',c:'var(--text3)',go:"gotoS('repas')"});
+  }
+  // Cycle
+  if(!CU.cycleOff){const ci=cycleInfo(null);if(ci){const ph=CYCLE_PHASES[ci.phase];W.push({i:ph.icon,v:'Jour '+ci.day,l:ph.nom,c:'var(--purple)',go:"gotoS('sante')"});}}
+  // Blessures
+  const bl=DB.getArr(blKey(null)).filter(b=>b.status!=='resolue');
+  W.push(bl.length?{i:'🩹',v:bl.length+'',l:'Blessure'+(bl.length>1?'s':'')+' en cours — plan de reprise actif',c:'var(--red)',go:"gotoS('sante')"}:{i:'💪',v:'0',l:'Aucune blessure en cours',c:'var(--green)',go:"gotoS('sante')"});
+  // Séances (checklist) du mois
+  let seances=0;const pref='nc3_ck_'+(CU.code||'')+'_'+localDate().slice(0,7);
+  for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(pref)){try{if(JSON.parse(localStorage.getItem(k)).s1)seances++;}catch(e){}}}
+  W.push({i:'🏋️',v:seances+'',l:'Séances cochées ce mois-ci',c:seances>=8?'var(--green)':'var(--blue)',go:"gotoS('dashboard')"});
+  // Bilans
+  const bis=DB.getArr(biKey(null));
+  W.push(bis.length?{i:'📋',v:bis.length+'',l:'Bilans · dernier le '+fmtDate(bis.slice().sort((a,b)=>new Date(b.date)-new Date(a.date))[0].date),c:'var(--gold)',go:"gotoS('transformation')"}:{i:'📋',v:'—',l:'Fais ton premier bilan (point de départ) →',c:'var(--text3)',go:"gotoS('transformation')"});
+  const html='<div style="margin:0 0 6px;font-family:var(--fd);font-size:15px;font-weight:700">📊 Ma progression</div><div class="dash-stats" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr))">'
+   +W.map(w=>'<div class="dstat" style="cursor:pointer;border-left:3px solid '+w.c+'" onclick="'+w.go+'"><div class="dstat-i">'+w.i+'</div><div class="dstat-v" style="font-size:21px">'+w.v+'</div><div class="dstat-l">'+w.l+'</div></div>').join('')+'</div>';
+  let kp=document.getElementById('kpi-wrap');
+  if(!kp){kp=document.createElement('div');kp.id='kpi-wrap';const hero=sec.querySelector('.dash-hero');if(hero&&hero.parentElement)hero.parentElement.insertAdjacentElement('afterend',kp);else sec.appendChild(kp);}
+  kp.innerHTML=html;
+}
+
+// renderRepas : ajoute la barre liste de courses sous le compteur
+const __repasBase=renderRepas;
+renderRepas=function(){__repasBase();try{renderCoursesBar();}catch(e){}};
+
+// viewClientTransfo (admin) : bilans + bouton comparer
+const __vctBase=viewClientTransfo;
+viewClientTransfo=function(code){
+  __vctBase(code);
+  try{
+    const mc=document.getElementById('modal-content');
+    const ph=comparablePhotos(code);
+    mc.insertAdjacentHTML('beforeend','<div style="margin-top:16px;border-top:1px solid var(--border);padding-top:14px"><div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:8px"><strong style="font-size:14px">📋 Bilans</strong><span style="display:flex;gap:8px"><button class="btn btn-sm" onclick="openBilanForm(\''+code+'\')"><i class="fa-solid fa-plus"></i> Bilan</button>'+(ph.length>=2?'<button class="btn-sec btn-sm" onclick="openComparePicker(\''+code+'\')"><i class="fa-solid fa-left-right"></i> Comparer</button>':'')+'</span></div>'+bilansListHTML(code,true)+'</div>');
+  }catch(e){console.warn(e);}
+};
+
+// ---------- ADMIN : modal Santé client ----------
+function toggleCycleClient(code,on){
+  const members=DB.getArr('members');const m=members.find(x=>x.code===code);if(!m)return;
+  m.cycleOff=!on;DB.set('members',members);
+  toast(on?'Suivi du cycle activé':'Suivi du cycle désactivé pour ce client','success');
+}
+function openSanteClient(code){
+  const m=DB.getArr('members').find(x=>x.code===code);if(!m)return;
+  const ci=cycleInfo(code);
+  let cyc='<label style="display:flex;align-items:center;gap:9px;font-size:13px;cursor:pointer;margin-bottom:10px"><input type="checkbox" '+(m.cycleOff?'':'checked')+' onchange="toggleCycleClient(\''+code+'\',this.checked)" style="width:17px;height:17px;accent-color:var(--blue)"> Activer le suivi du cycle pour ce client</label>';
+  if(m.cycleOff)cyc+='<p style="font-size:13px;color:var(--text3)">Suivi désactivé — la section n’apparaît pas chez ce client.</p>';
+  else if(ci){const ph=CYCLE_PHASES[ci.phase];cyc+='<div style="font-size:14px;font-weight:700">'+ph.icon+' '+ph.nom+' — jour '+ci.day+'/'+ci.cl+'</div><div style="font-size:12px;color:var(--text3);margin:4px 0 8px">Prochaines règles dans ~'+ci.next+' j'+(ci.bilanOK?' · 🟢 bonne fenêtre pour un bilan':'')+'</div><div style="font-size:12px;color:var(--text2);line-height:1.6"><strong>Training :</strong> '+ph.training+'</div><div style="font-size:12px;color:var(--text2);line-height:1.6;margin-top:6px"><strong>Nutrition :</strong> '+ph.nutrition+'</div>';}
+  else cyc+='<p style="font-size:13px;color:var(--text3)">Cycle non renseigné par la cliente.</p>';
+  document.getElementById('modal-content').innerHTML='<h3 style="font-family:var(--fd);font-size:19px;margin-bottom:14px">🩺 Santé — '+h(m.name)+'</h3>'
+   +'<div style="border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:12px"><div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text2);margin-bottom:8px">🌸 Cycle</div>'+cyc+'</div>'
+   +'<div style="border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:12px"><div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text2);margin-bottom:8px">😴 Sommeil</div>'+sleepCardHTML(code,true)+'</div>'
+   +'<div style="border:1px solid var(--border);border-radius:12px;padding:14px"><div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text2);margin-bottom:8px">🩹 Blessures</div>'+blFormHTML(code)+'<div style="margin-top:10px">'+blListHTML(code,true)+'</div></div>';
+  openModal();
 }
 </script>
 </body>
