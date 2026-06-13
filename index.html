@@ -721,8 +721,8 @@ input,select,textarea{font-family:var(--fb);}
   html,body{width:100%;max-width:100%;overflow-x:hidden;}
   .page,.main-wrap,.main-content,.topbar,header{max-width:100vw;overflow-x:hidden;}
   .post-img,.transfo-img,.repas-img{width:100%;height:auto;max-width:100%;}
-  .bnav{display:block;}
-  .main-wrap{margin-left:0 !important;padding-bottom:calc(72px + env(safe-area-inset-bottom));}
+  .bnav{display:none !important;}
+  .main-wrap{margin-left:0 !important;padding-bottom:calc(20px + env(safe-area-inset-bottom));}
   .sidebar{transform:translateX(-100%) !important;}
   .sidebar.open{transform:translateX(0) !important;box-shadow:var(--shl) !important;}
   .sb-close{display:flex !important;align-items:center;}
@@ -990,13 +990,13 @@ button{touch-action:manipulation;}
   .ld-login-btn{padding:8px 13px;font-size:12px;}
 }
 
-/* ---- LOT 4 : FIX BARRE DU BAS (le contenu ne passe plus dessous) ---- */
+/* ---- Mobile : sans bottom-nav, le contenu va jusqu'en bas ---- */
 @media(max-width:768px){
-  .main-wrap{padding-bottom:calc(100px + env(safe-area-inset-bottom)) !important;}
-  .focus-mode{padding-bottom:calc(110px + env(safe-area-inset-bottom));}
-  .modal-box{max-height:84vh;}
-  .gs-results{max-height:48vh;}
-  .bsheet{max-height:78vh;overflow-y:auto;}
+  .main-wrap{padding-bottom:calc(20px + env(safe-area-inset-bottom)) !important;}
+  .focus-mode{padding-bottom:calc(24px + env(safe-area-inset-bottom));}
+  .modal-box{max-height:88vh;}
+  .gs-results{max-height:52vh;}
+  .fab{bottom:calc(20px + env(safe-area-inset-bottom)) !important;}
 }
 
 /* ---- 12. ACCESSIBILITÉ : reduced motion ---- */
@@ -1811,7 +1811,7 @@ function fireConfetti(){const c=document.getElementById('confetti-c');const cols
 document.addEventListener('DOMContentLoaded',async()=>{
   // Tire les données partagées du cloud AVANT d'afficher (si Supabase dispo)
   await cloudPullAll();
-  seedData();seedFormules();
+  seedData();seedFormules();seedV3();
   document.getElementById('login-btn').addEventListener('click',handleLogin);
   document.getElementById('invite-code').addEventListener('keypress',e=>{if(e.key==='Enter')handleLogin();});
   document.getElementById('member-name').addEventListener('keypress',e=>{if(e.key==='Enter')handleLogin();});
@@ -3159,7 +3159,7 @@ function delInvite(code){DB.set('invites',DB.getArr('invites').filter(i=>i.code!
 function renderAInvites(){const fsel=document.getElementById('inv-formule');if(fsel){const cur=fsel.value;fsel.innerHTML='<option value="">Accès complet (par défaut)</option>'+DB.getArr('formules').map(f=>'<option value="'+f.id+'">'+(f.icon||'')+' '+h(f.name)+'</option>').join('');fsel.value=cur;}const list=document.getElementById('invites-list');const invs=DB.getArr('invites');if(!invs.length){list.innerHTML='<div class="empty"><i class="fa-solid fa-envelope"></i><p>Aucun code généré.</p></div>';return;}list.innerHTML=invs.slice().reverse().map(i=>'<div class="inv-item"><span class="ii-code">'+i.code+'</span><div style="font-size:12px;color:var(--text3)">'+(i.name?h(i.name):'')+(i.note?' · '+h(i.note):'')+(i.formule?' · 🎫 '+h((DB.getArr('formules').find(f=>f.id===i.formule)||{}).name||''):'')+'</div><span class="ii-status '+(i.used?'ii-used':'ii-unused')+'">'+(i.used?'✅ Utilisé'+(i.usedBy?' ('+h(i.usedBy)+')':''):'⏳ En attente')+'</span><button class="be-del" onclick="delInvite(\''+i.code+'\')" style="margin-left:8px"><i class="fa-solid fa-xmark"></i></button></div>').join('');}
 
 // ADMIN MEMBERS
-function renderAMembers(){const q=(document.getElementById('member-search')?.value||'').toLowerCase();let members=DB.getArr('members');if(q)members=members.filter(m=>m.name.toLowerCase().includes(q)||(m.code||'').toLowerCase().includes(q));const list=document.getElementById('members-list');if(!members.length){list.innerHTML='<div class="empty"><i class="fa-solid fa-users"></i><p>Aucun membre'+(q?' trouvé':' inscrit')+'.</p></div>';return;}const mods=DB.getArr('modules');const totalL=mods.reduce((s,m)=>s+m.lessons.length,0);list.innerHTML=members.map(m=>{const lv=getLevel(m.xp||0);const doneL=(m.completedLessons||[]).length;const pct=totalL?Math.round(doneL/totalL*100):0;const temo=DB.get('temo_'+m.code);const lastLogin=m.lastLogin||'—';const nBody=DB.getArr('body_'+m.code).length;const nTransfo=DB.getArr('transfo_'+m.code).length;return '<div class="member-card"><div class="mc-hdr"><div class="mc-av">'+initials(m.name)+'</div><div style="flex:1"><div class="mc-name">'+h(m.name)+(temo&&!temo.read?' <span style="background:var(--red);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px">⭐ Nouveau témo</span>':'')+'</div><div class="mc-meta">Code: '+m.code+' · Inscrit le '+fmtDate(m.joinedAt)+(m.pwHash?'':' · <span style="color:var(--orange);font-weight:600">mot de passe non créé</span>')+'</div></div><span class="lv-pill lv-'+lv.name+'">'+lv.name+'</span></div><div class="mc-stats"><div class="mc-stat">⚡ <strong>'+(m.xp||0)+'</strong> XP</div><div class="mc-stat">📚 <strong>'+doneL+'</strong> leçons ('+pct+'%)</div><div class="mc-stat">🏆 <strong>'+((m.completedDefis||[]).length)+'</strong> défis</div><div class="mc-stat">🔥 <strong>'+(m.streak||0)+'</strong> j streak</div><div class="mc-stat">📅 '+(lastLogin==='—'?'—':lastLogin)+'</div></div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:1px solid var(--border2)"><button class="btn-edit btn-sm" onclick="viewClientBody(\''+m.code+'\')"><i class="fa-solid fa-chart-line"></i> Suivi corporel'+(nBody?' ('+nBody+')':'')+'</button><button class="btn-edit btn-sm" onclick="viewClientTransfo(\''+m.code+'\')"><i class="fa-solid fa-camera"></i> Transformations'+(nTransfo?' ('+nTransfo+')':'')+'</button><button class="btn-edit btn-sm" onclick="viewTemo(\''+m.code+'\')" '+(temo?'':'disabled style="opacity:.4;cursor:default"')+'><i class="fa-solid fa-star"></i> Témoignage'+(temo?' ('+temo.note+'/5)':'')+'</button><button class="btn-edit btn-sm" onclick="openSanteClient(\''+m.code+'\')"><i class="fa-solid fa-heart-pulse"></i> Santé</button><button class="btn-edit btn-sm" onclick="openAccessEditor(\''+m.code+'\')"><i class="fa-solid fa-key"></i> Accès'+(m.access&&m.access.formule?' · '+h((DB.getArr('formules').find(f=>f.id===m.access.formule)||{}).name||''):'')+'</button><button class="btn-edit btn-sm" onclick="resetMemberPw(\''+m.code+'\',\''+escA(m.name)+'\')"><i class="fa-solid fa-rotate-left"></i> Mdp</button><button class="btn-del btn-sm" style="margin-left:auto" onclick="deleteMember(\''+m.code+'\',\''+escA(m.name)+'\')"><i class="fa-solid fa-trash"></i> Supprimer le compte</button></div></div>';}).join('');}
+function renderAMembers(){const q=(document.getElementById('member-search')?.value||'').toLowerCase();let members=DB.getArr('members');if(q)members=members.filter(m=>m.name.toLowerCase().includes(q)||(m.code||'').toLowerCase().includes(q));const list=document.getElementById('members-list');if(!members.length){list.innerHTML='<div class="empty"><i class="fa-solid fa-users"></i><p>Aucun membre'+(q?' trouvé':' inscrit')+'.</p></div>';return;}const mods=DB.getArr('modules');const totalL=mods.reduce((s,m)=>s+m.lessons.length,0);list.innerHTML=members.map(m=>{const lv=getLevel(m.xp||0);const doneL=(m.completedLessons||[]).length;const pct=totalL?Math.round(doneL/totalL*100):0;const temo=DB.get('temo_'+m.code);const lastLogin=m.lastLogin||'—';const nBody=DB.getArr('body_'+m.code).length;const nTransfo=DB.getArr('transfo_'+m.code).length;return '<div class="member-card"><div class="mc-hdr"><div class="mc-av">'+initials(m.name)+'</div><div style="flex:1"><div class="mc-name">'+h(m.name)+(temo&&!temo.read?' <span style="background:var(--red);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px">⭐ Nouveau témo</span>':'')+'</div><div class="mc-meta">Code: '+m.code+' · Inscrit le '+fmtDate(m.joinedAt)+(m.pwHash?'':' · <span style="color:var(--orange);font-weight:600">mot de passe non créé</span>')+'</div></div><span class="lv-pill lv-'+lv.name+'">'+lv.name+'</span></div><div class="mc-stats"><div class="mc-stat">⚡ <strong>'+(m.xp||0)+'</strong> XP</div><div class="mc-stat">📚 <strong>'+doneL+'</strong> leçons ('+pct+'%)</div><div class="mc-stat">🏆 <strong>'+((m.completedDefis||[]).length)+'</strong> défis</div><div class="mc-stat">🔥 <strong>'+(m.streak||0)+'</strong> j streak</div><div class="mc-stat">📅 '+(lastLogin==='—'?'—':lastLogin)+'</div></div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:1px solid var(--border2)"><button class="btn-edit btn-sm" onclick="viewClientBody(\''+m.code+'\')"><i class="fa-solid fa-chart-line"></i> Suivi corporel'+(nBody?' ('+nBody+')':'')+'</button><button class="btn-edit btn-sm" onclick="viewClientTransfo(\''+m.code+'\')"><i class="fa-solid fa-camera"></i> Transformations'+(nTransfo?' ('+nTransfo+')':'')+'</button><button class="btn-edit btn-sm" onclick="viewClientJournal(\''+m.code+'\')"><i class="fa-solid fa-utensils"></i> Journal repas</button><button class="btn-edit btn-sm" onclick="viewTemo(\''+m.code+'\')" '+(temo?'':'disabled style="opacity:.4;cursor:default"')+'><i class="fa-solid fa-star"></i> Témoignage'+(temo?' ('+temo.note+'/5)':'')+'</button><button class="btn-edit btn-sm" onclick="openSanteClient(\''+m.code+'\')"><i class="fa-solid fa-heart-pulse"></i> Santé</button><button class="btn-edit btn-sm" onclick="openAccessEditor(\''+m.code+'\')"><i class="fa-solid fa-key"></i> Accès'+(m.access&&m.access.formule?' · '+h((DB.getArr('formules').find(f=>f.id===m.access.formule)||{}).name||''):'')+'</button><button class="btn-edit btn-sm" onclick="resetMemberPw(\''+m.code+'\',\''+escA(m.name)+'\')"><i class="fa-solid fa-rotate-left"></i> Mdp</button><button class="btn-del btn-sm" style="margin-left:auto" onclick="deleteMember(\''+m.code+'\',\''+escA(m.name)+'\')"><i class="fa-solid fa-trash"></i> Supprimer le compte</button></div></div>';}).join('');}
 
 function viewClientBody(code){const m=DB.getArr('members').find(x=>x.code===code);const entries=DB.getArr('body_'+code).sort((a,b)=>new Date(b.date)-new Date(a.date));let html='<h3 style="font-family:var(--fd);font-size:20px;margin-bottom:16px"><i class="fa-solid fa-chart-line" style="color:var(--blue)"></i> Suivi corporel — '+h(m?m.name:'')+'</h3>';if(!entries.length){html+='<div class="empty"><i class="fa-solid fa-chart-line"></i><p>Aucune mesure enregistrée par ce client.</p></div>';}else{html+='<div style="display:flex;flex-direction:column;gap:10px">'+entries.map(e=>'<div class="body-entry" style="margin:0"><span class="be-date">'+fmtDate(e.date)+'</span><div class="be-metrics">'+(e.poids?'<span class="be-metric"><strong>'+e.poids+'</strong> kg</span>':'')+(e.taille?' <span class="be-metric">Taille: <strong>'+e.taille+'</strong>cm</span>':'')+(e.bras?' <span class="be-metric">Bras: <strong>'+e.bras+'</strong>cm</span>':'')+(e.cuisse?' <span class="be-metric">Cuisse: <strong>'+e.cuisse+'</strong>cm</span>':'')+(e.hanches?' <span class="be-metric">Hanches: <strong>'+e.hanches+'</strong>cm</span>':'')+(e.mg?' <span class="be-metric">MG: <strong>'+e.mg+'</strong>%</span>':'')+'</div></div>').join('')+'</div>';}document.getElementById('modal-content').innerHTML=html;openModal();}
 
@@ -3239,9 +3239,32 @@ function navJournal(dir){const dt=new Date(journalDate+'T12:00:00');dt.setDate(d
 function openMealPicker(moment){
   _mpMoment=moment;_mpList=canSection('repas')?filterByAccess(DB.getArr('repas'),'repas'):[];
   const lbl=Object.fromEntries(MOMENTS)[moment]||moment;
-  document.getElementById('modal-content').innerHTML='<h3 style="font-family:var(--fd);font-size:18px;margin-bottom:12px">Ajouter au journal — '+lbl+'</h3><div class="sbar" style="margin-bottom:10px"><i class="fa-solid fa-magnifying-glass"></i><input type="text" id="mp-search" placeholder="Rechercher un repas..." oninput="filterMealPicker()"></div><div id="mp-list" style="max-height:330px;overflow-y:auto"></div>';
+  document.getElementById('modal-content').innerHTML='<h3 style="font-family:var(--fd);font-size:18px;margin-bottom:12px">Ajouter au journal — '+lbl+'</h3>'
+   +'<button class="btn-sec btn-sm" style="width:100%;justify-content:center;margin-bottom:12px" onclick="customMealForm(\''+moment+'\')"><i class="fa-solid fa-pen"></i> Ajouter un repas personnalisé (saisie libre)</button>'
+   +'<div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Ou depuis la bibliothèque</div>'
+   +'<div class="sbar" style="margin-bottom:10px"><i class="fa-solid fa-magnifying-glass"></i><input type="text" id="mp-search" placeholder="Rechercher un repas..." oninput="filterMealPicker()"></div><div id="mp-list" style="max-height:300px;overflow-y:auto"></div>';
   openModal();renderMealPicker(_mpList);
   setTimeout(()=>document.getElementById('mp-search')?.focus(),80);
+}
+function customMealForm(moment){
+  _mpMoment=moment;
+  const iSt='width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:10px;background:var(--bg2);color:var(--text);font-size:16px';
+  const lSt='font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;display:block;margin-bottom:5px';
+  document.getElementById('modal-content').innerHTML='<h3 style="font-family:var(--fd);font-size:18px;margin-bottom:4px">Repas personnalisé</h3><p style="font-size:13px;color:var(--text3);margin-bottom:14px">Seul le nom est obligatoire. Renseigne les macros si tu les connais.</p>'
+   +'<div style="margin-bottom:10px"><label style="'+lSt+'">Qu’as-tu mangé ?</label><input type="text" id="cm-nom" placeholder="Ex : Pizza maison, Salade César..." maxlength="80" style="'+iSt+'"></div>'
+   +'<div style="margin-bottom:10px"><label style="'+lSt+'">Moment</label><select id="cm-moment" style="'+iSt+'">'+MOMENTS.map(m=>'<option value="'+m[0]+'" '+(m[0]===moment?'selected':'')+'>'+m[1]+'</option>').join('')+'</select></div>'
+   +'<div class="r4"><div><label style="'+lSt+'">Calories</label><input type="number" id="cm-cal" placeholder="—" style="'+iSt+'"></div><div><label style="'+lSt+'">Prot. (g)</label><input type="number" id="cm-prot" placeholder="—" style="'+iSt+'"></div><div><label style="'+lSt+'">Gluc. (g)</label><input type="number" id="cm-gluc" placeholder="—" style="'+iSt+'"></div><div><label style="'+lSt+'">Lip. (g)</label><input type="number" id="cm-lip" placeholder="—" style="'+iSt+'"></div></div>'
+   +'<div style="display:flex;gap:8px;margin-top:16px"><button class="btn" style="flex:1;justify-content:center" onclick="addCustomMeal()"><i class="fa-solid fa-plus"></i> Ajouter à mon journal</button><button class="btn-sec" onclick="openMealPicker(\''+moment+'\')">Retour</button></div>';
+  setTimeout(()=>document.getElementById('cm-nom')?.focus(),80);
+}
+function addCustomMeal(){
+  const nom=(document.getElementById('cm-nom').value||'').trim().slice(0,80);
+  if(!nom){toast('Indique au moins le nom du repas','error');return;}
+  const num=id=>{const v=document.getElementById(id).value;return v===''?null:(parseFloat(v)||0);};
+  const moment=document.getElementById('cm-moment').value;
+  const day=getDay(journalDate);
+  (day[moment]=day[moment]||[]).push({custom:true,nom,cal:num('cm-cal'),prot:num('cm-prot'),gluc:num('cm-gluc'),lip:num('cm-lip'),t:Date.now()+Math.floor(Math.random()*1000)});
+  setDay(journalDate,day);closeModal();renderNutriTools();toast('Repas personnalisé ajouté ✅','success');
 }
 function renderMealPicker(list){
   const el=document.getElementById('mp-list');if(!el)return;
@@ -3255,6 +3278,29 @@ function addMealToJournal(id){
   setDay(journalDate,day);closeModal();renderNutriTools();toast('Ajouté au journal ✅','success');
 }
 function quickAddJournal(id,moment){_mpMoment=moment;addMealToJournal(id);}
+function viewClientJournal(code){
+  const m=DB.getArr('members').find(x=>x.code===code);
+  const jr=DB.get('journal_'+code)||{};
+  const dates=Object.keys(jr).filter(d=>['matin','midi','soir','collation'].some(k=>(jr[d][k]||[]).length)).sort().reverse().slice(0,14);
+  const momL=Object.fromEntries(MOMENTS);
+  let html='<h3 style="font-family:var(--fd);font-size:20px;margin-bottom:4px"><i class="fa-solid fa-utensils" style="color:var(--green)"></i> Journal alimentaire — '+h(m?m.name:'')+'</h3><p style="font-size:12px;color:var(--text3);margin-bottom:14px">14 derniers jours renseignés. <i class="fa-solid fa-pen" style="color:var(--gold)"></i> = repas saisi librement par le client.</p>';
+  if(!dates.length){html+='<div class="empty"><i class="fa-solid fa-utensils"></i><p>Ce client n’a pas encore rempli son journal.</p></div>';}
+  else{
+    html+=dates.map(d=>{
+      const day=jr[d];let tot=0,hasMissing=false;
+      const moms=MOMENTS.map(([k,lbl])=>{
+        const items=(day[k]||[]);if(!items.length)return'';
+        return '<div style="font-size:12px;font-weight:700;color:var(--text2);margin:8px 0 3px">'+lbl+'</div>'+items.map(e=>{
+          const noMacros=e.custom&&e.cal==null&&e.prot==null&&e.gluc==null&&e.lip==null;
+          if(noMacros)hasMissing=true;else tot+=(e.cal||0);
+          return '<div style="display:flex;gap:8px;font-size:13px;padding:3px 0"><span style="flex:1">'+(e.custom?'<i class="fa-solid fa-pen" style="font-size:9px;color:var(--gold);margin-right:5px"></i>':'')+h(e.nom)+'</span><span style="color:var(--text3)">'+(noMacros?'<em>macros non renseignées</em>':(Math.round(e.cal||0)+' kcal'+((e.prot!=null||e.gluc!=null||e.lip!=null)?' · P'+Math.round(e.prot||0)+' G'+Math.round(e.gluc||0)+' L'+Math.round(e.lip||0):'')))+'</span></div>';
+        }).join('');
+      }).join('');
+      return '<div style="border:1px solid var(--border);border-radius:12px;padding:12px 16px;margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-weight:700;font-size:14px;color:var(--blue)"><span>'+fmtDate(d)+'</span><span>'+Math.round(tot)+' kcal'+(hasMissing?' +':'')+'</span></div>'+moms+'</div>';
+    }).join('');
+  }
+  document.getElementById('modal-content').innerHTML=html;openModal();
+}
 function removeJournalEntry(moment,t){const day=getDay(journalDate);day[moment]=(day[moment]||[]).filter(e=>e.t!==t);setDay(journalDate,day);renderNutriTools();}
 
 // ---------- Calculateur TDEE (Mifflin-St Jeor) ----------
@@ -3309,8 +3355,10 @@ function renderNutriTools(){
   const day=getDay(journalDate);
   let tot={cal:0,prot:0,gluc:0,lip:0};
   const mH=MOMENTS.map(([k,lbl])=>{
-    const items=(day[k]||[]).map(e=>{tot.cal+=e.cal;tot.prot+=e.prot;tot.gluc+=e.gluc;tot.lip+=e.lip;
-      return '<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border2);font-size:13px"><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+h(e.nom)+'</span><span style="color:var(--text3);flex-shrink:0">'+Math.round(e.cal)+' kcal</span><button onclick="removeJournalEntry(\''+k+'\','+e.t+')" style="background:none;border:none;color:var(--text3);cursor:pointer;padding:2px 4px"><i class="fa-solid fa-xmark"></i></button></div>';
+    const items=(day[k]||[]).map(e=>{tot.cal+=(e.cal||0);tot.prot+=(e.prot||0);tot.gluc+=(e.gluc||0);tot.lip+=(e.lip||0);
+      const noMacros=e.custom&&e.cal==null&&e.prot==null&&e.gluc==null&&e.lip==null;
+      const calTxt=noMacros?'<span style="font-style:italic">macros non renseignées</span>':(Math.round(e.cal||0)+' kcal');
+      return '<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border2);font-size:13px"><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+(e.custom?'<i class="fa-solid fa-pen" style="font-size:9px;color:var(--gold);margin-right:5px" title="Repas personnalisé"></i>':'')+h(e.nom)+'</span><span style="color:var(--text3);flex-shrink:0">'+calTxt+'</span><button onclick="removeJournalEntry(\''+k+'\','+e.t+')" style="background:none;border:none;color:var(--text3);cursor:pointer;padding:2px 4px"><i class="fa-solid fa-xmark"></i></button></div>';
     }).join('');
     return '<div style="margin-bottom:12px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px"><span style="font-size:13px;font-weight:700">'+lbl+'</span><button class="btn-al" style="padding:4px 13px;font-size:11px" onclick="openMealPicker(\''+k+'\')"><i class="fa-solid fa-plus"></i> Ajouter</button></div>'+(items||'<div style="font-size:12px;color:var(--text3);padding:2px 0 6px">Rien pour le moment</div>')+'</div>';
   }).join('');
@@ -4308,6 +4356,234 @@ function initLanding(){
   if(!('IntersectionObserver' in window)){els.forEach(e=>e.classList.add('lv-vis'));return;}
   const io=new IntersectionObserver(entries=>{entries.forEach(en=>{if(en.isIntersecting){en.target.classList.add('lv-vis');io.unobserve(en.target);}});},{threshold:.12});
   els.forEach(e=>io.observe(e));
+}
+// SEED v3 — contenu additif (ajouté le 2026-06-13). Ne remplace rien :
+// fusionne par id, n'ajoute que ce qui manque. ⚠️ Contenu éducatif.
+function seedV3(){
+  if(DB.get('seeded_v3'))return;
+  const NEW_MODS=[
+  {id:11,v:3,title:"La surcharge progressive en pratique",icon:"📈",domain:"Musculation",desc:"Le moteur n°1 de tes progrès, appliqué concrètement",lessons:[
+    {id:"l1",title:"Pourquoi rien ne pousse sans surcharge",duration:"6 min",videoUrl:"",content:`Ton corps s'adapte au stress qu'on lui impose, puis s'arrête. Si tu soulèves les mêmes charges, pour les mêmes répétitions, pendant des mois, ton corps n'a aucune raison de changer : il sait déjà faire. La surcharge progressive, c'est augmenter graduellement la demande pour forcer une adaptation continue.
+
+C'est LE principe le plus fondamental de l'entraînement, démontré depuis des décennies. Sans lui, aucune technique magique, aucun complément, aucun programme à la mode ne te fera progresser durablement.
+
+La bonne nouvelle : « progresser » ne veut pas dire « toujours plus lourd ». Il existe plusieurs leviers, et c'est ce qui rend la progression possible même quand la charge stagne.`,quiz:{question:"Pourquoi un entraînement identique pendant des mois cesse-t-il de faire progresser ?",options:["Le corps s'est déjà adapté à ce niveau de stress","Les muscles ont une mémoire limitée","Il faut changer d'exercices chaque semaine"],correct:0}},
+    {id:"l2",title:"Les 5 leviers de progression",duration:"7 min",videoUrl:"",content:`Tu peux surcharger de plusieurs façons, du plus simple au plus fin :
+
+1. Plus de répétitions à charge égale (8 → 10 reps).
+2. Plus de charge (paliers de 1,25 à 2,5 kg).
+3. Plus de séries (volume hebdomadaire).
+4. Meilleure exécution : plus d'amplitude, descente plus contrôlée, moins d'élan.
+5. Moins de repos à performance égale (à utiliser avec parcimonie).
+
+La méthode reine pour débutants et intermédiaires : la double progression. Fixe une fourchette (ex. 8-12 reps), garde la charge, et grimpe vers le haut de la fourchette séance après séance. Quand tu fais 12 reps propres sur toutes tes séries, tu montes la charge et tu repars à 8.
+
+L'erreur classique : vouloir tout augmenter en même temps. Choisis UN levier à la fois, et change seulement quand tu plafonnes.`,quiz:{question:"Avec la double progression sur 8-12 reps, quand augmentes-tu la charge ?",options:["Dès que c'est un peu facile","Quand tu atteins 12 reps propres sur toutes les séries","Toutes les semaines automatiquement"],correct:1}},
+    {id:"l3",title:"Le carnet : sans données, pas de surcharge",duration:"5 min",videoUrl:"",content:`On ne peut pas battre un score qu'on ne connaît pas. Note chaque série de travail : exercice, charge, répétitions, et idéalement le RIR (reps en réserve). Une ligne suffit : « Développé couché 60 kg — 9/8/8 ».
+
+À la séance suivante, ton objectif est clair et concret : faire au moins une chose de mieux que la dernière fois. Une rep de plus, 1,25 kg de plus, une exécution plus propre. C'est ça, progresser.
+
+Sans carnet, tu navigues à vue : tu crois progresser, mais tu utilises souvent les mêmes charges depuis des mois sans t'en rendre compte. Trente secondes de notes entre les séries valent des mois de progression en plus.`,quiz:{question:"Quel est le rôle du carnet d'entraînement ?",options:["Impressionner les autres à la salle","Savoir exactement quoi battre à chaque séance","Calculer ses calories"],correct:1}}
+  ]},
+  {id:12,v:3,title:"Gérer un plateau",icon:"🧱",domain:"Musculation",desc:"Débloquer une stagnation de poids ou de performance, méthodiquement",lessons:[
+    {id:"l1",title:"D'abord : est-ce vraiment un plateau ?",duration:"6 min",videoUrl:"",content:`Avant de tout changer, vérifie que c'en est vraiment un. Le poids corporel fluctue de ±1 à 2 kg au jour le jour (eau, sel, glucides, transit, cycle hormonal) : une « stagnation » de 10 jours sur la balance n'est presque jamais un vrai plateau. Juge sur la MOYENNE de 2-3 semaines, pas sur un chiffre isolé.
+
+Côté performance, c'est pareil : ne pas progresser pendant 1 ou 2 séances est normal. Un vrai plateau, c'est 3 à 4 semaines sans la moindre amélioration (ni reps, ni charge, ni qualité) sur un exercice donné.
+
+Beaucoup de gens « cassent » un plateau qui n'existait pas, en sabotant un programme qui marchait. La patience est souvent la meilleure stratégie anti-plateau.`,quiz:{question:"Sur combien de temps juge-t-on un vrai plateau de poids ?",options:["Sur la moyenne de 2-3 semaines","Sur la pesée du jour","Sur 3 jours"],correct:0}},
+    {id:"l2",title:"Le diagnostic dans le bon ordre",duration:"7 min",videoUrl:"",content:`Quand le plateau est réel, diagnostique dans cet ordre — la cause est presque toujours dans les premiers points :
+
+1. Sommeil et stress : la cause n°1, et de loin. 7-9 h par nuit, sinon le reste compte peu.
+2. Nutrition : pour la force, vérifie protéines (1,6-2,2 g/kg) et calories suffisantes. Pour la perte de poids, vérifie que le déficit existe encore (les portions « oubliées » sont la cause n°1 — sauces, grignotages, boissons).
+3. Récupération locale : trop de volume ou trop d'échec ? Parfois il faut FAIRE MOINS pour repartir.
+4. Le programme : seulement en dernier. Un blocage technique récurrent se travaille avec des variantes ciblées.
+
+L'erreur classique : sauter directement au point 4 (changer tout le programme) alors que le problème est au point 1 (on dort 5 h).`,quiz:{question:"Quelle est la cause n°1 d'un plateau réel ?",options:["Le manque de nouveaux exercices","Le sommeil et le stress","La marque des compléments"],correct:1}},
+    {id:"l3",title:"Les stratégies de relance qui marchent",duration:"7 min",videoUrl:"",content:`Une fois la base réglée (sommeil, nutrition, récup), voici des relances éprouvées :
+
+Pour la FORCE :
+• Reset modeste : -10 % sur la barre, puis remonte en 3-4 semaines avec une exécution parfaite. Tu repasseras ton ancien blocage avec de l'élan.
+• Change de variante 4-6 semaines (développé incliné au lieu du couché), puis reviens.
+• Ajoute une série « top » lourde suivie de séries plus légères (back-off).
+
+Pour la PERTE DE POIDS :
+• Resserre le suivi quelques jours (la cause est presque toujours un apport sous-estimé).
+• Ajoute 2 000-3 000 pas par jour avant de couper des calories — moins de faim, plus de dépense.
+• Si vraiment bloqué 3 semaines : -150 à 200 kcal, une seule fois, et observe.
+
+Dans tous les cas : une modification à la fois, puis 2-3 semaines d'observation. Changer dix choses d'un coup t'empêche de savoir ce qui a marché.`,quiz:{question:"Face à un plateau de perte de poids, que vérifier en premier ?",options:["Acheter un brûleur de graisse","Resserrer le suivi : l'apport réel est souvent sous-estimé","Sauter le petit-déjeuner"],correct:1}}
+  ]},
+  {id:13,v:3,title:"La recomposition corporelle",icon:"🔄",domain:"Nutrition",desc:"Perdre du gras ET prendre du muscle en même temps : pour qui, comment",lessons:[
+    {id:"l1",title:"Est-ce possible ? Oui, mais pas pour tout le monde",duration:"7 min",videoUrl:"",content:`La recomposition corporelle, c'est perdre de la graisse tout en gagnant du muscle simultanément. Longtemps jugée impossible (« il faut choisir entre prise de masse et sèche »), la recherche a montré qu'elle est bien réelle — mais surtout dans certaines situations.
+
+Elle fonctionne le mieux pour :
+• Les débutants (potentiel de progression énorme).
+• Les personnes en surpoids (réserves de graisse à mobiliser comme « carburant » pour construire du muscle).
+• Les personnes qui reprennent après une pause (la fameuse mémoire musculaire).
+
+Pour un pratiquant avancé et déjà sec, la recomposition devient très lente, voire négligeable : à ce stade, mieux vaut alterner phases de prise et de sèche. La recomposition n'est pas un échec de progression — c'est juste plus lent sur la balance, parce que le gras perdu et le muscle gagné se compensent.`,quiz:{question:"Pour qui la recomposition fonctionne-t-elle le mieux ?",options:["Les bodybuilders très avancés et secs","Les débutants, les personnes en surpoids ou en reprise","Personne, c'est un mythe"],correct:1}},
+    {id:"l2",title:"Le protocole : maintenance, protéines, force",duration:"7 min",videoUrl:"",content:`La recette de la recomposition repose sur trois piliers :
+
+1. Calories autour de la MAINTENANCE (ou très léger déficit, -100 à -200 kcal). Pas de gros déficit (qui freine la construction musculaire), pas de surplus (qui ajoute du gras). C'est l'équilibre qui permet au corps de puiser dans le gras pour bâtir du muscle.
+
+2. Protéines HAUTES : 1,8 à 2,4 g par kg de poids corporel et par jour. C'est non négociable — c'est le facteur le plus important de toute l'opération.
+
+3. Entraînement de force sérieux, avec surcharge progressive. C'est le signal qui dit « construis du muscle, brûle le gras ». Sans stimulus d'entraînement intense, il n'y a pas de raison pour le corps de recomposer.
+
+Ajoute du sommeil de qualité (7-9 h) et de la patience : la recomposition se mesure en mois, et au mètre ruban / aux photos bien plus qu'à la balance.`,quiz:{question:"Quel apport calorique vise la recomposition corporelle ?",options:["Un gros déficit de 1000 kcal","Autour de la maintenance (ou très léger déficit)","Un surplus de 500 kcal"],correct:1}},
+    {id:"l3",title:"Comment savoir si ça marche",duration:"6 min",videoUrl:"",content:`En recomposition, la balance est un mauvais juge : ton poids peut rester quasi stable pendant des mois alors que ton corps change profondément (moins de gras, plus de muscle). C'est déroutant si tu ne suis QUE la balance.
+
+Suis plutôt ces indicateurs croisés :
+• Le mètre ruban : tour de taille qui baisse = gras qui part. Tour de bras/cuisses stable ou en hausse = muscle qui tient ou progresse.
+• Les photos mensuelles, mêmes conditions (lumière, pose, heure).
+• Tes performances à l'entraînement : si tes charges montent pendant que ton tour de taille descend, c'est la signature parfaite d'une recomposition réussie.
+• L'ajustement des vêtements (un jean qui flotte à la taille mais serre aux cuisses).
+
+Si rien ne bouge sur AUCUN de ces indicateurs après 6-8 semaines, ajuste légèrement les calories (vers un mini-déficit si l'objectif penche perte de gras).`,quiz:{question:"Quel est le meilleur signe d'une recomposition réussie ?",options:["La balance qui chute vite","Performances en hausse + tour de taille en baisse","Des courbatures tous les jours"],correct:1}}
+  ]},
+  {id:14,v:3,title:"Calculer ses macros en pratique",icon:"🧮",domain:"Nutrition",desc:"De la théorie à ton assiette, étape par étape",lessons:[
+    {id:"l1",title:"Étape 1 : tes calories cibles",duration:"6 min",videoUrl:"",content:`Tout part de ta dépense énergétique (TDEE). Estimation rapide : poids (kg) × 22 environ pour le métabolisme de base, × un facteur d'activité (1,4 sédentaire+sport léger ; 1,55 actif ; 1,7 très actif).
+
+Exemple : 70 kg, actif → 70 × 22 × 1,55 ≈ 2 390 kcal de maintenance.
+
+Ensuite, ajuste selon l'objectif :
+• Perte de gras : -300 à -500 kcal.
+• Maintien / recomposition : maintenance.
+• Prise de masse : +250 à +400 kcal.
+
+Mais le calcul n'est qu'un POINT DE DÉPART. La vraie cible se confirme en mangeant ce total 2-3 semaines et en suivant la moyenne de ton poids. Le corps a toujours le dernier mot sur la formule.`,quiz:{question:"Le calcul du TDEE est-il une vérité absolue ?",options:["Oui, il est exact au gramme près","Non, c'est un point de départ à ajuster avec la balance","Il ne sert à rien"],correct:1}},
+    {id:"l2",title:"Étape 2 : répartir protéines, lipides, glucides",duration:"7 min",videoUrl:"",content:`On fixe les macros dans cet ordre de priorité :
+
+1. PROTÉINES d'abord : 1,6 à 2,2 g/kg/jour (le haut de la fourchette en sèche). Pour 70 kg → 120-155 g. C'est 4 kcal par gramme.
+
+2. LIPIDES ensuite : plancher de 0,6 à 1 g/kg (jamais durablement sous ~20 % des calories, pour les hormones). Pour 70 kg → 55-70 g. C'est 9 kcal par gramme.
+
+3. GLUCIDES en dernier : tout le reste des calories. C'est ton carburant d'entraînement. 4 kcal par gramme.
+
+Exemple à 2 400 kcal, 70 kg :
+• Protéines 150 g = 600 kcal
+• Lipides 65 g = 585 kcal
+• Reste : 2400 - 600 - 585 = 1215 kcal de glucides ÷ 4 = ~300 g.
+
+Le curseur glucides/lipides s'ajuste selon tes préférences : ce qui compte, c'est de tenir le plan dans la durée.`,quiz:{question:"Dans quel ordre fixe-t-on les macros ?",options:["Glucides, lipides, protéines","Protéines, lipides, puis glucides avec le reste","Peu importe l'ordre"],correct:1}},
+    {id:"l3",title:"Étape 3 : suivre sans devenir esclave de l'appli",duration:"6 min",videoUrl:"",content:`Peser et tracker ses aliments quelques semaines est extrêmement formateur : on découvre que 100 g de pâtes ou une cuillère d'huile « pèsent » bien plus qu'on ne croit. C'est un apprentissage, pas une prison à vie.
+
+Une fois l'œil calibré, beaucoup pilotent très bien avec :
+• Les portions à la main : paume = protéines, poing = légumes, main en coupe = glucides, pouce = lipides.
+• La règle « protéine + légumes + une source de glucides » à chaque repas principal.
+• La moyenne de la balance comme juge de paix hebdomadaire.
+
+Reviens au tracking précis ponctuellement : début de sèche, plateau, ou fin de régime quand la précision compte le plus. Le but n'est pas de tracker pour toujours, mais de savoir le faire quand c'est utile. L'adhérence sur des années bat la précision parfaite de quelques semaines.`,quiz:{question:"Faut-il peser ses aliments toute sa vie ?",options:["Oui, sinon ça ne marche pas","Non : on tracke pour apprendre, puis on pilote aux portions et à la balance","Il ne faut jamais peser"],correct:1}}
+  ]},
+  {id:15,v:3,title:"Compléments : ce qui marche vraiment",icon:"💊",domain:"Nutrition",desc:"Le tri honnête entre preuves solides et marketing",lessons:[
+    {id:"l1",title:"La hiérarchie : 95 % vient de la base",duration:"6 min",videoUrl:"",content:`Avant tout complément, un rappel qui fait économiser beaucoup d'argent : l'entraînement, le sommeil et l'alimentation solide font 95 % du résultat. Aucune poudre ne compense un mauvais sommeil ou un déficit de protéines.
+
+Le mot « complément » dit tout : ça COMPLÈTE une base déjà solide, ça ne la remplace pas. Un débutant qui dort 6 h, mange 80 g de protéines et s'entraîne sans plan n'a aucun besoin de compléments — il a besoin de régler la base.
+
+Dans les leçons suivantes, on voit les rares produits qui ont des preuves scientifiques solides, leurs dosages, et tout le reste qui relève surtout du marketing. Règle d'or : ne paie jamais en gélules ce que tu n'as pas d'abord payé en sommeil et en assiette.`,quiz:{question:"Quelle part du résultat vient de la base (entraînement, sommeil, alimentation) ?",options:["Environ 50 %","Environ 95 %","Environ 10 %"],correct:1}},
+    {id:"l2",title:"Les valeurs sûres (preuves solides)",duration:"8 min",videoUrl:"",content:`Quatre produits sortent du lot par la qualité de leurs preuves :
+
+• CRÉATINE MONOHYDRATE : le plus étudié de tous. 3-5 g/jour, tous les jours, n'importe quand (le timing n'importe pas). +5 à 10 % de force/performance sur efforts courts, légère aide à la prise de muscle. Pas de phase de charge nécessaire. Preuve : très élevée.
+
+• PROTÉINE EN POUDRE (whey ou végétale) : ce n'est « que » de la nourriture pratique pour atteindre ton quota de protéines. 25-30 g par dose. Aucun effet magique au-delà des protéines qu'elle apporte. Preuve : très élevée (pour l'apport).
+
+• CAFÉINE : 3-6 mg/kg, 30-60 min avant l'effort. Améliore force, endurance, concentration. Attention au sommeil (rien 8-10 h avant le coucher). Preuve : très élevée.
+
+• VITAMINE D : utile surtout en cas de carence (fréquent l'hiver dans les pays peu ensoleillés). 1000-2000 UI/jour avec un repas gras. Idéalement, fais doser ton taux. Preuve : élevée pour corriger une carence.
+
+Les oméga-3 (si tu ne manges pas de poisson gras) et le magnésium (si apports faibles) complètent utilement la liste.`,quiz:{question:"Quel est le complément le plus étudié et le plus efficace ?",options:["Les BCAA","La créatine monohydrate","Les brûleurs de graisse"],correct:1}},
+    {id:"l3",title:"Ce qui relève surtout du marketing",duration:"6 min",videoUrl:"",content:`Beaucoup de produits populaires ont des preuves faibles, nulles, ou inutiles si ton alimentation est correcte :
+
+• BCAA / acides aminés : inutiles si tu manges assez de protéines (ce qui est ton cas avec 1,6-2,2 g/kg). Ils ne contiennent qu'une partie de ce qu'une vraie source de protéines apporte déjà.
+• Brûleurs de graisse : effet quasi nul sur la perte de gras réelle (au mieux, un peu de caféine déguisée). C'est le déficit calorique qui brûle le gras, pas une pilule.
+• Boosters de testostérone « naturels » : aucune preuve sérieuse chez l'homme sain.
+• Glutamine, pré-workouts complexes à 20 ingrédients : surtout du remplissage et de la caféine.
+
+Avant d'acheter quoi que ce soit, un réflexe : cherche le produit sur des bases indépendantes (comme Examine.com) plutôt que de croire l'étiquette ou l'influenceur sponsorisé. Et en cas de traitement médical, demande toujours l'avis de ton médecin.`,quiz:{question:"Les BCAA sont-ils utiles si on mange assez de protéines ?",options:["Oui, indispensables","Non, redondants avec un apport en protéines suffisant","Seulement le matin"],correct:1}}
+  ]},
+  {id:16,v:3,title:"Échauffement & prévention des blessures",icon:"🤸",domain:"Musculation",desc:"S'entraîner longtemps sans se blesser : la base trop souvent négligée",lessons:[
+    {id:"l1",title:"L'échauffement efficace en 3 étapes",duration:"6 min",videoUrl:"",content:`Oublie les 20 minutes de tapis et les étirements statiques tenus longtemps avant l'effort (ils peuvent même réduire légèrement la force juste après). Un bon échauffement tient en 8-12 minutes :
+
+1. Élévation générale (3-5 min) : cardio léger (rameur, vélo, marche rapide) pour monter la température et la fréquence cardiaque.
+
+2. Mobilité dynamique ciblée (2-3 min) : mouvements amples des articulations qui vont travailler — rotations d'épaules, ouvertures de hanche, chevilles. Cible TES raideurs.
+
+3. Séries d'approche (3-5 min) : sur ton premier exercice, monte progressivement vers ta charge de travail (barre à vide, puis 40 %, 60 %, 80 %). Ça prépare le système nerveux sans fatigue.
+
+Les exercices suivants ne demandent qu'une ou deux séries d'approche légères. Court, efficace, et tu attaques tes séries lourdes vraiment prêt.`,quiz:{question:"Que faut-il éviter juste avant des séries lourdes ?",options:["Les séries d'approche","Les étirements statiques tenus longtemps","Le cardio léger"],correct:1}},
+    {id:"l2",title:"Technique et amplitude : ta meilleure assurance",duration:"7 min",videoUrl:"",content:`La majorité des blessures de musculation viennent de deux choses : trop de charge trop vite, et une exécution dégradée pour « gratter » du poids (dos qui s'arrondit, rebonds, amplitude écourtée, coup de rein).
+
+Trois principes de protection :
+• Maîtrise avant charge : si tu ne peux pas contrôler la descente en 2 secondes sur toutes tes reps, c'est trop lourd pour ta technique actuelle.
+• Amplitude complète maîtrisée : elle renforce les tendons et articulations sur toute leur course, ce qui les rend plus résistants — à condition de l'aborder progressivement.
+• Progression graduelle : +2,5 kg quand c'est solide, pas +20 kg pour l'ego. Le corps s'adapte vite au muscle, plus lentement aux tendons et articulations.
+
+Filme-toi de profil régulièrement : la vidéo révèle les défauts que tu ne sens pas. Une technique propre n'est pas qu'une question de sécurité — c'est aussi ce qui te permettra de soulever lourd plus tard.`,quiz:{question:"D'où viennent la majorité des blessures en musculation ?",options:["Du manque de compléments","De trop de charge trop vite et d'une exécution dégradée","De l'échauffement"],correct:1}},
+    {id:"l3",title:"Écouter les signaux : douleur vs inconfort",duration:"6 min",videoUrl:"",content:`Tout inconfort n'est pas une blessure, mais toute douleur ne doit pas être ignorée. Apprends à distinguer :
+
+• NORMAL : la fatigue musculaire (la « brûlure »), les courbatures diffuses et symétriques 24-72 h après, l'effort intense bien localisé dans le muscle ciblé.
+
+• SIGNAL D'ALARME : une douleur ARTICULAIRE vive, localisée, asymétrique, ou présente au repos. Une douleur qui s'aggrave pendant la série. Un « clac » suivi de douleur.
+
+Conduite intelligente face à un signal d'alarme : arrête l'exercice en cause (pas toute la séance), remplace par une variante indolore du même mouvement (presse au lieu de squat, prise neutre au lieu de pronation), réduis charge et amplitude temporairement. Si la douleur persiste plus de 1-2 semaines, s'aggrave ou s'accompagne de gonflement : consulte un médecin ou kiné.
+
+S'entraîner À TRAVERS une douleur articulaire qui empire est le meilleur moyen de transformer 2 semaines de prudence en 6 mois d'arrêt. Le repos intelligent n'est pas une faiblesse : c'est de la stratégie long terme.`,quiz:{question:"Que faire face à une douleur articulaire vive pendant un exercice ?",options:["Pousser plus fort pour la « débloquer »","Arrêter cet exercice et le remplacer par une variante indolore","Prendre un anti-douleur et continuer"],correct:1}}
+  ]},
+  {id:17,v:3,title:"Cardio & santé cardiovasculaire",icon:"❤️‍🔥",domain:"Lifestyle",desc:"Un cœur en forme sans saboter tes gains musculaires",lessons:[
+    {id:"l1",title:"Pourquoi le cardio compte (même en muscu)",duration:"6 min",videoUrl:"",content:`La musculation construit du muscle et de la force, mais elle entraîne peu ton système cardiovasculaire. Or la capacité cardio-respiratoire (le VO2max) est l'un des meilleurs prédicteurs de santé et de longévité connus — bien plus que ton tour de bras.
+
+Un cœur entraîné apporte aussi un bénéfice direct à la salle : une meilleure récupération ENTRE tes séries et entre tes séances. Tu récupères plus vite, tu encaisses plus de volume de qualité.
+
+Les recommandations de l'OMS pour les adultes : 150 à 300 minutes d'activité modérée par semaine, OU 75 à 150 minutes d'activité intense, PLUS du renforcement musculaire 2 fois par semaine (déjà coché si tu fais de la muscu). Le plus grand bénéfice santé survient en passant de « rien » à « un peu » : même 2-3 sessions courtes changent la donne.`,quiz:{question:"Pourquoi intégrer du cardio quand on fait déjà de la musculation ?",options:["Pour la santé cardiovasculaire et une meilleure récupération","Parce que la muscu est inutile","Pour brûler tout son muscle"],correct:0}},
+    {id:"l2",title:"LISS ou HIIT : lequel choisir ?",duration:"7 min",videoUrl:"",content:`Deux grandes familles :
+
+• LISS (effort continu modéré) : marche rapide, vélo tranquille, rameur léger — tu peux tenir une conversation. Avantages : récupération quasi nulle à payer, très peu d'interférence avec la muscu, accessible tous les jours. Idéal pour la base cardio et la dépense calorique en sèche.
+
+• HIIT (intervalles intenses) : alternance d'efforts durs (15 s à 4 min) et de récupérations. Avantages : efficace par minute, améliore vite le VO2max. Inconvénient : coûte cher en récupération, à doser quand on s'entraîne déjà en force.
+
+Vérité importante pour la perte de gras : à dépense calorique égale, HIIT et LISS font perdre AUTANT de gras. Le fameux « afterburn » du HIIT est réel mais modeste (quelques dizaines de kcal). Choisis donc selon ta récupération, ton temps et tes goûts — le meilleur cardio est celui que tu feras vraiment, régulièrement.`,quiz:{question:"À dépense calorique égale, lequel fait perdre le plus de gras ?",options:["Le HIIT, grâce à l'afterburn énorme","Le LISS","Égalité : c'est la dépense totale qui compte"],correct:2}},
+    {id:"l3",title:"Intégrer le cardio sans tuer tes gains",duration:"6 min",videoUrl:"",content:`« Le cardio tue les gains » est un mythe à nuancer. L'effet d'interférence existe, mais il est largement évitable. Un cardio modéré (2-3 sessions/semaine) n'altère quasiment pas l'hypertrophie selon les méta-analyses ; l'interférence ne devient mesurable qu'avec de gros volumes d'endurance intense.
+
+Règles pratiques pour cumuler sereinement :
+• Privilégie le faible impact pour les jambes (vélo, rameur, marche inclinée) plutôt que la course, qui crée plus de dommages musculaires.
+• Sépare les stimuli : cardio et muscu à 6 h d'écart ou jours différents. Si même séance, la musculation D'ABORD.
+• Évite un gros HIIT de jambes la veille d'une grosse séance bas du corps.
+• En prise de masse, compense les calories brûlées par le cardio.
+
+Le NEAT (toute l'activité hors sport : marche, escaliers) est souvent un meilleur outil que le cardio formel pour la dépense quotidienne : il ne fatigue pas et ne coupe pas l'appétit. Vise 7 000-10 000 pas par jour comme socle.`,quiz:{question:"Si cardio et musculation sont dans la même séance, quel ordre ?",options:["Cardio d'abord, 45 min","Musculation d'abord, cardio ensuite","Peu importe"],correct:1}}
+  ]}
+  ];
+  const NEW_REPAS=[
+    {id:35,nom:"Porridge protéiné chocolat",cat:"petit-dejeuner",cal:450,prot:30,gluc:55,lip:12,photo:"",tags:["vegetarien"],desc:`60 g de flocons d'avoine cuits dans 250 ml de lait, 25 g de whey chocolat hors du feu, 1 c. à café de cacao, quelques amandes. Onctueux et rassasiant pour toute la matinée.`},
+    {id:36,nom:"Bagel saumon fromage frais",cat:"petit-dejeuner",cal:460,prot:28,gluc:48,lip:16,photo:"",tags:[],desc:`1 bagel complet, 60 g de saumon fumé, 40 g de fromage frais, quelques rondelles de concombre et aneth. Riche en protéines et oméga-3.`},
+    {id:37,nom:"Smoothie bowl açaï",cat:"petit-dejeuner",cal:410,prot:14,gluc:60,lip:12,photo:"",tags:["vegan","vegetarien"],desc:`100 g de purée d'açaï, 1 banane congelée, 150 ml de lait végétal, mixés épais. Garnir de granola, fruits rouges et copeaux de coco.`},
+    {id:38,nom:"Œufs brouillés avocat",cat:"petit-dejeuner",cal:390,prot:22,gluc:12,lip:28,photo:"",tags:["vegetarien","sans-gluten"],desc:`3 œufs brouillés à feu doux, 1/2 avocat en tranches, ciboulette, sel, poivre. Pauvre en glucides, riche en bonnes graisses — idéal le week-end.`},
+    {id:39,nom:"Pancakes banane flocons",cat:"petit-dejeuner",cal:410,prot:20,gluc:58,lip:10,photo:"",tags:["vegetarien"],desc:`50 g de flocons d'avoine mixés, 1 banane écrasée, 2 œufs, cuits en petits pancakes. Garnir d'un filet de sirop d'érable. Sans sucre ajouté hormis la banane.`},
+    {id:40,nom:"Wrap thon crudités",cat:"dejeuner",cal:440,prot:35,gluc:42,lip:14,photo:"",tags:[],desc:`1 grande tortilla complète, 1 boîte de thon au naturel égoutté, salade, tomate, maïs, 1 c. à soupe de fromage blanc citronné. Le déjeuner rapide à emporter.`},
+    {id:41,nom:"Poke bowl saumon avocat",cat:"dejeuner",cal:520,prot:34,gluc:55,lip:18,photo:"",tags:["sans-gluten","sans-lactose"],desc:`120 g de saumon cru en dés, 80 g de riz (cru) cuit, 1/2 avocat, edamame, concombre, sauce soja-sésame. Frais, complet, riche en oméga-3.`},
+    {id:42,nom:"Curry de lentilles coco",cat:"dejeuner",cal:460,prot:22,gluc:60,lip:14,photo:"",tags:["vegan","vegetarien","sans-gluten"],desc:`100 g de lentilles corail (cru), 100 ml de lait de coco léger, tomates, oignon, curry, gingembre. Servir avec un peu de riz. Végan et réconfortant.`},
+    {id:43,nom:"Buddha bowl tofu mariné",cat:"dejeuner",cal:490,prot:26,gluc:58,lip:16,photo:"",tags:["vegan","vegetarien"],desc:`150 g de tofu ferme mariné soja-sésame et doré, 70 g de quinoa (cru) cuit, patate douce rôtie, chou rouge, sauce tahini. Complet en acides aminés.`},
+    {id:44,nom:"Steak haché patate douce",cat:"dejeuner",cal:510,prot:40,gluc:50,lip:16,photo:"",tags:["sans-gluten","sans-lactose"],desc:`130 g de steak haché 5 %, 250 g de patate douce rôtie, haricots verts à l'ail. Simple, riche en protéines et en glucides de qualité.`},
+    {id:45,nom:"Pâtes pesto poulet",cat:"dejeuner",cal:600,prot:42,gluc:65,lip:18,photo:"",tags:[],desc:`90 g de pâtes (cru), 130 g de poulet grillé, 1 c. à soupe de pesto, tomates cerises, parmesan. Le classique post-séance, calorique et protéiné.`},
+    {id:46,nom:"Chili con carne",cat:"dejeuner",cal:510,prot:38,gluc:55,lip:15,photo:"",tags:["sans-gluten","sans-lactose"],desc:`130 g de bœuf haché 5 %, 150 g de haricots rouges, tomates concassées, maïs, cumin, paprika. Servir avec un peu de riz. Riche en fibres et en protéines.`},
+    {id:47,nom:"Omelette jambon fromage",cat:"diner",cal:350,prot:32,gluc:6,lip:22,photo:"",tags:["sans-gluten"],desc:`3 œufs, 50 g de jambon, 30 g de fromage râpé, salade verte en accompagnement. Dîner express, très protéiné et pauvre en glucides.`},
+    {id:48,nom:"Papillote cabillaud légumes",cat:"diner",cal:320,prot:36,gluc:25,lip:8,photo:"",tags:["sans-gluten","sans-lactose"],desc:`160 g de cabillaud, courgettes, tomates, citron et herbes, en papillote 20 min au four. Léger, digeste, parfait en sèche.`},
+    {id:49,nom:"Soupe miso tofu nouilles",cat:"diner",cal:350,prot:20,gluc:45,lip:10,photo:"",tags:["vegan","vegetarien"],desc:`Bouillon miso, 120 g de tofu soyeux, nouilles soba, champignons, oignon vert, algues. Réconfortant et léger pour le soir.`},
+    {id:50,nom:"Gratin courgettes ricotta",cat:"diner",cal:350,prot:24,gluc:18,lip:20,photo:"",tags:["vegetarien","sans-gluten"],desc:`3 courgettes en rondelles, 150 g de ricotta, 2 œufs, parmesan, gratiné au four. Végétarien, rassasiant et pauvre en glucides.`},
+    {id:51,nom:"Bowl crevettes quinoa",cat:"diner",cal:420,prot:34,gluc:48,lip:10,photo:"",tags:["sans-gluten","sans-lactose"],desc:`150 g de crevettes sautées à l'ail, 70 g de quinoa (cru) cuit, brocoli et poivrons. Haut ratio protéines/calories, idéal en fin de journée.`},
+    {id:52,nom:"Dahl de lentilles corail",cat:"diner",cal:370,prot:20,gluc:52,lip:9,photo:"",tags:["vegan","vegetarien","sans-gluten"],desc:`90 g de lentilles corail (cru), tomates, oignon, ail, cumin, curcuma, lait de coco léger. Végan, riche en fibres et très rassasiant.`},
+    {id:53,nom:"Cottage cheese concombre",cat:"snack",cal:140,prot:18,gluc:8,lip:4,photo:"",tags:["vegetarien","sans-gluten"],desc:`200 g de cottage cheese, concombre en dés, ciboulette, poivre. 18 g de protéines pour 140 kcal — la collation minceur parfaite.`},
+    {id:54,nom:"Energy balls dattes amandes",cat:"snack",cal:250,prot:6,gluc:28,lip:12,photo:"",tags:["vegan","vegetarien","sans-gluten"],desc:`Recette pour ~3 balls : 4 dattes, 30 g d'amandes, 1 c. à soupe de cacao, mixés et roulés. Valeurs pour la portion. Sans sucre ajouté.`},
+    {id:55,nom:"Toast beurre de cacahuète banane",cat:"snack",cal:340,prot:12,gluc:40,lip:14,photo:"",tags:["vegetarien"],desc:`1 tranche de pain complet, 15 g de beurre de cacahuète, 1/2 banane en rondelles, cannelle. Énergie rapide avant l'entraînement.`},
+    {id:56,nom:"Shake caséine fruits rouges",cat:"collation",cal:240,prot:30,gluc:20,lip:4,photo:"",tags:["vegetarien","sans-gluten"],desc:`30 g de caséine (ou fromage blanc battu), 250 ml de lait écrémé, poignée de fruits rouges. Digestion lente — idéal le soir avant de dormir.`}
+  ];
+  const mods=DB.getArr('modules');const mIds=new Set(mods.map(m=>m.id));let addedM=0;
+  NEW_MODS.forEach(m=>{if(!mIds.has(m.id)){mods.push(m);addedM++;}});
+  if(addedM)DB.set('modules',mods);
+  const rep=DB.getArr('repas');const rIds=new Set(rep.map(r=>r.id));let addedR=0;
+  NEW_REPAS.forEach(r=>{if(!rIds.has(r.id)){rep.push(r);addedR++;}});
+  if(addedR)DB.set('repas',rep);
+  DB.set('seeded_v3',true);
 }
 </script>
 </body>
