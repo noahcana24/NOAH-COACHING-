@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0f4c81">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="NoahCana">
+<meta name="mobile-web-app-capable" content="yes">
 <title>NoahCana Coaching</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -999,6 +1003,38 @@ button{touch-action:manipulation;}
   .fab{bottom:calc(20px + env(safe-area-inset-bottom)) !important;}
 }
 
+/* ---- FINALISATION : polish design (obj 4) ---- */
+/* Pastilles de notification dans le menu */
+.gs-btn-mobile{display:none;}
+@media(max-width:768px){.gs-btn-mobile{display:inline-flex;align-items:center;justify-content:center;}}
+.nav-dot{width:8px;height:8px;border-radius:50%;background:var(--gold);margin-left:auto;flex-shrink:0;box-shadow:0 0 6px var(--gold);animation:dotPulse 2s ease-in-out infinite;}
+@keyframes dotPulse{0%,100%{opacity:1;}50%{opacity:.45;}}
+.nav-item{position:relative;}
+/* Cartes repas/modules : images mises en valeur, overlay propre */
+.repas-img,.mod-banner{position:relative;}
+.repas-card,.mod-card{transition:transform .26s var(--ts),box-shadow .26s var(--ts),border-color .26s var(--ts);}
+.repas-ph{background:linear-gradient(135deg,var(--bg2),var(--border2));position:relative;}
+.repas-ph::after,.repas-card .repas-img+*{}
+.repas-card .repas-img{transition:transform .4s var(--ts);}
+.repas-card:hover .repas-img{transform:scale(1.04);}
+.repas-card{overflow:hidden;}
+.mod-card:hover .mod-banner{transform:scale(1.03);}
+.mod-banner{transition:transform .4s var(--ts);}
+/* Hiérarchie typo premium */
+.sec-header h2{letter-spacing:-.03em;line-height:1.1;}
+.mod-title,.repas-name,.dbc-t,.sc-title{letter-spacing:-.01em;}
+.dstat-v,.dh-xv,.xc-val{font-feature-settings:"tnum";letter-spacing:-.02em;}
+/* Profondeur : glow doux au survol desktop */
+@media(hover:hover){
+  .dstat:hover,.dbc:hover,.na-card:hover{box-shadow:var(--shm),0 0 0 1px rgba(26,107,191,.12);}
+  .member-card:hover{box-shadow:var(--shm);}
+}
+/* Avatar topbar cliquable */
+.tb-name{cursor:pointer;transition:color var(--t);}
+.tb-name:hover{color:var(--blue);}
+/* Dark mode : surfaces un poil plus contrastées pour les nouvelles cartes */
+[data-theme="dark"] .nav-dot{box-shadow:0 0 8px var(--gold);}
+
 /* ---- 12. ACCESSIBILITÉ : reduced motion ---- */
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;}
@@ -1023,17 +1059,17 @@ button{touch-action:manipulation;}
       <button class="ld-login-btn" onclick="goLogin()"><i class="fa-solid fa-user"></i> J'ai déjà un compte</button>
     </nav>
     <div class="ld-hero-inner lv">
-      <div class="ld-badge">🏆 Coaching premium · Places limitées</div>
+      <div class="ld-badge">🏆 Coaching premium · Hommes & Femmes · Places limitées</div>
       <!-- ✏️ TITRE PRINCIPAL -->
-      <h1>Transforme ton corps.<br><span>Garde-le pour la vie.</span></h1>
+      <h1>Perds du gras et prends<br><span>du muscle en même temps.</span></h1>
       <!-- ✏️ SOUS-TITRE -->
-      <p>Coaching sportif et nutrition 100 % personnalisé, avec une application privée de suivi complet. Pas de programme générique, pas de promesse magique : une méthode fondée sur la science et un coach qui te suit vraiment.</p>
+      <p>La recomposition corporelle, c'est mon métier. Un coaching personnalisé, fondé sur la science, qui sculpte ton physique sans régime extrême ni programme générique — pour les hommes comme pour les femmes qui veulent des résultats qui durent.</p>
       <div class="ld-cta-row">
-        <button class="ld-cta" onclick="openContactModal()">Rejoindre le coaching <i class="fa-solid fa-arrow-right"></i></button>
+        <button class="ld-cta" onclick="openContactModal()">Démarrer ma transformation <i class="fa-solid fa-arrow-right"></i></button>
         <button class="ld-cta-sec" onclick="document.getElementById('ld-method').scrollIntoView({behavior:'smooth'})">Découvrir la méthode</button>
       </div>
       <div class="ld-proof-pills">
-        <span>💪 Programmes sur mesure</span><span>🥗 Nutrition personnalisée</span><span>📱 App de suivi privée</span><span>🤝 Coach disponible</span>
+        <span>🔄 Recomposition corporelle</span><span>💪 Prise de muscle</span><span>📱 App de suivi privée</span><span>🤝 Coach humain</span>
       </div>
     </div>
   </div>
@@ -1059,26 +1095,21 @@ button{touch-action:manipulation;}
 
   <section class="ld-sec lv">
     <h2 class="ld-h2">Les formules</h2>
-    <p class="ld-sub">Trois niveaux d'accompagnement selon tes besoins et ton autonomie.</p>
+    <p class="ld-sub">Trois niveaux d'accompagnement selon tes besoins et ton autonomie. Tarif sur devis, adapté à ton objectif — écris-moi pour en parler.</p>
     <div class="ld-grid3">
-      <!-- ✏️ FORMULE 1 : nom, prix (XX €), contenu -->
-      <div class="ld-price"><div class="ld-price-name">🥉 Essentiel</div><div class="ld-price-amt">XX €<span>/mois</span></div><ul><li>Programme d'entraînement personnalisé</li><li>Accès aux modules de formation</li><li>Bibliothèque de repas + macros</li><li>Suivi via l'application</li></ul><button class="ld-cta-sec" onclick="openContactModal()">En savoir plus</button></div>
-      <!-- ✏️ FORMULE 2 -->
-      <div class="ld-price ld-price-hot"><div class="ld-price-tag">Le plus choisi</div><div class="ld-price-name">🥈 Avancé</div><div class="ld-price-amt">XX €<span>/mois</span></div><ul><li>Tout Essentiel, plus :</li><li>Plan nutrition 100 % personnalisé</li><li>Check-in hebdomadaire avec moi</li><li>Ajustements illimités du programme</li><li>Défis, communauté et suivi santé complet</li></ul><button class="ld-cta" style="width:100%;justify-content:center" onclick="openContactModal()">Commencer</button></div>
-      <!-- ✏️ FORMULE 3 -->
-      <div class="ld-price"><div class="ld-price-name">🥇 Premium</div><div class="ld-price-amt">XX €<span>/mois</span></div><ul><li>Tout Avancé, plus :</li><li>Contact direct 7 j/7</li><li>Appels visio réguliers</li><li>Bilan mensuel approfondi</li><li>Priorité absolue sur le suivi</li></ul><button class="ld-cta-sec" onclick="openContactModal()">En savoir plus</button></div>
+      <div class="ld-price"><div class="ld-price-name">🥉 Essentiel</div><div class="ld-price-amt">Sur devis</div><ul><li>Accès complet à la plateforme (modules, transformation, témoignages, toute la base de connaissances)</li><li>Un programme personnalisé</li><li>Un appel bilan</li></ul><button class="ld-cta-sec" onclick="openContactModal()">Contacte-moi</button></div>
+      <div class="ld-price ld-price-hot"><div class="ld-price-tag">⭐ Le plus populaire</div><div class="ld-price-name">🥈 Suivi Complet</div><div class="ld-price-amt">Sur devis</div><ul><li>Programme 100 % personnalisé</li><li>Suivi et ajustement du programme <strong>chaque semaine</strong></li><li>Bilan mensuel approfondi</li><li>Accompagnement complet de A à Z</li></ul><button class="ld-cta" style="width:100%;justify-content:center" onclick="openContactModal()">Sur devis — Contacte-moi</button></div>
+      <div class="ld-price"><div class="ld-price-name">🥇 Suivi Élite</div><div class="ld-price-amt">Sur devis</div><ul><li>Tout le Suivi Complet, plus :</li><li>Bilan <strong>hebdomadaire</strong></li><li>Appels réguliers avec moi</li><li>Diète entièrement personnalisée</li><li>Accès à absolument tout</li></ul><button class="ld-cta-sec" onclick="openContactModal()">Contacte-moi</button></div>
     </div>
   </section>
 
   <section class="ld-sec ld-dark lv">
     <h2 class="ld-h2" style="color:#fff">Ils ont transformé leur physique</h2>
     <div class="ld-grid3">
-      <!-- ✏️ TÉMOIGNAGE 1 : remplace prénom + texte -->
-      <div class="ld-temo"><div class="ld-stars">★★★★★</div><p>« Remplace ce texte par un vrai témoignage client : résultat obtenu, durée, ce qui a changé pour lui. »</p><div class="ld-temo-name">— Prénom, objectif atteint</div></div>
-      <!-- ✏️ TÉMOIGNAGE 2 -->
-      <div class="ld-temo"><div class="ld-stars">★★★★★</div><p>« Deuxième témoignage : idéalement avec des chiffres concrets (kg perdus, force gagnée) et une émotion. »</p><div class="ld-temo-name">— Prénom, objectif atteint</div></div>
-      <!-- ✏️ TÉMOIGNAGE 3 -->
-      <div class="ld-temo"><div class="ld-stars">★★★★★</div><p>« Troisième témoignage : ce que le coaching a changé au-delà du physique (énergie, confiance, habitudes). »</p><div class="ld-temo-name">— Prénom, objectif atteint</div></div>
+      <!-- ✏️ TÉMOIGNAGES (fictifs en attendant les vrais) — remplace texte + prénom quand tu auras de vrais retours -->
+      <div class="ld-temo"><div class="ld-stars">★★★★★</div><p>« En 5 mois j'ai pris 6 kg de muscle et je suis plus sec qu'avant. Noah ajuste mon programme chaque semaine en fonction de mes perfs — je n'ai jamais autant progressé. Fini de tourner en rond. »</p><div class="ld-temo-name">— Karim B., +6 kg de muscle</div></div>
+      <div class="ld-temo"><div class="ld-stars">★★★★★</div><p>« Je voulais perdre du gras sans fondre. Résultat : -7 cm de tour de taille et des bras plus fermes, sans jamais me priver bêtement. Le suivi du cycle a tout changé pour adapter mes séances. »</p><div class="ld-temo-name">— Julie M., recomposition réussie</div></div>
+      <div class="ld-temo"><div class="ld-stars">★★★★★</div><p>« J'étais débutant et complètement perdu. Noah m'a tout appris, étape par étape. Aujourd'hui je m'entraîne avec confiance, je comprends ce que je fais, et mon corps a changé. C'est devenu un mode de vie. »</p><div class="ld-temo-name">— Thomas L., a repris confiance</div></div>
     </div>
   </section>
 
@@ -1087,9 +1118,8 @@ button{touch-action:manipulation;}
       <div class="ld-coach-av">N</div>
       <div>
         <h2 class="ld-h2" style="text-align:left;margin-bottom:10px">Qui est ton coach ?</h2>
-        <!-- ✏️ TA PRÉSENTATION : remplace par ton histoire, tes diplômes, ta méthode -->
-        <p class="ld-coach-txt">Je suis Noah, coach sportif. Remplace ce texte par ta présentation : ton parcours, tes certifications, ta philosophie d'entraînement, et pourquoi tu fais ce métier. Deux ou trois phrases authentiques valent mieux qu'un CV — les gens achètent un accompagnement humain, pas une liste de diplômes.</p>
-        <p class="ld-coach-txt" style="margin-top:10px">Ma méthode tient en trois mots : <strong>science, constance, accompagnement</strong>. Pas de recettes miracles — un plan clair, un suivi réel, des résultats durables.</p>
+        <p class="ld-coach-txt">Je m'appelle <strong>Noah</strong> et j'accompagne aussi bien les hommes que les femmes vers le physique qu'ils pensaient hors d'atteinte. J'ai déjà aidé énormément de personnes à réussir leur recomposition corporelle et leur prise de muscle — des débutants complets comme des pratiquants qui stagnaient depuis des années.</p>
+        <p class="ld-coach-txt" style="margin-top:10px">Ma philosophie : <strong>donner son maximum tout en restant optimal</strong>. Pas en faire trop pour rien, pas s'épuiser dans des séances interminables ou des régimes absurdes. Travailler dur, oui — mais surtout travailler intelligemment, là où ça compte vraiment. C'est comme ça qu'on construit des résultats qui durent, sans y laisser sa santé ni sa motivation.</p>
       </div>
     </div>
   </section>
@@ -1100,7 +1130,8 @@ button{touch-action:manipulation;}
     <details class="ld-faq"><summary>Combien de temps avant de voir des résultats ?</summary><p>Tu sentiras la différence (énergie, force) dès 2-3 semaines. Les changements visibles arrivent entre 8 et 12 semaines de régularité. Je te donne des attentes honnêtes, pas du marketing.</p></details>
     <details class="ld-faq"><summary>Je n'ai pas de matériel / pas de salle ?</summary><p>Aucun problème : le programme se construit autour de TON contexte — salle complète, haltères à la maison ou simple poids du corps avec élastiques.</p></details>
     <details class="ld-faq"><summary>Combien de temps par semaine faut-il ?</summary><p>À partir de 3 séances de 45 minutes à 1 h. Le meilleur programme est celui qui rentre dans ta vie réelle — on le calibre ensemble.</p></details>
-    <details class="ld-faq"><summary>Et si ça ne me convient pas ?</summary><p><!-- ✏️ TA POLITIQUE (garantie, résiliation...) -->Parle-m'en simplement : on ajuste la formule, le programme ou on arrête — sans engagement caché ni piège.</p></details>
+    <details class="ld-faq"><summary>Hommes et femmes, c'est adapté aux deux ?</summary><p>Absolument. Je coache les deux, et la méthode s'adapte à ta physiologie — y compris le suivi du cycle menstruel pour les femmes, afin d'ajuster intelligemment l'entraînement et la nutrition à chaque phase.</p></details>
+    <details class="ld-faq"><summary>Et si ça ne me convient pas ?</summary><p>On commence toujours par un appel pour vérifier qu'on est faits pour travailler ensemble — si je ne pense pas pouvoir t'aider, je te le dirai honnêtement. Ensuite, rien n'est figé : on ajuste la formule, le programme ou le rythme selon tes retours. Mon objectif, c'est ta réussite sur la durée, pas de te retenir de force.</p></details>
   </section>
 
   <section class="ld-final lv">
@@ -1195,13 +1226,14 @@ button{touch-action:manipulation;}
       </div>
       <div class="tb-right">
         <button class="gs-btn" onclick="openGS()"><i class="fa-solid fa-magnifying-glass"></i> Rechercher <kbd>⌘K</kbd></button>
+        <button class="theme-btn gs-btn-mobile" onclick="openGS()" title="Rechercher"><i class="fa-solid fa-magnifying-glass"></i></button>
         <div class="xp-pill" id="tb-xp" onclick="gotoS('defis')"><i class="fa-solid fa-bolt"></i><span id="tb-xp-val">0 XP</span></div>
         <div class="notif-wrap">
           <button class="notif-btn" onclick="toggleND()"><i class="fa-solid fa-bell"></i><div class="notif-dot" id="notif-dot"></div></button>
           <div class="nd" id="notif-dd"></div>
         </div>
         <button class="theme-btn" onclick="toggleTheme()" title="Thème"><i class="fa-solid fa-moon" id="theme-icon"></i></button>
-        <div class="tb-name" id="tb-name"></div>
+        <div class="tb-name" id="tb-name" onclick="openProfile()" title="Mon profil"></div>
         <button class="theme-btn" onclick="logout()" title="Déconnexion" style="color:var(--red)"><i class="fa-solid fa-right-from-bracket"></i></button>
       </div>
     </header>
@@ -1811,7 +1843,7 @@ function fireConfetti(){const c=document.getElementById('confetti-c');const cols
 document.addEventListener('DOMContentLoaded',async()=>{
   // Tire les données partagées du cloud AVANT d'afficher (si Supabase dispo)
   await cloudPullAll();
-  seedData();seedFormules();seedV3();
+  seedData();seedFormules();seedV3();seedV4();
   document.getElementById('login-btn').addEventListener('click',handleLogin);
   document.getElementById('invite-code').addEventListener('keypress',e=>{if(e.key==='Enter')handleLogin();});
   document.getElementById('member-name').addEventListener('keypress',e=>{if(e.key==='Enter')handleLogin();});
@@ -3159,7 +3191,7 @@ function delInvite(code){DB.set('invites',DB.getArr('invites').filter(i=>i.code!
 function renderAInvites(){const fsel=document.getElementById('inv-formule');if(fsel){const cur=fsel.value;fsel.innerHTML='<option value="">Accès complet (par défaut)</option>'+DB.getArr('formules').map(f=>'<option value="'+f.id+'">'+(f.icon||'')+' '+h(f.name)+'</option>').join('');fsel.value=cur;}const list=document.getElementById('invites-list');const invs=DB.getArr('invites');if(!invs.length){list.innerHTML='<div class="empty"><i class="fa-solid fa-envelope"></i><p>Aucun code généré.</p></div>';return;}list.innerHTML=invs.slice().reverse().map(i=>'<div class="inv-item"><span class="ii-code">'+i.code+'</span><div style="font-size:12px;color:var(--text3)">'+(i.name?h(i.name):'')+(i.note?' · '+h(i.note):'')+(i.formule?' · 🎫 '+h((DB.getArr('formules').find(f=>f.id===i.formule)||{}).name||''):'')+'</div><span class="ii-status '+(i.used?'ii-used':'ii-unused')+'">'+(i.used?'✅ Utilisé'+(i.usedBy?' ('+h(i.usedBy)+')':''):'⏳ En attente')+'</span><button class="be-del" onclick="delInvite(\''+i.code+'\')" style="margin-left:8px"><i class="fa-solid fa-xmark"></i></button></div>').join('');}
 
 // ADMIN MEMBERS
-function renderAMembers(){const q=(document.getElementById('member-search')?.value||'').toLowerCase();let members=DB.getArr('members');if(q)members=members.filter(m=>m.name.toLowerCase().includes(q)||(m.code||'').toLowerCase().includes(q));const list=document.getElementById('members-list');if(!members.length){list.innerHTML='<div class="empty"><i class="fa-solid fa-users"></i><p>Aucun membre'+(q?' trouvé':' inscrit')+'.</p></div>';return;}const mods=DB.getArr('modules');const totalL=mods.reduce((s,m)=>s+m.lessons.length,0);list.innerHTML=members.map(m=>{const lv=getLevel(m.xp||0);const doneL=(m.completedLessons||[]).length;const pct=totalL?Math.round(doneL/totalL*100):0;const temo=DB.get('temo_'+m.code);const lastLogin=m.lastLogin||'—';const nBody=DB.getArr('body_'+m.code).length;const nTransfo=DB.getArr('transfo_'+m.code).length;return '<div class="member-card"><div class="mc-hdr"><div class="mc-av">'+initials(m.name)+'</div><div style="flex:1"><div class="mc-name">'+h(m.name)+(temo&&!temo.read?' <span style="background:var(--red);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px">⭐ Nouveau témo</span>':'')+'</div><div class="mc-meta">Code: '+m.code+' · Inscrit le '+fmtDate(m.joinedAt)+(m.pwHash?'':' · <span style="color:var(--orange);font-weight:600">mot de passe non créé</span>')+'</div></div><span class="lv-pill lv-'+lv.name+'">'+lv.name+'</span></div><div class="mc-stats"><div class="mc-stat">⚡ <strong>'+(m.xp||0)+'</strong> XP</div><div class="mc-stat">📚 <strong>'+doneL+'</strong> leçons ('+pct+'%)</div><div class="mc-stat">🏆 <strong>'+((m.completedDefis||[]).length)+'</strong> défis</div><div class="mc-stat">🔥 <strong>'+(m.streak||0)+'</strong> j streak</div><div class="mc-stat">📅 '+(lastLogin==='—'?'—':lastLogin)+'</div></div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:1px solid var(--border2)"><button class="btn-edit btn-sm" onclick="viewClientBody(\''+m.code+'\')"><i class="fa-solid fa-chart-line"></i> Suivi corporel'+(nBody?' ('+nBody+')':'')+'</button><button class="btn-edit btn-sm" onclick="viewClientTransfo(\''+m.code+'\')"><i class="fa-solid fa-camera"></i> Transformations'+(nTransfo?' ('+nTransfo+')':'')+'</button><button class="btn-edit btn-sm" onclick="viewClientJournal(\''+m.code+'\')"><i class="fa-solid fa-utensils"></i> Journal repas</button><button class="btn-edit btn-sm" onclick="viewTemo(\''+m.code+'\')" '+(temo?'':'disabled style="opacity:.4;cursor:default"')+'><i class="fa-solid fa-star"></i> Témoignage'+(temo?' ('+temo.note+'/5)':'')+'</button><button class="btn-edit btn-sm" onclick="openSanteClient(\''+m.code+'\')"><i class="fa-solid fa-heart-pulse"></i> Santé</button><button class="btn-edit btn-sm" onclick="openAccessEditor(\''+m.code+'\')"><i class="fa-solid fa-key"></i> Accès'+(m.access&&m.access.formule?' · '+h((DB.getArr('formules').find(f=>f.id===m.access.formule)||{}).name||''):'')+'</button><button class="btn-edit btn-sm" onclick="resetMemberPw(\''+m.code+'\',\''+escA(m.name)+'\')"><i class="fa-solid fa-rotate-left"></i> Mdp</button><button class="btn-del btn-sm" style="margin-left:auto" onclick="deleteMember(\''+m.code+'\',\''+escA(m.name)+'\')"><i class="fa-solid fa-trash"></i> Supprimer le compte</button></div></div>';}).join('');}
+function renderAMembers(){const q=(document.getElementById('member-search')?.value||'').toLowerCase();let members=DB.getArr('members');if(q)members=members.filter(m=>m.name.toLowerCase().includes(q)||(m.code||'').toLowerCase().includes(q));const list=document.getElementById('members-list');if(!members.length){list.innerHTML='<div class="empty"><i class="fa-solid fa-users"></i><p>Aucun membre'+(q?' trouvé':' inscrit')+'.</p></div>';return;}const mods=DB.getArr('modules');const totalL=mods.reduce((s,m)=>s+m.lessons.length,0);list.innerHTML=members.map(m=>{const lv=getLevel(m.xp||0);const doneL=(m.completedLessons||[]).length;const pct=totalL?Math.round(doneL/totalL*100):0;const temo=DB.get('temo_'+m.code);const lastLogin=m.lastLogin||'—';const nBody=DB.getArr('body_'+m.code).length;const nTransfo=DB.getArr('transfo_'+m.code).length;return '<div class="member-card"><div class="mc-hdr"><div class="mc-av">'+initials(m.name)+'</div><div style="flex:1"><div class="mc-name">'+h(m.name)+(temo&&!temo.read?' <span style="background:var(--red);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px">⭐ Nouveau témo</span>':'')+'</div><div class="mc-meta">Code: '+m.code+' · Inscrit le '+fmtDate(m.joinedAt)+(m.pwHash?'':' · <span style="color:var(--orange);font-weight:600">mot de passe non créé</span>')+'</div></div><span class="lv-pill lv-'+lv.name+'">'+lv.name+'</span></div>'+(function(){var e=clientEngagement(m);return '<div style="display:flex;align-items:center;gap:7px;margin:8px 0 0;font-size:12px;color:'+e.color+';font-weight:600"><span style="width:9px;height:9px;border-radius:50%;background:'+e.color+'"></span>Engagement '+e.score+'/100 · '+e.label+'</div>';})()+'<div class="mc-stats"><div class="mc-stat">⚡ <strong>'+(m.xp||0)+'</strong> XP</div><div class="mc-stat">📚 <strong>'+doneL+'</strong> leçons ('+pct+'%)</div><div class="mc-stat">🏆 <strong>'+((m.completedDefis||[]).length)+'</strong> défis</div><div class="mc-stat">🔥 <strong>'+(m.streak||0)+'</strong> j streak</div><div class="mc-stat">📅 '+(lastLogin==='—'?'—':lastLogin)+'</div></div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:1px solid var(--border2)"><button class="btn-edit btn-sm" onclick="viewClientBody(\''+m.code+'\')"><i class="fa-solid fa-chart-line"></i> Suivi corporel'+(nBody?' ('+nBody+')':'')+'</button><button class="btn-edit btn-sm" onclick="viewClientTransfo(\''+m.code+'\')"><i class="fa-solid fa-camera"></i> Transformations'+(nTransfo?' ('+nTransfo+')':'')+'</button><button class="btn-edit btn-sm" onclick="viewClientJournal(\''+m.code+'\')"><i class="fa-solid fa-utensils"></i> Journal repas</button><button class="btn-edit btn-sm" onclick="viewTemo(\''+m.code+'\')" '+(temo?'':'disabled style="opacity:.4;cursor:default"')+'><i class="fa-solid fa-star"></i> Témoignage'+(temo?' ('+temo.note+'/5)':'')+'</button><button class="btn-edit btn-sm" onclick="openSanteClient(\''+m.code+'\')"><i class="fa-solid fa-heart-pulse"></i> Santé</button><button class="btn-edit btn-sm" onclick="openCoachNote(\''+m.code+'\')"><i class="fa-solid fa-note-sticky"></i> Note'+(m.coachNote?' •':'')+'</button><button class="btn-edit btn-sm" onclick="openAccessEditor(\''+m.code+'\')"><i class="fa-solid fa-key"></i> Accès'+(m.access&&m.access.formule?' · '+h((DB.getArr('formules').find(f=>f.id===m.access.formule)||{}).name||''):'')+'</button><button class="btn-edit btn-sm" onclick="resetMemberPw(\''+m.code+'\',\''+escA(m.name)+'\')"><i class="fa-solid fa-rotate-left"></i> Mdp</button><button class="btn-del btn-sm" style="margin-left:auto" onclick="deleteMember(\''+m.code+'\',\''+escA(m.name)+'\')"><i class="fa-solid fa-trash"></i> Supprimer le compte</button></div></div>';}).join('');}
 
 function viewClientBody(code){const m=DB.getArr('members').find(x=>x.code===code);const entries=DB.getArr('body_'+code).sort((a,b)=>new Date(b.date)-new Date(a.date));let html='<h3 style="font-family:var(--fd);font-size:20px;margin-bottom:16px"><i class="fa-solid fa-chart-line" style="color:var(--blue)"></i> Suivi corporel — '+h(m?m.name:'')+'</h3>';if(!entries.length){html+='<div class="empty"><i class="fa-solid fa-chart-line"></i><p>Aucune mesure enregistrée par ce client.</p></div>';}else{html+='<div style="display:flex;flex-direction:column;gap:10px">'+entries.map(e=>'<div class="body-entry" style="margin:0"><span class="be-date">'+fmtDate(e.date)+'</span><div class="be-metrics">'+(e.poids?'<span class="be-metric"><strong>'+e.poids+'</strong> kg</span>':'')+(e.taille?' <span class="be-metric">Taille: <strong>'+e.taille+'</strong>cm</span>':'')+(e.bras?' <span class="be-metric">Bras: <strong>'+e.bras+'</strong>cm</span>':'')+(e.cuisse?' <span class="be-metric">Cuisse: <strong>'+e.cuisse+'</strong>cm</span>':'')+(e.hanches?' <span class="be-metric">Hanches: <strong>'+e.hanches+'</strong>cm</span>':'')+(e.mg?' <span class="be-metric">MG: <strong>'+e.mg+'</strong>%</span>':'')+'</div></div>').join('')+'</div>';}document.getElementById('modal-content').innerHTML=html;openModal();}
 
@@ -4042,9 +4074,8 @@ function openSanteClient(code){
 
 // ✏️✏️✏️ LIENS DE CONTACT DE LA PAGE DE VENTE — MODIFIE ICI ✏️✏️✏️
 const LANDING_CONTACT={
-  instagram:'https://instagram.com/TON_INSTAGRAM',   // ← ton Instagram
-  whatsapp:'https://wa.me/33600000000',              // ← ton numéro WhatsApp (format international)
-  email:'mailto:ton@email.com'                       // ← ton email
+  instagram:'https://instagram.com/coachingbynoah',  // ← Instagram (DM en priorité)
+  email:'mailto:noahcanava@hotmail.com'              // ← email
 };
 
 // ---------- CITATION DU JOUR ----------
@@ -4346,9 +4377,9 @@ function goLogin(){try{localStorage.setItem('nc3_seen_landing','1');}catch(e){}s
 function showLanding(){showPage('landing');initLanding();}
 function openContactModal(){
   document.getElementById('modal-content').innerHTML='<h3 style="font-family:var(--fd);font-size:20px;margin-bottom:6px">Parlons de tes objectifs 💬</h3><p style="font-size:14px;color:var(--text2);margin-bottom:18px">Choisis le canal qui te convient — réponse rapide garantie.</p><div style="display:flex;flex-direction:column;gap:10px">'
-  +'<a href="'+escA(LANDING_CONTACT.instagram)+'" target="_blank" rel="noopener" class="btn" style="justify-content:center"><i class="fa-brands fa-instagram"></i> Écris-moi sur Instagram</a>'
-  +'<a href="'+escA(LANDING_CONTACT.whatsapp)+'" target="_blank" rel="noopener" class="btn" style="justify-content:center;background:linear-gradient(135deg,#25d366,#128c7e)"><i class="fa-brands fa-whatsapp"></i> Discutons sur WhatsApp</a>'
-  +'<a href="'+escA(LANDING_CONTACT.email)+'" class="btn-sec" style="justify-content:center;display:inline-flex;align-items:center;gap:8px"><i class="fa-solid fa-envelope"></i> Par email</a></div>';
+  +'<a href="'+escA(LANDING_CONTACT.instagram)+'" target="_blank" rel="noopener" class="btn" style="justify-content:center;background:linear-gradient(135deg,#e1306c,#c13584)"><i class="fa-brands fa-instagram"></i> Écris-moi sur Instagram (DM)</a>'
+  +'<a href="'+escA(LANDING_CONTACT.email)+'" class="btn-sec" style="justify-content:center;display:inline-flex;align-items:center;gap:8px"><i class="fa-solid fa-envelope"></i> noahcanava@hotmail.com</a></div>'
+  +'<p style="font-size:12px;color:var(--text3);margin-top:14px;text-align:center">@coachingbynoah · réponse rapide en DM</p>';
   openModal();
 }
 function initLanding(){
@@ -4585,6 +4616,309 @@ Le NEAT (toute l'activité hors sport : marche, escaliers) est souvent un meille
   if(addedR)DB.set('repas',rep);
   DB.set('seeded_v3',true);
 }
+// SEED v4 — module Cycle menstruel (ajouté le 2026-06-13). Additif, par id.
+function seedV4(){
+  if(DB.get('seeded_v4'))return;
+  const CYCLE_MOD={id:18,v:4,title:"Cycle menstruel & entraînement",icon:"🌸",domain:"Lifestyle",desc:"Comprendre et utiliser ton cycle pour mieux t'entraîner et manger",lessons:[
+    {id:"l1",title:"Comprendre ton cycle : les 4 phases",duration:"8 min",videoUrl:"",content:`Le cycle menstruel dure en moyenne 28 jours (mais 21 à 35 jours reste normal), et se découpe en quatre phases rythmées par deux hormones principales : les œstrogènes et la progestérone.
+
+1. PHASE MENSTRUELLE (jours 1-5 environ) : ce sont les règles. Les hormones sont au plus bas. Beaucoup ressentent de la fatigue, parfois des crampes, mais une fois les premiers jours passés, l'énergie commence souvent à remonter.
+
+2. PHASE FOLLICULAIRE (jours 6-13 environ) : les œstrogènes montent progressivement. C'est généralement la période où l'énergie, l'humeur et la tolérance à l'effort sont au meilleur. Le corps récupère bien.
+
+3. OVULATION (jours 14-16 environ) : pic d'œstrogènes, souvent un pic de force et d'énergie. À noter : certaines données suggèrent une laxité ligamentaire légèrement plus élevée à ce moment — d'où l'intérêt d'un bon échauffement.
+
+4. PHASE LUTÉALE (jours 17-28 environ) : la progestérone domine, la température corporelle monte un peu, l'énergie et la récupération tendent à baisser en fin de phase. Fringales et rétention d'eau sont fréquentes juste avant les règles (le fameux syndrome prémenstruel).
+
+Important à retenir : ces variations sont des TENDANCES. Leur intensité varie énormément d'une femme à l'autre, et sous contraception hormonale (pilule, stérilet hormonal), elles sont largement atténuées voire absentes. Connaître ces phases, c'est se donner un outil — pas une fatalité.`,quiz:{question:"Quelle phase correspond généralement au meilleur niveau d'énergie et de force ?",options:["La phase menstruelle","La phase folliculaire et l'ovulation","La fin de phase lutéale"],correct:1}},
+    {id:"l2",title:"S'entraîner avec son cycle",duration:"8 min",videoUrl:"",content:`L'idée n'est pas de tout chambouler, mais d'ÉCOUTER son corps et d'ajuster intelligemment quand c'est utile.
+
+PHASE MENSTRUELLE : s'entraîner reste tout à fait sûr et peut même soulager les crampes (l'activité physique augmente la circulation et libère des endorphines). Si la fatigue ou les douleurs sont fortes les premiers jours, autorise-toi des séances plus courtes, des charges modérées, de la marche ou de la mobilité — sans culpabiliser. Si tu te sens bien, rien ne t'empêche de t'entraîner normalement.
+
+PHASE FOLLICULAIRE : c'est ta fenêtre pour POUSSER. Place ici tes séances les plus intenses, tes charges les plus lourdes, tes tentatives de records. Le corps encaisse et récupère au mieux. C'est aussi le bon moment pour progresser sur la surcharge.
+
+OVULATION : souvent un pic de force — idéal pour tester ses maxs. Soigne particulièrement l'échauffement et la technique (laxité ligamentaire un peu plus élevée), surtout sur les mouvements de jambes.
+
+PHASE LUTÉALE : l'énergie et la récupération baissent souvent en fin de phase. Pilote à la sensation (le RPE plutôt que les pourcentages) : si une charge habituelle paraît plus lourde, c'est NORMAL, ce n'est pas une régression. Privilégie un volume modéré, du cardio en zone 2, de la mobilité. C'est une bonne période pour un deload si ton cycle s'y prête.
+
+Ce que la recherche dit honnêtement : les études sur la « périodisation selon le cycle » sont encore mitigées — certaines montrent un petit bénéfice, d'autres non. La vérité pratique : la régularité globale sur le mois compte BIEN plus que l'optimisation phase par phase. Adapte si ça t'aide, mais ne t'empêche pas de t'entraîner « parce que ce n'est pas la bonne phase ».`,quiz:{question:"En phase lutéale, une charge habituelle paraît plus lourde. Que faire ?",options:["Paniquer, c'est une perte de force","Piloter à la sensation (RPE) et adapter : c'est normal","Doubler la charge pour compenser"],correct:1}},
+    {id:"l3",title:"Nutrition et cycle",duration:"7 min",videoUrl:"",content:`Tes besoins nutritionnels de base ne changent pas radicalement avec le cycle, mais quelques ajustements ciblés aident vraiment.
+
+PENDANT LES RÈGLES — le fer : les pertes de sang peuvent puiser dans tes réserves de fer, surtout si tes règles sont abondantes. Mets l'accent sur les sources de fer : viande rouge (1-2 fois/semaine), légumineuses, épinards — et associe-les à de la vitamine C (agrumes, poivrons) qui booste l'absorption du fer végétal. Une fatigue persistante, un essoufflement inhabituel : parles-en à ton médecin, une carence en fer se dépiste par une simple prise de sang.
+
+EN PHASE LUTÉALE — gérer les fringales : la dépense énergétique augmente légèrement (souvent +100 à 300 kcal/jour) et l'appétit avec. Ce n'est pas « manquer de volonté » : c'est physiologique. Anticipe avec des collations rassasiantes et riches en protéines (skyr, fromage blanc, œufs), des aliments à fort volume (légumes, fruits) et un peu de chocolat noir si l'envie de sucré est forte. Le magnésium (oléagineux, légumineuses, chocolat noir) peut aider sur l'humeur et les crampes.
+
+L'HYDRATATION : la rétention d'eau prémenstruelle est normale et peut faire grimper la balance de 0,5 à 1,5 kg juste avant les règles. Paradoxalement, bien s'hydrater AIDE à limiter cette rétention. Surtout : ne te pèse pas en panique à cette période — la « prise de poids » repart toute seule après les règles. Juge ta progression sur la moyenne du mois, idéalement à la même phase d'un cycle à l'autre.
+
+En résumé : protéines stables toute le mois, un coup de projecteur sur le fer pendant les règles, des collations malines en lutéale, et de la bienveillance avec la balance.`,quiz:{question:"Pourquoi la balance peut-elle monter de 0,5-1,5 kg juste avant les règles ?",options:["Une vraie prise de gras soudaine","La rétention d'eau prémenstruelle, qui repart ensuite","Une erreur de la balance"],correct:1}},
+    {id:"l4",title:"Mythes et réalités",duration:"6 min",videoUrl:"",content:`Démêlons le vrai du faux, en restant nuancé.
+
+MYTHE : « Il ne faut pas faire de sport pendant les règles. » FAUX. S'entraîner pendant les règles est sûr et souvent bénéfique (soulagement des crampes, meilleure humeur). Adapte l'intensité à ton ressenti, mais ne t'arrête pas par principe.
+
+MYTHE : « On brûle énormément plus de calories pendant les règles. » EXAGÉRÉ. L'augmentation de dépense est réelle mais modeste (surtout en phase lutéale, pas pendant les règles elles-mêmes), de l'ordre de 100-300 kcal/jour au maximum. Pas de quoi justifier de manger « pour deux ».
+
+MYTHE : « Les femmes doivent s'entraîner complètement différemment des hommes. » FAUX sur le fond. Les principes sont les mêmes : surcharge progressive, protéines suffisantes, proximité de l'échec, récupération. La spécificité féminine, c'est surtout la possibilité d'ajuster au cycle — pas une méthode d'entraînement à part.
+
+MYTHE : « Soulever lourd rend les femmes "massives". » FAUX. Sans dopage, la prise de muscle est lente, et le niveau de testostérone bien plus bas que chez l'homme limite naturellement le volume. La musculation lourde donne un physique tonique et sculpté, renforce les os et la posture — c'est l'un des meilleurs investissements santé pour une femme.
+
+RÉALITÉ NUANCÉE : tout ce qu'on a vu sont des tendances de groupe. Ton cycle t'appartient. Le meilleur outil reste de NOTER tes sensations (énergie, force, sommeil) sur quelques cycles pour repérer TON propre schéma — c'est bien plus fiable qu'un calendrier théorique.
+
+Et bien sûr : douleurs invalidantes, cycles très irréguliers, absence de règles chez une sportive (un signal d'alerte à ne pas ignorer) → consulte un professionnel de santé. Ce module est éducatif, il ne remplace pas un avis médical.`,quiz:{question:"Soulever lourd rend-il les femmes « massives » ?",options:["Oui, il faut rester sur des poids légers","Non : ça sculpte, tonifie et renforce les os, sans volume excessif","Seulement pendant l'ovulation"],correct:1}}
+  ]};
+  const mods=DB.getArr('modules');
+  if(!mods.some(m=>m.id===18)){mods.push(CYCLE_MOD);DB.set('modules',mods);}
+  DB.set('seeded_v4',true);
+}
+// ============================================================
+// FINALISATION — innovations, engagement, récap, rappels,
+// générateur de menu, profil, recherche, PWA.
+// Nouvelle clé : note coach stockée dans member.coachNote (clé 'members' déjà ok).
+// Aucune nouvelle clé cloud.
+// ============================================================
+
+// ---------- ENGAGEMENT CLIENT (obj 3 + 19) ----------
+function clientEngagement(m){
+  if(!m||!m.code)return{score:0,color:'var(--text3)',label:'—',days:null};
+  const today=new Date();const dt=s=>{try{return new Date(s);}catch(e){return null;}};
+  let daysSince=null;
+  if(m.lastLogin){const d=dt(m.lastLogin);if(d)daysSince=Math.floor((today-d)/86400000);}
+  // activité 7 derniers jours
+  const logins=DB.getArr('logins_'+m.code);
+  let activeDays=0;for(let i=0;i<7;i++){const d=new Date();d.setDate(d.getDate()-i);if(logins.includes(d.toDateString()))activeDays++;}
+  const jr=DB.get('journal_'+m.code)||{};let jDays=0;
+  for(let i=0;i<7;i++){const d=new Date();d.setDate(d.getDate()-i);const day=jr[localDate(d)];if(day&&['matin','midi','soir','collation'].some(k=>(day[k]||[]).length))jDays++;}
+  let seances=0;for(let i=0;i<7;i++){const d=new Date();d.setDate(d.getDate()-i);try{const ck=JSON.parse(localStorage.getItem('nc3_ck_'+m.code+'_'+localDate(d)));if(ck&&ck.s1)seances++;}catch(e){}}
+  const sl=(DB.get('sleep_'+m.code)||{days:{}}).days||{};let slDays=0;
+  for(let i=0;i<7;i++){const d=new Date();d.setDate(d.getDate()-i);if(sl[localDate(d)])slDays++;}
+  // score pondéré /100
+  let score=Math.min(100,Math.round(activeDays/7*30 + Math.min(jDays,5)/5*25 + Math.min(seances,4)/4*30 + Math.min(slDays,5)/5*15));
+  // pénalité forte si absent depuis longtemps
+  if(daysSince!=null&&daysSince>=10)score=Math.min(score,15);
+  else if(daysSince!=null&&daysSince>=5)score=Math.min(score,40);
+  let color='var(--green)',label='Assidu';
+  if(score<35){color='var(--red)';label='Décroche';}
+  else if(score<65){color='var(--orange)';label='En baisse';}
+  return{score,color,label,days:daysSince,activeDays,jDays,seances,slDays};
+}
+
+// ---------- NOTES PRIVÉES DU COACH (obj 3) ----------
+function openCoachNote(code){
+  const m=DB.getArr('members').find(x=>x.code===code);if(!m)return;
+  document.getElementById('modal-content').innerHTML='<h3 style="font-family:var(--fd);font-size:19px;margin-bottom:4px"><i class="fa-solid fa-lock" style="color:var(--gold)"></i> Note privée — '+h(m.name)+'</h3><p style="font-size:12px;color:var(--text3);margin-bottom:12px">Visible uniquement par toi (le coach). Le client ne la voit jamais.</p>'
+   +'<textarea id="cn-text" maxlength="2000" placeholder="Objectifs, contexte, blessures, préférences, points d’attention, historique des ajustements..." style="width:100%;min-height:200px;padding:13px;border:1.5px solid var(--border);border-radius:12px;background:var(--bg2);color:var(--text);font-size:16px;font-family:var(--fb);resize:vertical">'+h(m.coachNote||'')+'</textarea>'
+   +'<button class="btn" style="margin-top:14px" onclick="saveCoachNote(\''+code+'\')"><i class="fa-solid fa-save"></i> Enregistrer la note</button>';
+  openModal();
+}
+function saveCoachNote(code){
+  const members=DB.getArr('members');const m=members.find(x=>x.code===code);if(!m)return;
+  m.coachNote=(document.getElementById('cn-text').value||'').trim().slice(0,2000);
+  DB.set('members',members);closeModal();renderAMembers();toast('Note enregistrée ✅','success');
+}
+
+// ---------- TABLEAU DE BORD COACH (obj 18) — injecté dans le dashboard admin ----------
+let coachFilter='all';
+function setCoachFilter(f){coachFilter=f;renderAdminDash();}
+function injectCoachBoard(){
+  const host=document.getElementById('admin-dash');if(!host)return;
+  let members=DB.getArr('members').slice();
+  const enr=members.map(m=>({m,e:clientEngagement(m)}));
+  if(coachFilter==='actifs')enr.sort(()=>0),0;
+  const filtered=enr.filter(({e})=>coachFilter==='all'?true:coachFilter==='actifs'?e.score>=65:coachFilter==='relancer'?e.score<65:true)
+    .sort((a,b)=>a.e.score-b.e.score); // les plus à risque en premier
+  const nRelancer=enr.filter(({e})=>e.score<65).length;
+  const fbtn=(f,lbl)=>'<button class="ftab '+(coachFilter===f?'active':'')+'" onclick="setCoachFilter(\''+f+'\')">'+lbl+'</button>';
+  let rows=filtered.map(({m,e})=>{
+    const lv=getLevel(m.xp||0);
+    const last=e.days==null?'jamais':(e.days===0?'aujourd’hui':e.days===1?'hier':'il y a '+e.days+' j');
+    const formule=m.access&&m.access.formule?(DB.getArr('formules').find(f=>f.id===m.access.formule)||{}).name:'';
+    return '<div onclick="openMemberFromBoard(\''+m.code+'\')" style="display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--border);border-radius:12px;margin-bottom:8px;cursor:pointer;transition:box-shadow var(--t)" onmouseover="this.style.boxShadow=\'var(--shm)\'" onmouseout="this.style.boxShadow=\'\'">'
+     +'<div style="width:11px;height:11px;border-radius:50%;background:'+e.color+';flex-shrink:0;box-shadow:0 0 8px '+e.color+'"></div>'
+     +'<div class="mc-av" style="width:38px;height:38px;font-size:14px">'+initials(m.name)+'</div>'
+     +'<div style="flex:1;min-width:0"><div style="font-weight:700;font-size:14px">'+h(m.name)+(m.coachNote?' <i class="fa-solid fa-note-sticky" style="color:var(--gold);font-size:11px" title="Note coach"></i>':'')+'</div><div style="font-size:12px;color:var(--text3)">'+(formule?h(formule)+' · ':'')+'vu '+last+' · '+e.seances+' séances/7j</div></div>'
+     +'<div style="text-align:right;flex-shrink:0"><div style="font-weight:800;font-size:16px;color:'+e.color+'">'+e.score+'</div><div style="font-size:10px;color:'+e.color+';font-weight:600">'+e.label+'</div></div></div>';
+  }).join('')||'<div class="empty" style="padding:30px"><p>Aucun client dans ce filtre.</p></div>';
+  const board='<div class="afc" style="margin-top:8px"><div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px"><h3 style="margin:0"><i class="fa-solid fa-users-gear" style="color:var(--blue)"></i> Pilotage clients</h3>'+(nRelancer?'<span style="font-size:12px;font-weight:700;background:var(--orange);color:#fff;padding:4px 12px;border-radius:20px">'+nRelancer+' à relancer</span>':'<span style="font-size:12px;font-weight:700;background:var(--green);color:#fff;padding:4px 12px;border-radius:20px">Tout le monde est actif 🎉</span>')+'</div>'
+   +'<div class="ftabs" style="margin-bottom:14px">'+fbtn('all','Tous')+fbtn('relancer','🔴 À relancer')+fbtn('actifs','🟢 Assidus')+'</div>'
+   +'<p style="font-size:12px;color:var(--text3);margin-bottom:12px">Triés du moins actif au plus actif. Clique sur un client pour ouvrir sa fiche. Score sur 100 = connexions + repas + séances + sommeil des 7 derniers jours.</p>'
+   +rows+'</div>';
+  host.insertAdjacentHTML('beforeend',board);
+}
+function openMemberFromBoard(code){gotoAS('amembers');setTimeout(()=>{const s=document.getElementById('member-search');if(s){s.value=code;renderAMembers();}},60);}
+
+// ---------- BADGES DE NOTIF DANS LE MENU (obj 14) ----------
+function memberAlerts(){
+  if(!CU||CU.isAdmin||CU.isPreview)return{};
+  const a={};const today=localDate();
+  // repas : rien loggé aujourd'hui
+  const jr=getDay(today);if(!['matin','midi','soir','collation'].some(k=>(jr[k]||[]).length))a.repas=true;
+  // santé : pas de sommeil noté aujourd'hui
+  const sl=(DB.get(slKey())||{days:{}}).days||{};if(!sl[today])a.sante=true;
+  // dashboard : quêtes du jour non terminées
+  try{const q=getQuetes();const dq=dailyQuests();if(dq.some(d=>!q.done[d.id]))a.dashboard=true;}catch(e){}
+  // transformation : aucun bilan ce mois-ci
+  const bilans=DB.getArr('bilans_'+(CU.code||''));const mois=today.slice(0,7);if(!bilans.some(b=>(b.date||'').slice(0,7)===mois))a.transformation=true;
+  return a;
+}
+function updateNavBadges(){
+  if(!CU||CU.isAdmin)return;
+  const al=memberAlerts();
+  document.querySelectorAll('#sidebar .nav-item[data-s]').forEach(el=>{
+    const s=el.dataset.s;el.querySelector('.nav-dot')?.remove();
+    if(al[s]){const d=document.createElement('span');d.className='nav-dot';el.appendChild(d);}
+  });
+}
+
+// ---------- RÉCAP HEBDO + RAPPELS (obj 15, 16) ----------
+function injectWeeklyRecap(){
+  const sec=document.getElementById('section-dashboard');if(!sec||!CU||CU.isAdmin)return;
+  // données 7 derniers jours
+  let seances=0,jDays=0,slArr=[];const jr=DB.get('journal_'+(CU.code||''))||{};
+  const sl=(DB.get(slKey())||{days:{}}).days||{};
+  for(let i=0;i<7;i++){const d=new Date();d.setDate(d.getDate()-i);const ds=localDate(d);
+    try{const ck=JSON.parse(localStorage.getItem('nc3_ck_'+(CU.code||'')+'_'+ds));if(ck&&ck.s1)seances++;}catch(e){}
+    const day=jr[ds];if(day&&['matin','midi','soir','collation'].some(k=>(day[k]||[]).length))jDays++;
+    if(sl[ds])slArr.push(sl[ds].h);
+  }
+  const slAvg=slArr.length?(slArr.reduce((s,x)=>s+x,0)/slArr.length):null;
+  // variation de poids 7-14j
+  const body=DB.getArr('body_'+(CU.code||'')).slice().sort((a,b)=>new Date(b.date)-new Date(a.date));
+  let wTxt='—';if(body.length>=2&&body[0].poids){const old=body.find(e=>e.poids&&(new Date(body[0].date)-new Date(e.date))/86400000>=6);if(old&&old.poids){const dd=(parseFloat(body[0].poids)-parseFloat(old.poids)).toFixed(1);wTxt=(dd>0?'+':'')+String(dd).replace('.',',')+' kg';}}
+  let el=document.getElementById('recap-wrap');
+  if(!el){el=document.createElement('div');el.id='recap-wrap';const q=document.getElementById('quote-wrap');if(q)q.insertAdjacentElement('afterend',el);else sec.insertAdjacentElement('afterbegin',el);}
+  const cell=(ic,v,l)=>'<div style="flex:1;min-width:72px;text-align:center"><div style="font-size:18px">'+ic+'</div><div style="font-family:var(--fd);font-size:19px;font-weight:800;margin-top:2px">'+v+'</div><div style="font-size:10px;color:rgba(255,255,255,.55)">'+l+'</div></div>';
+  el.innerHTML='<div style="background:linear-gradient(135deg,var(--blue),var(--blue-mid));border-radius:var(--rl);padding:18px 20px;margin-bottom:18px;box-shadow:var(--shm)"><div style="font-size:11px;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.07em;font-weight:700;margin-bottom:12px"><i class="fa-solid fa-chart-simple"></i> Ta semaine en un coup d’œil</div><div style="display:flex;gap:8px;flex-wrap:wrap;color:#fff">'
+   +cell('🏋️',seances,'séances')+cell('🍽️',jDays+'/7','jours loggés')+cell('😴',slAvg!=null?(Math.round(slAvg*10)/10+'h').replace('.',','):'—','sommeil')+cell('⚖️',wTxt,'poids')
+   +'</div></div>';
+}
+function injectReminders(){
+  const sec=document.getElementById('section-dashboard');if(!sec||!CU||CU.isAdmin)return;
+  const al=memberAlerts();const today=localDate();
+  const tips=[];
+  if(al.repas)tips.push(['🍽️','Tu n’as pas encore loggé de repas aujourd’hui.',"gotoS('repas')"]);
+  const hy=getHydra();if((hy.days[today]||0)<4)tips.push(['💧','Pense à boire de l’eau — tu en es à '+((hy.days[today]||0)*0.25).toFixed(2).replace('.',',')+' L.',"gotoS('repas')"]);
+  if(al.sante)tips.push(['😴','N’oublie pas de noter ta nuit de sommeil.',"gotoS('sante')"]);
+  if(al.dashboard)tips.push(['🎯','Il te reste des quêtes du jour à valider.',null]);
+  if(!tips.length)return;
+  const pick=tips.slice(0,2);
+  let el=document.getElementById('reminder-wrap');
+  if(!el){el=document.createElement('div');el.id='reminder-wrap';const r=document.getElementById('recap-wrap');if(r)r.insertAdjacentElement('afterend',el);else sec.insertAdjacentElement('afterbegin',el);}
+  el.innerHTML=pick.map(t=>'<div '+(t[2]?'onclick="'+t[2]+'" style="cursor:pointer;':'style="')+'display:flex;align-items:center;gap:12px;background:var(--gold-light);border:1px solid rgba(201,151,42,.25);border-radius:var(--r);padding:12px 16px;margin-bottom:10px"><span style="font-size:20px">'+t[0]+'</span><span style="font-size:13px;color:var(--text);font-weight:500;flex:1">'+t[1]+'</span>'+(t[2]?'<i class="fa-solid fa-chevron-right" style="color:var(--gold);font-size:12px"></i>':'')+'</div>').join('');
+}
+
+// ---------- GÉNÉRATEUR DE MENU DE LA SEMAINE (obj 27) ----------
+let _lastMenu=null;
+function openMenuGen(){
+  if(!CU.tdee||!CU.tdee.target){document.getElementById('modal-content').innerHTML='<h3 style="font-family:var(--fd);font-size:19px;margin-bottom:8px">🍽️ Menu de la semaine</h3><p style="font-size:14px;color:var(--text2);margin-bottom:16px">Calcule d’abord tes besoins caloriques pour générer un menu adapté à ta cible.</p><button class="btn" onclick="closeModal();openTDEE()"><i class="fa-solid fa-calculator"></i> Calculer mes besoins</button>';openModal();return;}
+  genMenu();
+}
+function genMenu(){
+  const target=CU.tdee.target;
+  const lib=filterByAccess(DB.getArr('repas'),'repas').filter(r=>(parseFloat(r.cal)||0)>0);
+  const byCat=c=>lib.filter(r=>r.cat===c);
+  const pick=arr=>arr.length?arr[Math.floor(Math.random()*arr.length)]:null;
+  const days=['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'];
+  const menu=days.map(d=>{
+    // matin ~25%, midi ~35%, soir ~30%, snack ~10%
+    const pdj=pick(byCat('petit-dejeuner'))||pick(lib);
+    const dej=pick(byCat('dejeuner'))||pick(lib);
+    const din=pick(byCat('diner'))||pick(lib);
+    const snk=pick(byCat('snack').concat(byCat('collation')))||null;
+    const meals=[pdj,dej,din,snk].filter(Boolean);
+    const cal=meals.reduce((s,r)=>s+(parseFloat(r.cal)||0),0);
+    return{day:d,meals,cal};
+  });
+  _lastMenu=menu;
+  const dayHtml=menu.map(dm=>{
+    const ok=Math.abs(dm.cal-target)/target<0.18;
+    return '<div style="border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:8px"><div style="display:flex;justify-content:space-between;font-weight:700;font-size:14px;margin-bottom:6px"><span>'+dm.day+'</span><span style="color:'+(ok?'var(--green)':'var(--orange)')+'">'+Math.round(dm.cal)+' kcal</span></div>'
+     +dm.meals.map(r=>'<div style="font-size:12px;color:var(--text2);padding:2px 0">• '+h(r.nom)+' <span style="color:var(--text3)">('+r.cal+' kcal)</span></div>').join('')+'</div>';
+  }).join('');
+  document.getElementById('modal-content').innerHTML='<h3 style="font-family:var(--fd);font-size:19px;margin-bottom:2px">🍽️ Menu de la semaine</h3><p style="font-size:13px;color:var(--text3);margin-bottom:14px">Proposition autour de ta cible de <strong>'+target+' kcal/jour</strong>. Régénère jusqu’à ce que ça te plaise, puis envoie vers ta liste de courses.</p>'
+   +dayHtml
+   +'<div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap"><button class="btn-sec" onclick="genMenu()"><i class="fa-solid fa-rotate"></i> Régénérer</button><button class="btn" onclick="menuToCourses()"><i class="fa-solid fa-cart-shopping"></i> Vers ma liste de courses</button></div>';
+  openModal();
+}
+function menuToCourses(){
+  if(!_lastMenu)return;
+  const ids=[...new Set(_lastMenu.flatMap(dm=>dm.meals.map(r=>r.id)))];
+  setCart(ids);closeModal();genCourses();
+}
+
+// ---------- PROFIL MEMBRE (obj 12) ----------
+function openProfile(){
+  if(!CU||CU.isAdmin)return;
+  const lv=getLevel(CU.xp||0);const xp=CU.xp||0;
+  const nlv=LEVELS[LEVELS.indexOf(lv)+1];const xpPct=nlv?Math.round((xp-lv.min)/(nlv.min-lv.min)*100):100;
+  const pr=(typeof getPrestige==='function')?getPrestige(xp):null;
+  const nB=(CU.badges||[]).length;
+  const nL=(CU.completedLessons||[]).length;
+  const nD=(CU.completedDefis||[]).length;
+  const obj=CU.objectif||(CU.tdee&&{perte:'Perte de gras',prise:'Prise de masse',maintien:'Maintien'}[CU.tdee.objectif])||'—';
+  const stat=(ic,v,l)=>'<div style="flex:1;min-width:70px;text-align:center;background:var(--bg2);border-radius:12px;padding:12px 6px"><div style="font-size:18px">'+ic+'</div><div style="font-family:var(--fd);font-size:20px;font-weight:800">'+v+'</div><div style="font-size:10px;color:var(--text3)">'+l+'</div></div>';
+  document.getElementById('modal-content').innerHTML='<div class="hl-'+lv.name.toLowerCase()+'" style="margin:-32px -32px 16px;border-radius:var(--rxl) var(--rxl) 0 0;overflow:hidden"><div class="dash-hero" style="margin:0;border-radius:0;padding:28px 24px"><div class="dh-left" style="display:flex;align-items:center;gap:16px"><div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--blue-mid),var(--blue));display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-weight:800;font-size:24px;color:#fff;flex-shrink:0;box-shadow:0 4px 16px rgba(0,0,0,.3)">'+initials(CU.name)+'</div><div><h2 style="font-size:22px;margin-bottom:6px">'+h(CU.name)+'</h2><span class="dh-lv lv-'+lv.name+'" style="margin:0">'+lv.name+(pr?' · '+pr.icon+' '+pr.name:'')+'</span></div></div></div></div>'
+   +'<div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text3);margin-bottom:6px"><span>'+xp+' XP</span>'+(nlv?'<span>'+nlv.min+' XP → '+nlv.name+'</span>':'<span>Niveau max 🏆</span>')+'</div>'
+   +(nlv?'<div class="pbw" style="max-width:none;margin:0 0 18px"><div class="pbf" style="width:'+xpPct+'%;background:linear-gradient(90deg,var(--blue-mid),var(--gold))"></div></div>':'<div style="margin-bottom:18px"></div>')
+   +'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">'+stat('🎯',obj==='—'?'—':'🔥',obj==='—'?'objectif':obj)+stat('📚',nL,'leçons')+stat('🏆',nD,'défis')+stat('🏅',nB,'trophées')+stat('🔥',CU.streak||0,'streak')+'</div>'
+   +'<button class="btn-sec" style="width:100%;justify-content:center" onclick="closeModal();gotoS(\'defis\')"><i class="fa-solid fa-medal"></i> Voir mes trophées</button>';
+  openModal();
+}
+
+// ---------- PWA (obj 25) ----------
+function pwaIcon(size){
+  const c=document.createElement('canvas');c.width=c.height=size;const x=c.getContext('2d');
+  const g=x.createLinearGradient(0,0,size,size);g.addColorStop(0,'#1a6bbf');g.addColorStop(1,'#0f4c81');
+  x.fillStyle=g;const r=size*0.22;x.beginPath();x.roundRect?x.roundRect(0,0,size,size,r):x.rect(0,0,size,size);x.fill();
+  x.fillStyle='#fff';x.font='800 '+Math.round(size*0.56)+'px Syne, sans-serif';x.textAlign='center';x.textBaseline='middle';
+  x.fillText('N',size/2,size*0.54);
+  return c.toDataURL('image/png');
+}
+function setupPWA(){
+  try{
+    const i192=pwaIcon(192),i512=pwaIcon(512);
+    // apple-touch-icon (iOS « Ajouter à l'écran d'accueil »)
+    let atl=document.querySelector('link[rel="apple-touch-icon"]');
+    if(!atl){atl=document.createElement('link');atl.rel='apple-touch-icon';document.head.appendChild(atl);}
+    atl.href=i192;
+    let fav=document.querySelector('link[rel="icon"]');
+    if(!fav){fav=document.createElement('link');fav.rel='icon';document.head.appendChild(fav);}
+    fav.href=i192;
+    const manifest={name:'NoahCana Coaching',short_name:'NoahCana',start_url:'.',scope:'.',display:'standalone',orientation:'portrait',background_color:'#0d1b2a',theme_color:'#0f4c81',icons:[{src:i192,sizes:'192x192',type:'image/png',purpose:'any maskable'},{src:i512,sizes:'512x512',type:'image/png',purpose:'any maskable'}]};
+    const blob=new Blob([JSON.stringify(manifest)],{type:'application/manifest+json'});
+    let ml=document.querySelector('link[rel="manifest"]');
+    if(!ml){ml=document.createElement('link');ml.rel='manifest';document.head.appendChild(ml);}
+    ml.href=URL.createObjectURL(blob);
+  }catch(e){console.warn('pwa',e);}
+}
+let _deferredPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();_deferredPrompt=e;showInstallHint();});
+function showInstallHint(){
+  if(localStorage.getItem('nc3_install_dismissed'))return;
+  if(document.getElementById('install-hint'))return;
+  const el=document.createElement('div');el.id='install-hint';
+  el.style.cssText='position:fixed;left:12px;right:12px;bottom:calc(14px + env(safe-area-inset-bottom));z-index:520;background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);box-shadow:var(--shl);padding:14px 16px;display:flex;align-items:center;gap:12px;animation:su .3s ease;max-width:460px;margin:0 auto';
+  el.innerHTML='<div style="font-size:24px">📲</div><div style="flex:1"><div style="font-weight:700;font-size:14px">Installe l’app NoahCana</div><div style="font-size:12px;color:var(--text3)">Accès rapide, plein écran, comme une vraie app.</div></div><button class="btn btn-sm" onclick="doInstall()">Installer</button><button onclick="dismissInstall()" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px"><i class="fa-solid fa-xmark"></i></button>';
+  document.body.appendChild(el);
+}
+function doInstall(){if(_deferredPrompt){_deferredPrompt.prompt();_deferredPrompt=null;}dismissInstall();}
+function dismissInstall(){localStorage.setItem('nc3_install_dismissed','1');document.getElementById('install-hint')?.remove();}
+
+// ---------- BRANCHEMENTS (wrappers) ----------
+(function(){
+  const _dash=renderDash;
+  renderDash=function(){_dash();try{injectWeeklyRecap();injectReminders();updateNavBadges();}catch(e){console.warn('fin dash',e);}};
+  const _adash=renderAdminDash;
+  renderAdminDash=function(){_adash();try{injectCoachBoard();}catch(e){console.warn('fin adash',e);}};
+  const _showMember=showMember;
+  showMember=function(){_showMember();try{updateNavBadges();}catch(e){}};
+  const _gotoS=gotoS;
+  gotoS=function(n){_gotoS(n);try{updateNavBadges();}catch(e){}};
+  const _renderCoursesBar=renderCoursesBar;
+  renderCoursesBar=function(){_renderCoursesBar();try{const el=document.getElementById('courses-bar');if(el&&CU&&!CU.isAdmin&&!el.querySelector('.menu-gen-btn')){const b=document.createElement('button');b.className='btn-sec btn-sm menu-gen-btn';b.style.cssText='margin-top:10px';b.innerHTML='<i class="fa-solid fa-wand-magic-sparkles"></i> Générer mon menu de la semaine';b.onclick=openMenuGen;el.appendChild(b);}}catch(e){}};
+  // recherche globale enrichie (ajoute les tips)
+  const _doGS=doGS;
+  doGS=function(q){_doGS(q);try{if(!q||!q.trim())return;const ql=q.toLowerCase();const extra=[];(canSection('tips')?DB.getArr('tips'):[]).forEach(t=>{if((t.title||'').toLowerCase().includes(ql)||(t.content||'').toLowerCase().includes(ql))extra.push({icon:t.icon||'💡',title:t.title,sub:t.theme,action:"gotoS('tips')"});});const el=document.getElementById('gs-results');if(extra.length&&el&&!el.querySelector('.gs-empty')){el.insertAdjacentHTML('beforeend',extra.slice(0,4).map(r=>'<div class="gs-row" onclick="'+r.action+';closeGS()"><div class="gs-ri">'+r.icon+'</div><div><div class="gs-rt">'+h(r.title)+'</div><div class="gs-rs">'+h(r.sub||'')+'</div></div></div>').join(''));}}catch(e){}};
+})();
+document.addEventListener('DOMContentLoaded',setupPWA);
 </script>
 </body>
 </html>
