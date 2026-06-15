@@ -1574,7 +1574,12 @@ button{touch-action:manipulation;}
         <div class="afc">
           <h3 id="res-form-title">Nouvelle ressource</h3>
           <div class="r2"><div class="fg2"><label>Titre</label><input type="text" id="res-title"></div><div class="fg2"><label>Type</label><select id="res-type"><option value="pdf">📄 PDF</option><option value="video">🎥 Vidéo</option><option value="excel">📊 Excel</option><option value="link">🔗 Lien</option></select></div></div>
-          <div class="r2"><div class="fg2"><label>Catégorie</label><select id="res-cat"><option>Nutrition</option><option>Entraînement</option><option>Mental</option><option>Lifestyle</option><option>Récupération</option></select></div><div class="fg2"><label>URL / lien (ex : ressources/guide.pdf ou https://...)</label><input type="text" id="res-url" placeholder="https://... ou ressources/mon_guide.pdf"></div></div>
+          <div class="r2"><div class="fg2"><label>Catégorie</label><select id="res-cat"><option>Nutrition</option><option>Entraînement</option><option>Mental</option><option>Lifestyle</option><option>Récupération</option></select></div><div class="fg2"><label>URL / lien (auto-rempli si tu téléverses un PDF)</label><input type="text" id="res-url" placeholder="https://... ou téléverse un PDF ci-dessous"></div></div>
+          <div class="fg2"><label>📄 Téléverser un PDF (depuis ton appareil)</label>
+            <label class="btn-sec" style="display:inline-flex;align-items:center;gap:8px;cursor:pointer"><i class="fa-solid fa-cloud-arrow-up"></i> Choisir un PDF<input type="file" id="res-pdf-file" accept="application/pdf,.pdf" onchange="handleResPdf(this)" style="display:none"></label>
+            <div id="res-pdf-prog" style="margin-top:8px"></div>
+            <div style="font-size:12px;color:var(--text3);margin-top:4px">Le PDF est envoyé en ligne et le lien se remplit tout seul. Ou colle un lien externe / vidéo dans le champ URL.</div>
+          </div>
           <div class="fg2"><label>Description</label><input type="text" id="res-desc"></div>
           <div class="fa-row"><button class="btn" onclick="saveResource()"><i class="fa-solid fa-save"></i> <span id="save-res-txt">Ajouter</span></button><button class="btn-sec" id="cancel-res-btn" onclick="cancelRes()" style="display:none">Annuler</button></div>
         </div>
@@ -1753,6 +1758,47 @@ const SB_URL='https://saluihriqmnjtsnurtbv.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNhbHVpaHJpcW1uanRzbnVydGJ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEwODY5OTksImV4cCI6MjA5NjY2Mjk5OX0.tA1ypxLeUr_HcinMamkXcb7UmFwp4de9Xu51qpAfSsg';
 let SB=null;
 try{if(window.supabase)SB=window.supabase.createClient(SB_URL,SB_KEY);}catch(e){console.warn('Supabase init fail',e);}
+// ---------- SUPABASE STORAGE (PDF + photos) ----------
+let _storageWarned=false;
+function fileExt(name,fb){const e=(String(name||'').split('.').pop()||fb).toLowerCase().replace(/[^a-z0-9]/g,'');return e||fb;}
+function randName(ext){const r=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():(Date.now().toString(36)+Math.random().toString(36).slice(2));return r+'.'+ext;}
+function blobToDataURL(blob){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=()=>rej(new Error('lecture'));r.readAsDataURL(blob);});}
+function optimizeImageBlob(file,maxW,quality){return new Promise((resolve,reject)=>{const rd=new FileReader();rd.onerror=()=>reject(new Error('lecture du fichier'));rd.onload=e=>{const img=new Image();img.onerror=()=>reject(new Error('image illisible'));img.onload=()=>{let w=img.width,hh=img.height;if(w>maxW){hh=Math.round(hh*maxW/w);w=maxW;}const c=document.createElement('canvas');c.width=w;c.height=hh;c.getContext('2d').drawImage(img,0,0,w,hh);c.toBlob(b=>b?resolve(b):reject(new Error('compression')),'image/jpeg',quality||0.72);};img.src=e.target.result;};rd.readAsDataURL(file);});}
+// Upload générique vers un bucket public ; renvoie l'URL publique. Throw si échec.
+async function sbUpload(bucket,blob,prefix,ext,contentType){
+  if(!SB||!SB.storage)throw new Error('Stockage en ligne indisponible');
+  const path=(prefix?prefix+'/':'')+randName(ext);
+  const {error}=await SB.storage.from(bucket).upload(path,blob,{contentType:contentType||'application/octet-stream',upsert:false,cacheControl:'3600'});
+  if(error)throw error;
+  const {data}=SB.storage.from(bucket).getPublicUrl(path);
+  if(!data||!data.publicUrl)throw new Error('URL publique introuvable');
+  return data.publicUrl;
+}
+// Upload d'une PHOTO (optimisée 1280px). Si Storage échoue → repli base64 (l'app continue de marcher).
+async function uploadPhoto(file,prefix){
+  if(file.size>20*1024*1024)throw new Error('Image trop lourde (max 20 Mo)');
+  const blob=await optimizeImageBlob(file,1280,0.72);
+  try{return await sbUpload('photos',blob,prefix,'jpg','image/jpeg');}
+  catch(e){console.warn('photo storage fail → base64',e);if(!_storageWarned){_storageWarned=true;toast('Stockage en ligne indisponible — photo gardée en local. Configure Supabase Storage.','error');}return await blobToDataURL(blob);}
+}
+// Upload d'un PDF de ressource (jamais de base64).
+async function handleResPdf(inp){
+  const f=inp.files&&inp.files[0];if(!f){return;}
+  if(f.type!=='application/pdf'&&!/\.pdf$/i.test(f.name)){toast('Choisis un fichier PDF','error');inp.value='';return;}
+  if(f.size>50*1024*1024){toast('PDF trop lourd (max 50 Mo)','error');inp.value='';return;}
+  const prog=document.getElementById('res-pdf-prog');
+  if(prog)prog.innerHTML='<span style="font-size:13px;color:var(--blue);font-weight:600"><i class="fa-solid fa-spinner fa-spin"></i> Envoi du PDF en cours...</span>';
+  try{
+    const url=await sbUpload('ressources',f,'pdf',fileExt(f.name,'pdf'),'application/pdf');
+    const u=document.getElementById('res-url');if(u)u.value=url;
+    const t=document.getElementById('res-type');if(t)t.value='pdf';
+    if(prog)prog.innerHTML='<span style="font-size:13px;color:var(--green);font-weight:600"><i class="fa-solid fa-check"></i> PDF envoyé ✓ — clique sur Enregistrer</span>';
+    toast('PDF téléversé ✅','success');
+  }catch(e){console.warn('pdf upload',e);
+    if(prog)prog.innerHTML='<span style="font-size:13px;color:var(--red)"><i class="fa-solid fa-triangle-exclamation"></i> Échec. Vérifie ta connexion et que le bucket « ressources » existe (voir config Supabase).</span>';
+    toast('Échec de l\'upload du PDF','error');
+  }finally{inp.value='';}
+}
 // Clés synchronisées dans le cloud (le reste = purement local : theme, session, sb_mini, checklist...)
 const CLOUD_KEYS=['members','invites','modules','repas','defis','resources','glossaire','tips','faq','posts','coach_message','notifs','formules','admin_auth','citations'];
 function isCloudKey(k){
@@ -3095,7 +3141,7 @@ function reactPost(pid,rxn){const posts=DB.getArr('posts');const p=posts.find(x=
 function toggleComments(id){document.getElementById('pc-'+id).classList.toggle('open');}
 function submitComment(pid){const inp=document.getElementById('ci-'+pid);if(!inp||!inp.value.trim())return;const c=DB.getArr('comments_'+pid);const replyTo=inp.dataset.replyto||'';c.push({id:Date.now(),author:CU.isAdmin?'Noah (Coach)':CU.name,isCoach:!!CU.isAdmin,text:inp.value.trim().slice(0,600),replyTo:replyTo,createdAt:new Date().toISOString()});DB.set('comments_'+pid,c);inp.value='';inp.dataset.replyto='';renderPosts();document.getElementById('pc-'+pid).classList.add('open');}
 function replyToComment(pid,author){const inp=document.getElementById('ci-'+pid);if(!inp)return;document.getElementById('pc-'+pid).classList.add('open');inp.dataset.replyto=author;inp.value='@'+author+' ';inp.focus();}
-function handlePostImg(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{pendingImg=e.target.result;document.getElementById('pc-img-prev').innerHTML='<img src="'+e.target.result+'" style="max-height:50px;border-radius:6px">';};r.readAsDataURL(f);}
+async function handlePostImg(inp){const f=inp.files&&inp.files[0];if(!f)return;const pv=document.getElementById('pc-img-prev');if(pv)pv.innerHTML='<span style="font-size:12px;color:var(--blue)"><i class="fa-solid fa-spinner fa-spin"></i> Envoi...</span>';try{pendingImg=await uploadPhoto(f,'posts');if(pv)pv.innerHTML='<img src="'+escA(safeUrl(pendingImg))+'" style="max-height:50px;border-radius:6px">';}catch(e){toast(e.message||'Échec image','error');if(pv)pv.innerHTML='';}}
 function publishPost(){const text=(document.getElementById('post-text')?.value||'').trim().slice(0,3000);const cat=document.getElementById('post-cat')?.value||'Motivation';if(!text&&!pendingImg)return;const posts=DB.getArr('posts');posts.push({id:Date.now(),author:CU.name,authorCode:CU.code,authorId:CU.id||0,body:text,cat,image:pendingImg||null,createdAt:new Date().toISOString(),likes:0,likedBy:[],pinned:false,reactions:{},myReactions:{}});DB.set('posts',posts);if(!CU.isPreview){CU.postCount=(CU.postCount||0)+1;CU.xp=(CU.xp||0)+10;saveCU();checkBadges();}pendingImg=null;document.getElementById('tb-xp-val').textContent=(CU.xp||0)+' XP';toast('Post publié ! +10 XP 🔥','success');renderComm();}
 function likePost(id){const posts=DB.getArr('posts');const p=posts.find(x=>x.id===id);if(!p)return;if(!p.likedBy)p.likedBy=[];const i=p.likedBy.indexOf(CU.code);if(i>=0){p.likedBy.splice(i,1);p.likes=Math.max(0,(p.likes||1)-1);}else{p.likedBy.push(CU.code);p.likes=(p.likes||0)+1;}DB.set('posts',posts);renderPosts();}
 function deletePost(id){DB.set('posts',DB.getArr('posts').filter(p=>p.id!==id));renderPosts();toast('Post supprimé');}
@@ -3123,7 +3169,7 @@ function exportBodyCSV(){const entries=DB.getArr('body_'+(CU.code||''));const cs
 // ============================================================
 function renderTransfo(){const entries=DB.getArr('transfo_'+(CU.code||'')).sort((a,b)=>new Date(b.date)-new Date(a.date));const tl=document.getElementById('transfo-tl');if(!entries.length){tl.innerHTML='<div class="empty"><i class="fa-solid fa-camera"></i><p>Ajoute tes photos avant/après !</p></div>';return;}tl.innerHTML=entries.map(e=>'<div class="tl-item"><div class="tl-dot"></div><div class="transfo-card">'+(e.image?'<img src="'+escA(safeUrl(e.image))+'" class="transfo-img" onclick="openFS(this.src)" alt="">':'<div class="transfo-ph">📸</div>')+'<div class="transfo-body"><div class="transfo-date">'+fmtDate(e.date)+'</div><div class="transfo-comment">'+h(e.comment||'')+'</div><button class="btn-del btn-sm" style="margin-top:12px" onclick="delTransfo('+e.id+')"><i class="fa-solid fa-trash"></i> Supprimer</button></div></div></div>').join('');}
 function openTransfoForm(){document.getElementById('modal-content').innerHTML='<h3 style="font-family:var(--fd);font-size:18px;margin-bottom:20px">Nouvelle photo</h3><div style="display:flex;flex-direction:column;gap:14px"><div><label style="font-size:11px;font-weight:600;color:var(--text2);display:block;margin-bottom:6px;text-transform:uppercase">Date</label><input type="date" id="tf-date" value="'+new Date().toISOString().split('T')[0]+'" style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--r);font-family:var(--fb);font-size:16px;color:var(--text);background:var(--bg2);outline:none"></div><div><label style="font-size:11px;font-weight:600;color:var(--text2);display:block;margin-bottom:6px;text-transform:uppercase">Photo</label><input type="file" id="tf-img" accept="image/*" style="width:100%;padding:10px;border:1.5px dashed var(--border);border-radius:var(--r);font-size:14px"></div><div><label style="font-size:11px;font-weight:600;color:var(--text2);display:block;margin-bottom:6px;text-transform:uppercase">Commentaire</label><textarea id="tf-comment" placeholder="Ex: -4kg en 6 semaines !" style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--r);font-family:var(--fb);font-size:16px;color:var(--text);background:var(--bg2);outline:none;min-height:80px;resize:vertical"></textarea></div></div><button class="btn" style="margin-top:20px" onclick="saveTransfo()"><i class="fa-solid fa-save"></i> Enregistrer</button>';openModal();}
-function saveTransfo(){const file=document.getElementById('tf-img')?.files[0];const date=document.getElementById('tf-date')?.value;const comment=(document.getElementById('tf-comment')?.value||'').trim();const doSave=img=>{const arr=DB.getArr('transfo_'+(CU.code||''));arr.push({id:Date.now(),date,image:img,comment});DB.set('transfo_'+(CU.code||''),arr);if(!CU.isPreview){CU.xp=(CU.xp||0)+25;saveCU();checkBadges();document.getElementById('tb-xp-val').textContent=(CU.xp||0)+' XP';}closeModal();renderTransfo();toast('Photo enregistrée ! +25 XP 📸','success');addNotif('📸','Transformation','Photo ajoutée');};if(file){const r=new FileReader();r.onload=e=>doSave(e.target.result);r.readAsDataURL(file);}else doSave(null);}
+async function saveTransfo(){const file=document.getElementById('tf-img')?.files[0];const date=document.getElementById('tf-date')?.value;const comment=(document.getElementById('tf-comment')?.value||'').trim();let img=null;if(file){const btn=document.querySelector('#modal-content .btn');if(btn){btn.disabled=true;btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> Envoi de la photo...';}try{img=await uploadPhoto(file,'transfo');}catch(e){toast(e.message||'Échec image','error');if(btn){btn.disabled=false;btn.innerHTML='<i class="fa-solid fa-save"></i> Enregistrer';}return;}}const arr=DB.getArr('transfo_'+(CU.code||''));arr.push({id:Date.now(),date,image:img,comment});DB.set('transfo_'+(CU.code||''),arr);if(!CU.isPreview){CU.xp=(CU.xp||0)+25;saveCU();checkBadges();document.getElementById('tb-xp-val').textContent=(CU.xp||0)+' XP';}closeModal();renderTransfo();toast('Photo enregistrée ! +25 XP 📸','success');addNotif('📸','Transformation','Photo ajoutée');}
 function delTransfo(id){DB.set('transfo_'+(CU.code||''),DB.getArr('transfo_'+(CU.code||'')).filter(e=>e.id!==id));renderTransfo();}
 function openFS(src){document.getElementById('fs-img').src=src;document.getElementById('fs-ov').classList.add('active');}
 
@@ -3529,24 +3575,14 @@ function stopRecTimer(showResume){if(recTimer){clearInterval(recTimer);recTimer=
 function resetRecTimer(){stopRecTimer(false);recState.remain=Math.round((recState.r.steps[recState.idx].min||0)*60);const d=document.getElementById('rec-timer');if(d){d.textContent=fmtSec(recState.remain);d.style.color='var(--blue)';}const btn=document.getElementById('rec-start');if(btn)btn.innerHTML='<i class="fa-solid fa-play"></i> Lancer le minuteur';}
 
 // ---------- Admin repas : édition complète (remplace les versions précédentes) ----------
-function handleRepasImg(inp){
+async function handleRepasImg(inp){
   const f=inp.files&&inp.files[0];if(!f)return;
-  const rd=new FileReader();
-  rd.onload=e=>{
-    const img=new Image();
-    img.onload=()=>{
-      const max=800;let w=img.width,hh=img.height;
-      if(w>max){hh=hh*max/w;w=max;}
-      if(hh>max){w=w*max/hh;hh=max;}
-      const c=document.createElement('canvas');c.width=w;c.height=hh;
-      c.getContext('2d').drawImage(img,0,0,w,hh);
-      pendingRepasImg=c.toDataURL('image/jpeg',0.72);
-      const pv=document.getElementById('repas-img-prev');
-      if(pv)pv.innerHTML='<img src="'+pendingRepasImg+'" style="max-height:64px;border-radius:8px;margin-top:8px">';
-    };
-    img.src=e.target.result;
-  };
-  rd.readAsDataURL(f);
+  const pv=document.getElementById('repas-img-prev');
+  if(pv)pv.innerHTML='<span style="font-size:12px;color:var(--blue)"><i class="fa-solid fa-spinner fa-spin"></i> Envoi de la photo...</span>';
+  try{
+    pendingRepasImg=await uploadPhoto(f,'repas');
+    if(pv)pv.innerHTML='<img src="'+escA(safeUrl(pendingRepasImg))+'" style="max-height:64px;border-radius:8px;margin-top:8px">';
+  }catch(e){toast(e.message||'Échec image','error');if(pv)pv.innerHTML='';}
 }
 function parseRepasSteps(txt){
   return String(txt||'').split('\n').map(l=>l.trim()).filter(Boolean).map(l=>{
@@ -3849,7 +3885,7 @@ function renderSante(){
 // ---------- BILANS ----------
 function biKey(c){return 'bilans_'+(c||CU&&CU.code||'');}
 let pendingBilanImg=null;
-function handleBilanImg(inp){const f=inp.files&&inp.files[0];if(!f)return;resizeImg(f,d=>{pendingBilanImg=d;const pv=document.getElementById('bi-prev');if(pv)pv.innerHTML='<img src="'+d+'" style="max-height:64px;border-radius:8px;margin-top:6px">';});}
+async function handleBilanImg(inp){const f=inp.files&&inp.files[0];if(!f)return;const pv=document.getElementById('bi-prev');if(pv)pv.innerHTML='<span style="font-size:12px;color:var(--blue)"><i class="fa-solid fa-spinner fa-spin"></i> Envoi...</span>';try{pendingBilanImg=await uploadPhoto(f,'bilans');if(pv)pv.innerHTML='<img src="'+escA(safeUrl(pendingBilanImg))+'" style="max-height:64px;border-radius:8px;margin-top:6px">';}catch(e){toast(e.message||'Échec image','error');if(pv)pv.innerHTML='';}}
 function openBilanForm(code){
   pendingBilanImg=null;
   const iSt='width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:10px;background:var(--bg2);color:var(--text);font-size:16px';
