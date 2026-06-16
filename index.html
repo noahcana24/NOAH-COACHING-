@@ -1205,6 +1205,8 @@ button{touch-action:manipulation;}
       <div class="nav-group">Communauté</div>
       <button class="nav-item" data-s="community"><i class="fa-solid fa-comments"></i><span>Communauté</span></button>
       <button class="nav-item" data-s="resources"><i class="fa-solid fa-folder-open"></i><span>Ressources</span></button>
+      <div class="nav-group">Entraînement</div>
+      <button class="nav-item" data-s="training"><i class="fa-solid fa-dumbbell"></i><span>Mon entraînement</span></button>
       <div class="nav-group">Mon suivi</div>
       <button class="nav-item" data-s="body"><i class="fa-solid fa-chart-line"></i><span>Suivi corporel</span></button>
       <button class="nav-item" data-s="sante"><i class="fa-solid fa-heart-circle-check"></i><span>Santé</span></button>
@@ -1327,6 +1329,11 @@ button{touch-action:manipulation;}
         <div class="res-grid" id="res-grid"></div>
       </section>
 
+      <section id="section-training" class="section">
+        <div class="sec-header"><h2>Mon entraînement</h2><p>Tes séances, en direct, où que tu sois</p></div>
+        <div id="training-wrap"></div>
+      </section>
+
       <section id="section-body" class="section">
         <div class="sec-header"><h2>Suivi Corporel</h2><p>Tes mesures, ton évolution</p></div>
         <div class="body-actions">
@@ -1419,6 +1426,7 @@ button{touch-action:manipulation;}
       <button class="bsi" data-s="repas" onclick="gotoS('repas');closeBS()"><i class="fa-solid fa-utensils"></i><span>Repas</span></button>
       <button class="bsi" data-s="resources" onclick="gotoS('resources');closeBS()"><i class="fa-solid fa-folder-open"></i><span>Ressources</span></button>
       <button class="bsi" data-s="body" onclick="gotoS('body');closeBS()"><i class="fa-solid fa-chart-line"></i><span>Suivi corps</span></button>
+      <button class="bsi" data-s="training" onclick="gotoS('training');closeBS()"><i class="fa-solid fa-dumbbell"></i><span>Entraînement</span></button>
       <button class="bsi" data-s="sante" onclick="gotoS('sante');closeBS()"><i class="fa-solid fa-heart-circle-check"></i><span>Santé</span></button>
       <button class="bsi" data-s="transformation" onclick="gotoS('transformation');closeBS()"><i class="fa-solid fa-camera"></i><span>Transfo</span></button>
       <button class="bsi" data-s="glossaire" onclick="gotoS('glossaire');closeBS()"><i class="fa-solid fa-book"></i><span>Glossaire</span></button>
@@ -1443,6 +1451,8 @@ button{touch-action:manipulation;}
     <nav class="sb-nav">
       <button class="nav-item active" data-as="adashboard"><i class="fa-solid fa-gauge"></i><span>Dashboard</span></button>
       <button class="nav-item" data-as="amodules"><i class="fa-solid fa-graduation-cap"></i><span>Modules</span></button>
+      <button class="nav-item" data-as="aexercices"><i class="fa-solid fa-dumbbell"></i><span>Exercices</span></button>
+      <button class="nav-item" data-as="aprogrammes"><i class="fa-solid fa-clipboard-list"></i><span>Programmes</span></button>
       <button class="nav-item" data-as="arepas"><i class="fa-solid fa-utensils"></i><span>Repas</span></button>
       <button class="nav-item" data-as="adefis"><i class="fa-solid fa-trophy"></i><span>Défis</span></button>
       <button class="nav-item" data-as="ainvites"><i class="fa-solid fa-envelope"></i><span>Invitations</span></button>
@@ -1498,6 +1508,33 @@ button{touch-action:manipulation;}
         </div>
         <div class="list-title">Modules existants</div>
         <div id="admin-mods-list"></div>
+      </section>
+
+      <section id="section-aexercices" class="section">
+        <div class="sec-header"><h2>Bibliothèque d'exercices</h2><p>Ton catalogue d'exercices, réutilisé dans les programmes</p></div>
+        <div class="afc">
+          <h3 id="exo-form-title">Nouvel exercice</h3>
+          <div class="r2"><div class="fg2"><label>Nom</label><input type="text" id="exo-nom" placeholder="Ex : Développé couché barre"></div><div class="fg2"><label>Groupe musculaire</label><select id="exo-groupe"><option>Pectoraux</option><option>Dos</option><option>Jambes</option><option>Épaules</option><option>Bras</option><option>Abdos</option><option>Full body</option><option>Cardio</option></select></div></div>
+          <div class="r2"><div class="fg2"><label>Matériel</label><select id="exo-materiel"><option>Barre</option><option>Haltères</option><option>Machine</option><option>Poulie</option><option>Poids du corps</option><option>Élastique</option><option>Kettlebell</option></select></div><div class="fg2"><label>Niveau</label><select id="exo-niveau"><option>Débutant</option><option>Intermédiaire</option><option>Avancé</option></select></div></div>
+          <div class="fg2"><label>Consignes d'exécution</label><textarea id="exo-consignes" placeholder="Comment réaliser le mouvement correctement..."></textarea></div>
+          <div class="fg2"><label>Conseils de sécurité</label><textarea id="exo-securite" placeholder="Points d'attention, erreurs à éviter..."></textarea></div>
+          <div class="fg2"><label>Lien vidéo de démonstration (YouTube, Vimeo...)</label><input type="text" id="exo-video" placeholder="https://youtube.com/..."></div>
+          <div class="fa-row"><button class="btn" onclick="saveExo()"><i class="fa-solid fa-save"></i> <span id="save-exo-txt">Ajouter</span></button><button class="btn-sec" id="cancel-exo-btn" onclick="cancelExo()" style="display:none">Annuler</button></div>
+        </div>
+        <div class="ftabs" style="gap:8px"><select id="exo-filter-g" class="pc-cat" style="font-size:16px"></select><select id="exo-filter-m" class="pc-cat" style="font-size:16px"></select><select id="exo-filter-n" class="pc-cat" style="font-size:16px"></select></div>
+        <div class="sbar"><i class="fa-solid fa-magnifying-glass"></i><input type="text" id="exo-search" placeholder="Rechercher un exercice..." oninput="renderAExos()"></div>
+        <div id="exo-count" style="font-size:13px;color:var(--text3);margin:-6px 0 12px;font-weight:500"></div>
+        <div id="admin-exos-list"></div>
+      </section>
+
+      <section id="section-aprogrammes" class="section">
+        <div class="sec-header"><h2>Programmes & templates</h2><p>Crée des programmes réutilisables, attribue-les depuis la fiche d'un membre</p></div>
+        <div id="aprog-list-wrap">
+          <button class="btn" onclick="newProg()" style="margin-bottom:18px"><i class="fa-solid fa-plus"></i> Créer un programme</button>
+          <div class="list-title">Mes programmes</div>
+          <div id="admin-progs-list"></div>
+        </div>
+        <div id="aprog-builder" style="display:none"></div>
       </section>
 
       <section id="section-arepas" class="section">
@@ -1652,6 +1689,8 @@ button{touch-action:manipulation;}
     <div class="bs-handle"></div>
     <div class="bs-title">Admin</div>
     <div class="bs-grid">
+      <button class="bsi" onclick="gotoAS('aexercices');closeABS()"><i class="fa-solid fa-dumbbell"></i><span>Exercices</span></button>
+      <button class="bsi" onclick="gotoAS('aprogrammes');closeABS()"><i class="fa-solid fa-clipboard-list"></i><span>Programmes</span></button>
       <button class="bsi" onclick="gotoAS('arepas');closeABS()"><i class="fa-solid fa-utensils"></i><span>Repas</span></button>
       <button class="bsi" onclick="gotoAS('aformules');closeABS()"><i class="fa-solid fa-layer-group"></i><span>Formules</span></button>
       <button class="bsi" onclick="gotoAS('adefis');closeABS()"><i class="fa-solid fa-trophy"></i><span>Défis</span></button>
@@ -1800,11 +1839,11 @@ async function handleResPdf(inp){
   }finally{inp.value='';}
 }
 // Clés synchronisées dans le cloud (le reste = purement local : theme, session, sb_mini, checklist...)
-const CLOUD_KEYS=['members','invites','modules','repas','defis','resources','glossaire','tips','faq','posts','coach_message','notifs','formules','admin_auth','citations'];
+const CLOUD_KEYS=['members','invites','modules','repas','defis','resources','glossaire','tips','faq','posts','coach_message','notifs','formules','admin_auth','citations','exercices','programmes'];
 function isCloudKey(k){
   if(CLOUD_KEYS.includes(k))return true;
   // données par client : body_, transfo_, temo_, comments_
-  return /^(body_|transfo_|temo_|comments_|journal_|hydra_|cycle_|sleep_|blessures_|bilans_|courses_|quetes_)/.test(k);
+  return /^(body_|transfo_|temo_|comments_|journal_|hydra_|cycle_|sleep_|blessures_|bilans_|courses_|quetes_|assign_|workouts_)/.test(k);
 }
 // Pousse une clé vers Supabase (sans bloquer l'interface)
 function cloudPush(key,val){
@@ -1891,7 +1930,7 @@ function fireConfetti(){const c=document.getElementById('confetti-c');const cols
 document.addEventListener('DOMContentLoaded',async()=>{
   // Tire les données partagées du cloud AVANT d'afficher (si Supabase dispo)
   await cloudPullAll();
-  seedData();seedFormules();seedV3();seedV4();
+  seedData();seedFormules();seedV3();seedV4();seedTraining();
   document.getElementById('login-btn').addEventListener('click',handleLogin);
   document.getElementById('invite-code').addEventListener('keypress',e=>{if(e.key==='Enter')handleLogin();});
   document.getElementById('member-name').addEventListener('keypress',e=>{if(e.key==='Enter')handleLogin();});
@@ -2865,8 +2904,8 @@ function logout(){DB.set('session',null);CU=null;isPreview=false;const b1=docume
 // access = {formule:id|null, sections:{cle:false=bloqué}, modules:'all'|[ids], repas:'all'|[ids]}
 // Absence d'access (membres existants) = accès complet → zéro régression.
 // ============================================================
-const GATED_SECTIONS=['modules','repas','defis','community','resources','body','sante','transformation','temoignage','glossaire','tips','faq'];
-const SECTION_LABELS={modules:'Modules',repas:'Repas',defis:'Défis',community:'Communauté',resources:'Ressources',body:'Suivi corporel',sante:'Santé',transformation:'Transformation',temoignage:'Témoignage',glossaire:'Glossaire',tips:'Tips & Récup',faq:'FAQ'};
+const GATED_SECTIONS=['modules','training','repas','defis','community','resources','body','sante','transformation','temoignage','glossaire','tips','faq'];
+const SECTION_LABELS={modules:'Modules',training:'Entraînement',repas:'Repas',defis:'Défis',community:'Communauté',resources:'Ressources',body:'Suivi corporel',sante:'Santé',transformation:'Transformation',temoignage:'Témoignage',glossaire:'Glossaire',tips:'Tips & Récup',faq:'FAQ'};
 function getAccess(){const a=(CU&&CU.access)||{};return{formule:a.formule||null,sections:a.sections||{},modules:(a.modules===undefined||a.modules===null)?'all':a.modules,repas:(a.repas===undefined||a.repas===null)?'all':a.repas};}
 function canSection(s){if(!CU||CU.isAdmin||CU.isPreview)return true;if(!GATED_SECTIONS.includes(s))return true;return getAccess().sections[s]!==false;}
 function filterByAccess(list,kind){if(!CU||CU.isAdmin||CU.isPreview)return list;const sel=getAccess()[kind];if(sel==='all')return list;return list.filter(x=>(sel||[]).includes(x.id));}
@@ -2998,7 +3037,7 @@ function showMember(){showPage('member');renderNavProfile();renderNotifs();apply
 function showAdmin(){showPage('admin');gotoAS('adashboard');document.getElementById('admin-bnav').style.display='block';document.getElementById('bnav').style.display='none';}
 function renderNavProfile(){const init=initials(CU.name);const lv=getLevel(CU.xp||0);document.getElementById('tb-name').textContent='Bonjour '+CU.name.split(' ')[0]+' 👋';document.getElementById('tb-xp-val').textContent=(CU.xp||0)+' XP';document.getElementById('sb-profile').innerHTML='<div class="sbp-av">'+init+'</div><div class="sbp-info"><div class="sbp-name">'+h(CU.name)+'</div><div style="margin-top:3px"><span class="lv-pill lv-'+lv.name+'" style="font-size:10px;padding:3px 12px">'+lv.name+'</span></div></div>';}
 
-const SNAMES={dashboard:'Dashboard',modules:'Modules',repas:'Repas',defis:'Défis',community:'Communauté',resources:'Ressources',body:'Suivi corporel',sante:'Santé',transformation:'Transformation',temoignage:'Témoignage',glossaire:'Glossaire',tips:'Tips & Récup',faq:'FAQ','module-detail':'Module'};
+const SNAMES={dashboard:'Dashboard',modules:'Modules',training:'Mon entraînement',repas:'Repas',defis:'Défis',community:'Communauté',resources:'Ressources',body:'Suivi corporel',sante:'Santé',transformation:'Transformation',temoignage:'Témoignage',glossaire:'Glossaire',tips:'Tips & Récup',faq:'FAQ','module-detail':'Module'};
 function gotoS(name){
   if(CU&&!CU.isAdmin&&!CU.isPreview&&!canSection(name)){renderLocked(name);closeSB();window.scrollTo(0,0);return;}
   document.querySelectorAll('#page-member .section').forEach(s=>s.classList.remove('active'));
@@ -3006,7 +3045,7 @@ function gotoS(name){
   const sec=document.getElementById('section-'+name);if(sec)sec.classList.add('active');
   const nav=document.querySelector('#sidebar .nav-item[data-s="'+name+'"]');if(nav)nav.classList.add('active');
   document.getElementById('bc-current').textContent=SNAMES[name]||name;
-  if(name==='dashboard')renderDash();if(name==='modules')renderMods();if(name==='repas')renderRepas();if(name==='defis')renderDefis();if(name==='community')renderComm();if(name==='resources')renderResources();if(name==='body')renderBody();if(name==='sante')renderSante();if(name==='transformation')renderTransfo();if(name==='temoignage')renderTemo();if(name==='glossaire')renderGlossaire();if(name==='tips')renderTips();if(name==='faq')renderFAQ();
+  if(name==='dashboard')renderDash();if(name==='modules')renderMods();if(name==='repas')renderRepas();if(name==='defis')renderDefis();if(name==='community')renderComm();if(name==='resources')renderResources();if(name==='body')renderBody();if(name==='training')renderTraining();if(name==='sante')renderSante();if(name==='transformation')renderTransfo();if(name==='temoignage')renderTemo();if(name==='glossaire')renderGlossaire();if(name==='tips')renderTips();if(name==='faq')renderFAQ();
   updateFAB(name);closeSB();window.scrollTo(0,0);
 }
 function gotoAS(name){
@@ -3014,7 +3053,7 @@ function gotoAS(name){
   document.querySelectorAll('#admin-sidebar .nav-item').forEach(n=>n.classList.remove('active'));
   const sec=document.getElementById('section-'+name);if(sec)sec.classList.add('active');
   const nav=document.querySelector('#admin-sidebar .nav-item[data-as="'+name+'"]');if(nav)nav.classList.add('active');
-  if(name==='adashboard')renderAdminDash();if(name==='amodules')renderAMods();if(name==='arepas')renderARepas();if(name==='adefis')renderADefis();if(name==='aformules')renderAFormules();if(name==='ainvites')renderAInvites();if(name==='amembers')renderAMembers();if(name==='acommunity')renderAComm();if(name==='aresources')renderARes();if(name==='aglossaire')renderAGlos();if(name==='atips')renderATips();if(name==='afaq')renderAFAQ();if(name==='amessage'){const m=DB.get('coach_message');if(m)document.getElementById('coach-msg').value=m;const cq=document.getElementById('coach-quotes');if(cq)cq.value=DB.getArr('citations').join('\n');}
+  if(name==='adashboard')renderAdminDash();if(name==='amodules')renderAMods();if(name==='aexercices')renderAExos();if(name==='aprogrammes')renderAProgs();if(name==='arepas')renderARepas();if(name==='adefis')renderADefis();if(name==='aformules')renderAFormules();if(name==='ainvites')renderAInvites();if(name==='amembers')renderAMembers();if(name==='acommunity')renderAComm();if(name==='aresources')renderARes();if(name==='aglossaire')renderAGlos();if(name==='atips')renderATips();if(name==='afaq')renderAFAQ();if(name==='amessage'){const m=DB.get('coach_message');if(m)document.getElementById('coach-msg').value=m;const cq=document.getElementById('coach-quotes');if(cq)cq.value=DB.getArr('citations').join('\n');}
   closeASB();window.scrollTo(0,0);
 }
 function updateFAB(s){const fab=document.getElementById('fab');fab.style.display=['community','body','transformation'].includes(s)&&window.innerWidth<=768?'flex':'none';fab.dataset.s=s;}
@@ -3242,7 +3281,7 @@ function delInvite(code){DB.set('invites',DB.getArr('invites').filter(i=>i.code!
 function renderAInvites(){const fsel=document.getElementById('inv-formule');if(fsel){const cur=fsel.value;fsel.innerHTML='<option value="">Accès complet (par défaut)</option>'+DB.getArr('formules').map(f=>'<option value="'+f.id+'">'+(f.icon||'')+' '+h(f.name)+'</option>').join('');fsel.value=cur;}const list=document.getElementById('invites-list');const invs=DB.getArr('invites');if(!invs.length){list.innerHTML='<div class="empty"><i class="fa-solid fa-envelope"></i><p>Aucun code généré.</p></div>';return;}list.innerHTML=invs.slice().reverse().map(i=>'<div class="inv-item"><span class="ii-code">'+i.code+'</span><div style="font-size:12px;color:var(--text3)">'+(i.name?h(i.name):'')+(i.note?' · '+h(i.note):'')+(i.formule?' · 🎫 '+h((DB.getArr('formules').find(f=>f.id===i.formule)||{}).name||''):'')+'</div><span class="ii-status '+(i.used?'ii-used':'ii-unused')+'">'+(i.used?'✅ Utilisé'+(i.usedBy?' ('+h(i.usedBy)+')':''):'⏳ En attente')+'</span><button class="be-del" onclick="delInvite(\''+i.code+'\')" style="margin-left:8px"><i class="fa-solid fa-xmark"></i></button></div>').join('');}
 
 // ADMIN MEMBERS
-function renderAMembers(){const q=(document.getElementById('member-search')?.value||'').toLowerCase();let members=DB.getArr('members');if(q)members=members.filter(m=>m.name.toLowerCase().includes(q)||(m.code||'').toLowerCase().includes(q));const list=document.getElementById('members-list');if(!members.length){list.innerHTML='<div class="empty"><i class="fa-solid fa-users"></i><p>Aucun membre'+(q?' trouvé':' inscrit')+'.</p></div>';return;}const mods=DB.getArr('modules');const totalL=mods.reduce((s,m)=>s+m.lessons.length,0);list.innerHTML=members.map(m=>{const lv=getLevel(m.xp||0);const doneL=(m.completedLessons||[]).length;const pct=totalL?Math.round(doneL/totalL*100):0;const temo=DB.get('temo_'+m.code);const lastLogin=m.lastLogin||'—';const nBody=DB.getArr('body_'+m.code).length;const nTransfo=DB.getArr('transfo_'+m.code).length;return '<div class="member-card"><div class="mc-hdr"><div class="mc-av">'+initials(m.name)+'</div><div style="flex:1"><div class="mc-name">'+h(m.name)+(temo&&!temo.read?' <span style="background:var(--red);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px">⭐ Nouveau témo</span>':'')+'</div><div class="mc-meta">Code: '+m.code+' · Inscrit le '+fmtDate(m.joinedAt)+(m.pwHash?'':' · <span style="color:var(--orange);font-weight:600">mot de passe non créé</span>')+'</div></div><span class="lv-pill lv-'+lv.name+'">'+lv.name+'</span></div>'+(function(){var e=clientEngagement(m);return '<div style="display:flex;align-items:center;gap:7px;margin:8px 0 0;font-size:12px;color:'+e.color+';font-weight:600"><span style="width:9px;height:9px;border-radius:50%;background:'+e.color+'"></span>Engagement '+e.score+'/100 · '+e.label+'</div>';})()+'<div class="mc-stats"><div class="mc-stat">⚡ <strong>'+(m.xp||0)+'</strong> XP</div><div class="mc-stat">📚 <strong>'+doneL+'</strong> leçons ('+pct+'%)</div><div class="mc-stat">🏆 <strong>'+((m.completedDefis||[]).length)+'</strong> défis</div><div class="mc-stat">🔥 <strong>'+(m.streak||0)+'</strong> j streak</div><div class="mc-stat">📅 '+(lastLogin==='—'?'—':lastLogin)+'</div></div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:1px solid var(--border2)"><button class="btn-edit btn-sm" onclick="viewClientBody(\''+m.code+'\')"><i class="fa-solid fa-chart-line"></i> Suivi corporel'+(nBody?' ('+nBody+')':'')+'</button><button class="btn-edit btn-sm" onclick="viewClientTransfo(\''+m.code+'\')"><i class="fa-solid fa-camera"></i> Transformations'+(nTransfo?' ('+nTransfo+')':'')+'</button><button class="btn-edit btn-sm" onclick="viewClientJournal(\''+m.code+'\')"><i class="fa-solid fa-utensils"></i> Journal repas</button><button class="btn-edit btn-sm" onclick="viewTemo(\''+m.code+'\')" '+(temo?'':'disabled style="opacity:.4;cursor:default"')+'><i class="fa-solid fa-star"></i> Témoignage'+(temo?' ('+temo.note+'/5)':'')+'</button><button class="btn-edit btn-sm" onclick="openSanteClient(\''+m.code+'\')"><i class="fa-solid fa-heart-pulse"></i> Santé</button><button class="btn-edit btn-sm" onclick="openCoachNote(\''+m.code+'\')"><i class="fa-solid fa-note-sticky"></i> Note'+(m.coachNote?' •':'')+'</button><button class="btn-edit btn-sm" onclick="openAccessEditor(\''+m.code+'\')"><i class="fa-solid fa-key"></i> Accès'+(m.access&&m.access.formule?' · '+h((DB.getArr('formules').find(f=>f.id===m.access.formule)||{}).name||''):'')+'</button><button class="btn-edit btn-sm" onclick="resetMemberPw(\''+m.code+'\',\''+escA(m.name)+'\')"><i class="fa-solid fa-rotate-left"></i> Mdp</button><button class="btn-del btn-sm" style="margin-left:auto" onclick="deleteMember(\''+m.code+'\',\''+escA(m.name)+'\')"><i class="fa-solid fa-trash"></i> Supprimer le compte</button></div></div>';}).join('');}
+function renderAMembers(){const q=(document.getElementById('member-search')?.value||'').toLowerCase();let members=DB.getArr('members');if(q)members=members.filter(m=>m.name.toLowerCase().includes(q)||(m.code||'').toLowerCase().includes(q));const list=document.getElementById('members-list');if(!members.length){list.innerHTML='<div class="empty"><i class="fa-solid fa-users"></i><p>Aucun membre'+(q?' trouvé':' inscrit')+'.</p></div>';return;}const mods=DB.getArr('modules');const totalL=mods.reduce((s,m)=>s+m.lessons.length,0);list.innerHTML=members.map(m=>{const lv=getLevel(m.xp||0);const doneL=(m.completedLessons||[]).length;const pct=totalL?Math.round(doneL/totalL*100):0;const temo=DB.get('temo_'+m.code);const lastLogin=m.lastLogin||'—';const nBody=DB.getArr('body_'+m.code).length;const nTransfo=DB.getArr('transfo_'+m.code).length;return '<div class="member-card"><div class="mc-hdr"><div class="mc-av">'+initials(m.name)+'</div><div style="flex:1"><div class="mc-name">'+h(m.name)+(temo&&!temo.read?' <span style="background:var(--red);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px">⭐ Nouveau témo</span>':'')+'</div><div class="mc-meta">Code: '+m.code+' · Inscrit le '+fmtDate(m.joinedAt)+(m.pwHash?'':' · <span style="color:var(--orange);font-weight:600">mot de passe non créé</span>')+'</div></div><span class="lv-pill lv-'+lv.name+'">'+lv.name+'</span></div>'+(function(){var e=clientEngagement(m);return '<div style="display:flex;align-items:center;gap:7px;margin:8px 0 0;font-size:12px;color:'+e.color+';font-weight:600"><span style="width:9px;height:9px;border-radius:50%;background:'+e.color+'"></span>Engagement '+e.score+'/100 · '+e.label+'</div>';})()+'<div class="mc-stats"><div class="mc-stat">⚡ <strong>'+(m.xp||0)+'</strong> XP</div><div class="mc-stat">📚 <strong>'+doneL+'</strong> leçons ('+pct+'%)</div><div class="mc-stat">🏆 <strong>'+((m.completedDefis||[]).length)+'</strong> défis</div><div class="mc-stat">🔥 <strong>'+(m.streak||0)+'</strong> j streak</div><div class="mc-stat">📅 '+(lastLogin==='—'?'—':lastLogin)+'</div></div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;padding-top:14px;border-top:1px solid var(--border2)"><button class="btn-edit btn-sm" onclick="viewClientBody(\''+m.code+'\')"><i class="fa-solid fa-chart-line"></i> Suivi corporel'+(nBody?' ('+nBody+')':'')+'</button><button class="btn-edit btn-sm" onclick="viewClientTransfo(\''+m.code+'\')"><i class="fa-solid fa-camera"></i> Transformations'+(nTransfo?' ('+nTransfo+')':'')+'</button><button class="btn-edit btn-sm" onclick="openTrainingClient(\''+m.code+'\')"><i class="fa-solid fa-dumbbell"></i> Entraînement</button><button class="btn-edit btn-sm" onclick="viewClientJournal(\''+m.code+'\')"><i class="fa-solid fa-utensils"></i> Journal repas</button><button class="btn-edit btn-sm" onclick="viewTemo(\''+m.code+'\')" '+(temo?'':'disabled style="opacity:.4;cursor:default"')+'><i class="fa-solid fa-star"></i> Témoignage'+(temo?' ('+temo.note+'/5)':'')+'</button><button class="btn-edit btn-sm" onclick="openSanteClient(\''+m.code+'\')"><i class="fa-solid fa-heart-pulse"></i> Santé</button><button class="btn-edit btn-sm" onclick="openCoachNote(\''+m.code+'\')"><i class="fa-solid fa-note-sticky"></i> Note'+(m.coachNote?' •':'')+'</button><button class="btn-edit btn-sm" onclick="openAccessEditor(\''+m.code+'\')"><i class="fa-solid fa-key"></i> Accès'+(m.access&&m.access.formule?' · '+h((DB.getArr('formules').find(f=>f.id===m.access.formule)||{}).name||''):'')+'</button><button class="btn-edit btn-sm" onclick="resetMemberPw(\''+m.code+'\',\''+escA(m.name)+'\')"><i class="fa-solid fa-rotate-left"></i> Mdp</button><button class="btn-del btn-sm" style="margin-left:auto" onclick="deleteMember(\''+m.code+'\',\''+escA(m.name)+'\')"><i class="fa-solid fa-trash"></i> Supprimer le compte</button></div></div>';}).join('');}
 
 function viewClientBody(code){const m=DB.getArr('members').find(x=>x.code===code);const entries=DB.getArr('body_'+code).sort((a,b)=>new Date(b.date)-new Date(a.date));let html='<h3 style="font-family:var(--fd);font-size:20px;margin-bottom:16px"><i class="fa-solid fa-chart-line" style="color:var(--blue)"></i> Suivi corporel — '+h(m?m.name:'')+'</h3>';if(!entries.length){html+='<div class="empty"><i class="fa-solid fa-chart-line"></i><p>Aucune mesure enregistrée par ce client.</p></div>';}else{html+='<div style="display:flex;flex-direction:column;gap:10px">'+entries.map(e=>'<div class="body-entry" style="margin:0"><span class="be-date">'+fmtDate(e.date)+'</span><div class="be-metrics">'+(e.poids?'<span class="be-metric"><strong>'+e.poids+'</strong> kg</span>':'')+(e.taille?' <span class="be-metric">Taille: <strong>'+e.taille+'</strong>cm</span>':'')+(e.bras?' <span class="be-metric">Bras: <strong>'+e.bras+'</strong>cm</span>':'')+(e.cuisse?' <span class="be-metric">Cuisse: <strong>'+e.cuisse+'</strong>cm</span>':'')+(e.hanches?' <span class="be-metric">Hanches: <strong>'+e.hanches+'</strong>cm</span>':'')+(e.mg?' <span class="be-metric">MG: <strong>'+e.mg+'</strong>%</span>':'')+'</div></div>').join('')+'</div>';}document.getElementById('modal-content').innerHTML=html;openModal();}
 
@@ -4989,6 +5028,436 @@ function dismissInstall(){localStorage.setItem('nc3_install_dismissed','1');docu
   doGS=function(q){_doGS(q);try{if(!q||!q.trim())return;const ql=q.toLowerCase();const extra=[];(canSection('tips')?DB.getArr('tips'):[]).forEach(t=>{if((t.title||'').toLowerCase().includes(ql)||(t.content||'').toLowerCase().includes(ql))extra.push({icon:t.icon||'💡',title:t.title,sub:t.theme,action:"gotoS('tips')"});});const el=document.getElementById('gs-results');if(extra.length&&el&&!el.querySelector('.gs-empty')){el.insertAdjacentHTML('beforeend',extra.slice(0,4).map(r=>'<div class="gs-row" onclick="'+r.action+';closeGS()"><div class="gs-ri">'+r.icon+'</div><div><div class="gs-rt">'+h(r.title)+'</div><div class="gs-rs">'+h(r.sub||'')+'</div></div></div>').join(''));}}catch(e){}};
 })();
 document.addEventListener('DOMContentLoaded',setupPWA);
+// SEED ENTRAÎNEMENT — bibliothèque d'exercices + templates (additif, par id)
+function seedTraining(){
+  if(DB.get('seeded_train'))return;
+  const E=(id,nom,groupe,materiel,niveau,consignes,securite,video)=>({id,nom,groupe,materiel,niveau,consignes,securite,video:video||''});
+  const EXOS=[
+    // PECTORAUX
+    E(1,"Développé couché barre","Pectoraux","Barre","Intermédiaire","Allongé, omoplates serrées et basses, pieds ancrés. Descends la barre au niveau des tétons en contrôlant (2-3 s), puis pousse jusqu'à extension sans verrouiller violemment les coudes.","Garde toujours les poignets dans l'axe des avant-bras. Utilise un pareur ou des butées de sécurité pour les charges lourdes.",""),
+    E(2,"Développé incliné haltères","Pectoraux","Haltères","Intermédiaire","Banc à 30°, haltères au niveau des épaules. Pousse en rapprochant légèrement les haltères en haut, contrôle la descente jusqu'à un bon étirement des pectoraux.","Ne descends pas plus bas que confortable pour l'épaule. Démarre léger pour maîtriser l'équilibre.",""),
+    E(3,"Pompes","Pectoraux","Poids du corps","Débutant","Corps gainé en planche, mains un peu plus larges que les épaules. Descends la poitrine près du sol en gardant le corps droit, remonte en poussant.","Ne laisse pas les hanches s'affaisser. Variante sur genoux si trop difficile.",""),
+    E(4,"Écarté poulie / pec deck","Pectoraux","Poulie","Débutant","Mouvement d'ouverture/fermeture contrôlé, coudes légèrement fléchis et fixes. Cherche l'étirement puis la contraction du pectoral.","Pas de à-coups en position étirée. Amplitude confortable pour l'épaule.",""),
+    E(5,"Dips lestés (pecs)","Pectoraux","Poids du corps","Avancé","Buste penché vers l'avant, descends jusqu'à un étirement des pectoraux, remonte en poussant. Penche-toi pour cibler les pecs plutôt que les triceps.","Évite de descendre trop bas si tu sens une tension à l'avant de l'épaule.",""),
+    // DOS
+    E(6,"Tractions pronation","Dos","Poids du corps","Avancé","Suspendu prise large, tire en amenant la poitrine vers la barre, coudes vers le bas. Contrôle la descente jusqu'à extension complète.","Évite de te balancer. Utilise un élastique d'assistance si besoin.",""),
+    E(7,"Tirage vertical poulie","Dos","Poulie","Débutant","Assis, tire la barre vers le haut de la poitrine en descendant les coudes, omoplates qui glissent vers le bas. Contrôle la remontée.","Ne tire pas derrière la nuque. Garde le buste quasi droit, léger recul.",""),
+    E(8,"Rowing barre buste penché","Dos","Barre","Intermédiaire","Buste penché ~45°, dos neutre et gainé. Tire la barre vers le nombril, coudes le long du corps, contrôle la descente.","Garde le dos plat (jamais arrondi). Charge progressive pour protéger les lombaires.",""),
+    E(9,"Rowing haltère unilatéral","Dos","Haltères","Débutant","Un genou et une main sur le banc, dos plat. Tire l'haltère vers la hanche, coude proche du corps, contrôle la descente.","Ne tourne pas le buste pour tricher. Dos toujours neutre.",""),
+    E(10,"Soulevé de terre","Dos","Barre","Avancé","Barre proche des tibias, dos neutre, prends la barre, gaine, et pousse le sol en tirant la barre le long des jambes jusqu'à l'extension de hanche.","Le dos ne doit jamais s'arrondir. Apprends la technique léger avant de charger.",""),
+    E(11,"Tirage horizontal poulie","Dos","Poulie","Débutant","Assis, dos droit, tire la poignée vers le ventre en serrant les omoplates, contrôle le retour.","Évite de te pencher en arrière avec élan. Garde le buste stable.",""),
+    // JAMBES
+    E(12,"Squat barre","Jambes","Barre","Intermédiaire","Barre sur le haut du dos, pieds largeur épaules. Descends en poussant les hanches en arrière et fléchissant les genoux jusqu'à cuisses parallèles ou plus bas, remonte en poussant le sol.","Genoux dans l'axe des pieds, dos neutre. Utilise des butées de sécurité.",""),
+    E(13,"Presse à cuisses","Jambes","Machine","Débutant","Pieds largeur épaules sur la plateforme, descends en contrôlant jusqu'à ~90° de flexion, pousse sans verrouiller brutalement les genoux.","Ne laisse pas le bas du dos décoller du siège en bas.",""),
+    E(14,"Fentes marchées haltères","Jambes","Haltères","Intermédiaire","Un grand pas en avant, descends le genou arrière vers le sol, buste droit, pousse pour avancer sur l'autre jambe.","Genou avant aligné avec le pied. Avance sur une ligne stable.",""),
+    E(15,"Soulevé de terre roumain","Jambes","Barre","Intermédiaire","Jambes quasi tendues, pousse les hanches en arrière en descendant la barre le long des jambes jusqu'à étirement des ischios, reviens en contractant les fessiers.","Dos plat impératif. Mouvement de hanche, pas de dos.",""),
+    E(16,"Leg curl allongé","Jambes","Machine","Débutant","Allongé, fléchis les genoux pour ramener le talon vers les fessiers, contrôle la descente.","Évite de décoller le bassin pour tricher.",""),
+    E(17,"Leg extension","Jambes","Machine","Débutant","Assis, tends les genoux pour lever la charge, marque une pause en haut, contrôle la descente.","Réglage du dossier correct ; pas d'à-coups sur les genoux.",""),
+    E(18,"Hip thrust","Jambes","Barre","Intermédiaire","Haut du dos sur un banc, barre sur les hanches. Pousse les hanches vers le haut en contractant les fessiers jusqu'à alignement, contrôle la descente.","Ne creuse pas exagérément le bas du dos en haut ; rentre le menton.",""),
+    E(19,"Mollets debout","Jambes","Machine","Débutant","Monte sur la pointe des pieds le plus haut possible, marque une pause, descends en étirant le mollet.","Amplitude complète, sans rebond brusque en bas.",""),
+    E(20,"Goblet squat","Jambes","Haltères","Débutant","Tiens un haltère contre la poitrine, descends en squat profond en gardant le buste droit, remonte.","Talons au sol, genoux dans l'axe. Idéal pour apprendre le squat.",""),
+    // ÉPAULES
+    E(21,"Développé militaire barre","Épaules","Barre","Intermédiaire","Debout, barre au niveau des clavicules, gaine les abdos et fessiers, pousse au-dessus de la tête sans cambrer, contrôle la descente.","Évite l'hyperextension lombaire ; gaine bien la sangle abdominale.",""),
+    E(22,"Développé épaules haltères","Épaules","Haltères","Débutant","Assis ou debout, haltères au niveau des oreilles, pousse vers le haut en contrôlant, descends jusqu'aux oreilles.","Ne descends pas trop bas si l'épaule tire. Garde les poignets droits.",""),
+    E(23,"Élévations latérales","Épaules","Haltères","Débutant","Lève les haltères sur les côtés jusqu'à l'horizontale, coudes légèrement fléchis, contrôle la descente.","Charge légère, pas d'élan. Le mouvement vient de l'épaule, pas du dos.",""),
+    E(24,"Oiseau (deltoïde postérieur)","Épaules","Haltères","Débutant","Buste penché, écarte les bras sur les côtés en serrant l'arrière des épaules, contrôle le retour.","Garde le dos plat ; charge légère pour bien cibler.",""),
+    E(25,"Face pull poulie","Épaules","Poulie","Débutant","Tire la corde vers le visage en écartant les mains, coudes hauts, serre l'arrière des épaules.","Mouvement lent et contrôlé ; excellent pour la santé de l'épaule.",""),
+    // BRAS
+    E(26,"Curl barre biceps","Bras","Barre","Débutant","Debout, coudes fixes le long du corps, fléchis les bras pour monter la barre, contrôle la descente.","Évite de balancer le buste. Coudes immobiles.",""),
+    E(27,"Curl haltères alterné","Bras","Haltères","Débutant","Monte un haltère en supinant le poignet, contrôle, alterne. Coudes fixes.","Pas d'élan d'épaule ; contraction contrôlée.",""),
+    E(28,"Curl marteau","Bras","Haltères","Débutant","Prise neutre (paumes face à face), fléchis les bras, contrôle la descente. Cible le brachial et l'avant-bras.","Coudes stables, charge maîtrisée.",""),
+    E(29,"Extension triceps poulie","Bras","Poulie","Débutant","Coudes collés au corps, tends les bras vers le bas, contrôle la remontée.","Coudes fixes ; n'ouvre pas les épaules.",""),
+    E(30,"Barre au front (skull crusher)","Bras","Barre","Intermédiaire","Allongé, bras tendus, fléchis les coudes pour descendre la barre vers le front, puis tends.","Coudes fixes pointés vers le haut ; contrôle pour protéger les coudes.",""),
+    E(31,"Dips triceps banc","Bras","Poids du corps","Débutant","Mains sur un banc derrière toi, descends en pliant les coudes, remonte en poussant.","Ne descends pas trop bas pour l'épaule ; coudes vers l'arrière.",""),
+    // ABDOS
+    E(32,"Gainage planche","Abdos","Poids du corps","Débutant","Appui sur les avant-bras et pointes de pieds, corps parfaitement aligné, gaine sans creuser le dos. Tiens la position.","Ne laisse pas les hanches monter ni s'affaisser. Respire.",""),
+    E(33,"Crunch","Abdos","Poids du corps","Débutant","Allongé genoux fléchis, enroule le buste pour décoller les omoplates, contrôle la descente.","Ne tire pas sur la nuque ; le mouvement vient des abdos.",""),
+    E(34,"Relevé de jambes suspendu","Abdos","Poids du corps","Avancé","Suspendu à la barre, monte les jambes (tendues ou genoux) en enroulant le bassin, contrôle la descente.","Évite le balancement ; contrôle total.",""),
+    E(35,"Mountain climbers","Abdos","Poids du corps","Débutant","En position de planche haute, ramène alternativement les genoux vers la poitrine de façon dynamique.","Garde les hanches basses et le gainage actif.",""),
+    E(36,"Roue abdominale (ab wheel)","Abdos","Poids du corps","Avancé","À genoux, déroule la roue vers l'avant en gainant, puis reviens en contractant les abdos.","Ne cambre jamais le bas du dos ; amplitude progressive.",""),
+    // FULL BODY / FONCTIONNEL
+    E(37,"Kettlebell swing","Full body","Kettlebell","Intermédiaire","Mouvement de hanche explosif : projette la kettlebell vers l'avant via l'extension de hanche, pas avec les bras. Dos neutre.","Le dos reste plat ; la puissance vient des hanches et fessiers.",""),
+    E(38,"Thruster haltères","Full body","Haltères","Intermédiaire","Squat avec haltères aux épaules, puis en remontant enchaîne un développé au-dessus de la tête.","Gaine bien ; enchaîne fluide sans cambrer.",""),
+    E(39,"Burpees","Full body","Poids du corps","Intermédiaire","Descends en planche, pompe (optionnelle), reviens et saute. Mouvement complet et dynamique.","Adapte le rythme à ta condition ; réceptions souples.",""),
+    E(40,"Soulevé de terre kettlebell","Full body","Kettlebell","Débutant","Charnière de hanche, dos neutre, soulève la kettlebell entre les jambes jusqu'à extension.","Dos plat ; mouvement de hanche, pas de dos.",""),
+    // CARDIO
+    E(41,"Course / tapis","Cardio","Machine","Débutant","Course à allure régulière (LISS) ou par intervalles selon la consigne. Maintiens une posture droite et une foulée souple.","Échauffe-toi progressivement ; hydrate-toi.",""),
+    E(42,"Rameur","Cardio","Machine","Débutant","Séquence jambes → buste → bras à l'aller, puis bras → buste → jambes au retour. Dos droit.","Ne tire pas tout avec le dos ; la puissance vient des jambes.",""),
+    E(43,"Vélo / assault bike","Cardio","Machine","Débutant","Pédalage régulier ou en intervalles. Ajuste la résistance selon l'objectif.","Réglage de selle correct pour les genoux.",""),
+    E(44,"Corde à sauter","Cardio","Poids du corps","Débutant","Sauts légers sur la pointe des pieds, poignets qui font tourner la corde, rythme régulier.","Réceptions souples ; surface adaptée.",""),
+    E(45,"Sprint sur place / montées de genoux","Cardio","Poids du corps","Débutant","Monte les genoux rapidement en restant gainé, bras actifs. Idéal en finisher ou HIIT.","Adapte l'intensité ; réceptions souples.",""),
+    E(46,"Marche inclinée","Cardio","Machine","Débutant","Marche rapide sur tapis incliné, posture droite, sans t'accrocher aux poignées.","Garde une allure où tu peux encore parler (zone 2).","")
+  ];
+  const exMap={};EXOS.forEach(e=>exMap[e.nom]=e.id);
+  const X=n=>exMap[n];
+  // exo de programme : {exId,series,reps,charge,tempo,repos,note,ss,cardio}
+  const ex=(nom,series,reps,charge,repos,note,ss)=>({exId:X(nom),series,reps,charge:charge||'',tempo:'',repos:repos||'90s',note:note||'',ss:ss||'',cardio:null});
+  const cardio=(type,dur,desc)=>({exId:null,series:1,reps:'',charge:'',tempo:'',repos:'',note:'',ss:'',cardio:{type,dur:dur||'',desc:desc||''}});
+  const PROGS=[
+    {id:1,isTemplate:true,nom:"Full Body Débutant 3 jours",objectif:"Remise en forme",niveau:"Débutant",dureeSem:6,seances:[
+      {nom:"Séance A",exos:[ex("Goblet squat","3","10-12","","90s","Apprends le mouvement, contrôle la descente"),ex("Développé couché barre","3","8-10","","120s",""),ex("Tirage vertical poulie","3","10-12","","90s",""),ex("Développé épaules haltères","3","10-12","","90s",""),ex("Gainage planche","3","30-45 s","","60s","")]},
+      {nom:"Séance B",exos:[ex("Soulevé de terre roumain","3","8-10","","120s","Dos plat"),ex("Pompes","3","8-12","","90s","Sur genoux si besoin"),ex("Rowing haltère unilatéral","3","10-12","","90s",""),ex("Élévations latérales","3","12-15","","60s",""),ex("Crunch","3","15","","45s","")]},
+      {nom:"Séance C",exos:[ex("Presse à cuisses","3","12","","90s",""),ex("Développé incliné haltères","3","10-12","","90s",""),ex("Tirage horizontal poulie","3","12","","90s",""),ex("Curl haltères alterné","3","12","","60s",""),ex("Extension triceps poulie","3","12","","60s","")]}
+    ]},
+    {id:2,isTemplate:true,nom:"Upper / Lower 4 jours",objectif:"Prise de masse",niveau:"Intermédiaire",dureeSem:8,seances:[
+      {nom:"Upper A",exos:[ex("Développé couché barre","4","6-8","","150s",""),ex("Rowing barre buste penché","4","8-10","","120s",""),ex("Développé militaire barre","3","8-10","","120s",""),ex("Tirage vertical poulie","3","10-12","","90s",""),ex("Curl barre biceps","3","10-12","","60s","",""),ex("Extension triceps poulie","3","10-12","","60s","")]},
+      {nom:"Lower A",exos:[ex("Squat barre","4","6-8","","180s",""),ex("Soulevé de terre roumain","3","8-10","","150s",""),ex("Presse à cuisses","3","12","","120s",""),ex("Leg curl allongé","3","12","","90s",""),ex("Mollets debout","4","15","","45s","")]},
+      {nom:"Upper B",exos:[ex("Développé incliné haltères","4","8-10","","120s",""),ex("Tractions pronation","4","6-10","","120s","Élastique si besoin"),ex("Développé épaules haltères","3","10-12","","90s",""),ex("Face pull poulie","3","15","","60s",""),ex("Curl marteau","3","12","","60s",""),ex("Barre au front (skull crusher)","3","10-12","","60s","")]},
+      {nom:"Lower B",exos:[ex("Hip thrust","4","8-10","","120s",""),ex("Fentes marchées haltères","3","10-12","","90s",""),ex("Leg extension","3","15","","60s",""),ex("Leg curl allongé","3","12","","90s",""),ex("Gainage planche","3","45 s","","60s","")]}
+    ]},
+    {id:3,isTemplate:true,nom:"Push / Pull / Legs 6 jours",objectif:"Prise de masse",niveau:"Avancé",dureeSem:8,seances:[
+      {nom:"Push",exos:[ex("Développé couché barre","4","6-8","","150s",""),ex("Développé incliné haltères","3","8-10","","120s",""),ex("Développé militaire barre","3","8-10","","120s",""),ex("Élévations latérales","4","12-15","","45s","","A"),ex("Écarté poulie / pec deck","3","12-15","","60s","","A"),ex("Extension triceps poulie","4","10-12","","60s","")]},
+      {nom:"Pull",exos:[ex("Soulevé de terre","3","5","","180s","Échauffe-toi bien"),ex("Tractions pronation","4","6-10","","120s",""),ex("Rowing barre buste penché","4","8-10","","120s",""),ex("Face pull poulie","3","15","","60s",""),ex("Curl barre biceps","4","10-12","","60s",""),ex("Curl marteau","3","12","","60s","")]},
+      {nom:"Legs",exos:[ex("Squat barre","4","6-8","","180s",""),ex("Presse à cuisses","3","12","","120s",""),ex("Soulevé de terre roumain","3","8-10","","150s",""),ex("Leg curl allongé","3","12","","90s",""),ex("Leg extension","3","15","","60s",""),ex("Mollets debout","4","15","","45s","")]}
+    ]}
+  ];
+  const exos=DB.getArr('exercices');if(!exos.some(e=>e.id<=46&&e.nom)){EXOS.forEach(e=>{if(!exos.some(x=>x.id===e.id))exos.push(e);});DB.set('exercices',exos);}
+  const progs=DB.getArr('programmes');PROGS.forEach(p=>{if(!progs.some(x=>x.id===p.id))progs.push(p);});DB.set('programmes',progs);
+  DB.set('seeded_train',true);
+}
+// ============================================================
+// MODULE ENTRAÎNEMENT — coach (exercices, programmes, attribution, suivi)
+// + client (vue programme, mode séance live, historique/progression)
+// Clés cloud : exercices, programmes (partagées) ; assign_<code>, workouts_<code> (par membre)
+// ============================================================
+const EXO_GROUPES=['Pectoraux','Dos','Jambes','Épaules','Bras','Abdos','Full body','Cardio'];
+const EXO_MATERIEL=['Barre','Haltères','Machine','Poulie','Poids du corps','Élastique','Kettlebell'];
+const EXO_NIVEAUX=['Débutant','Intermédiaire','Avancé'];
+const PROG_OBJECTIFS=['Prise de masse','Perte de gras','Force','Remise en forme','Recomposition'];
+const GRP_ICON={Pectoraux:'🫀',Dos:'🔙',Jambes:'🦵',Épaules:'🤷',Bras:'💪',Abdos:'🧱','Full body':'🏋️',Cardio:'❤️‍🔥'};
+function exById(id){return DB.getArr('exercices').find(x=>x.id===id);}
+function progById(id){return DB.getArr('programmes').find(x=>x.id===id);}
+
+// ============================================================
+// ADMIN — BIBLIOTHÈQUE D'EXERCICES
+// ============================================================
+let editExoId=null,exoFilterG='all',exoFilterM='all',exoFilterN='all';
+function saveExo(){
+  const nom=(document.getElementById('exo-nom').value||'').trim();
+  if(!nom){toast('Nom requis','error');return;}
+  const obj={nom,groupe:document.getElementById('exo-groupe').value,materiel:document.getElementById('exo-materiel').value,niveau:document.getElementById('exo-niveau').value,consignes:(document.getElementById('exo-consignes').value||'').trim(),securite:(document.getElementById('exo-securite').value||'').trim(),video:(document.getElementById('exo-video').value||'').trim()};
+  const list=DB.getArr('exercices');
+  if(editExoId){const e=list.find(x=>x.id===editExoId);if(e)Object.assign(e,obj);toast('Exercice mis à jour ✅','success');}
+  else{list.push(Object.assign({id:Date.now()},obj));toast('Exercice ajouté ✅','success');}
+  DB.set('exercices',list);cancelExo();renderAExos();
+}
+function editExo(id){
+  const e=exById(id);if(!e)return;editExoId=id;
+  document.getElementById('exo-nom').value=e.nom||'';
+  document.getElementById('exo-groupe').value=e.groupe||'Pectoraux';
+  document.getElementById('exo-materiel').value=e.materiel||'Barre';
+  document.getElementById('exo-niveau').value=e.niveau||'Débutant';
+  document.getElementById('exo-consignes').value=e.consignes||'';
+  document.getElementById('exo-securite').value=e.securite||'';
+  document.getElementById('exo-video').value=e.video||'';
+  document.getElementById('exo-form-title').textContent='Modifier l’exercice';
+  document.getElementById('save-exo-txt').textContent='Enregistrer';
+  document.getElementById('cancel-exo-btn').style.display='inline-flex';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function cancelExo(){editExoId=null;['exo-nom','exo-consignes','exo-securite','exo-video'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});const t=document.getElementById('exo-form-title');if(t)t.textContent='Nouvel exercice';const s=document.getElementById('save-exo-txt');if(s)s.textContent='Ajouter';const c=document.getElementById('cancel-exo-btn');if(c)c.style.display='none';}
+function delExo(id){if(!confirm('Supprimer cet exercice ?'))return;if(editExoId===id)cancelExo();DB.set('exercices',DB.getArr('exercices').filter(x=>x.id!==id));renderAExos();toast('Supprimé');}
+function renderAExos(){
+  const list=document.getElementById('admin-exos-list');if(!list)return;
+  const q=(document.getElementById('exo-search')?.value||'').toLowerCase();
+  let exos=DB.getArr('exercices').slice().sort((a,b)=>a.nom.localeCompare(b.nom));
+  if(exoFilterG!=='all')exos=exos.filter(e=>e.groupe===exoFilterG);
+  if(exoFilterM!=='all')exos=exos.filter(e=>e.materiel===exoFilterM);
+  if(exoFilterN!=='all')exos=exos.filter(e=>e.niveau===exoFilterN);
+  if(q)exos=exos.filter(e=>e.nom.toLowerCase().includes(q));
+  const gf=document.getElementById('exo-filter-g');if(gf&&!gf.dataset.f){gf.dataset.f='1';gf.innerHTML='<option value="all">Tous groupes</option>'+EXO_GROUPES.map(g=>'<option>'+g+'</option>').join('');gf.onchange=()=>{exoFilterG=gf.value;renderAExos();};}
+  const mf=document.getElementById('exo-filter-m');if(mf&&!mf.dataset.f){mf.dataset.f='1';mf.innerHTML='<option value="all">Tout matériel</option>'+EXO_MATERIEL.map(g=>'<option>'+g+'</option>').join('');mf.onchange=()=>{exoFilterM=mf.value;renderAExos();};}
+  const nf=document.getElementById('exo-filter-n');if(nf&&!nf.dataset.f){nf.dataset.f='1';nf.innerHTML='<option value="all">Tous niveaux</option>'+EXO_NIVEAUX.map(g=>'<option>'+g+'</option>').join('');nf.onchange=()=>{exoFilterN=nf.value;renderAExos();};}
+  const cnt=document.getElementById('exo-count');if(cnt)cnt.textContent=exos.length+' exercice'+(exos.length>1?'s':'');
+  if(!exos.length){list.innerHTML='<div class="empty"><i class="fa-solid fa-dumbbell"></i><p>Aucun exercice.</p></div>';return;}
+  list.innerHTML=exos.map(e=>'<div class="ali"><div class="ali-icon">'+(GRP_ICON[e.groupe]||'🏋️')+'</div><div style="flex:1;min-width:0"><div class="ali-title">'+h(e.nom)+(e.video?' <i class="fa-solid fa-circle-play" style="color:var(--blue);font-size:12px"></i>':'')+'</div><div class="ali-meta">'+h(e.groupe)+' · '+h(e.materiel)+' · '+h(e.niveau)+'</div></div><div class="ali-actions"><button class="btn-edit btn-sm" onclick="editExo('+e.id+')"><i class="fa-solid fa-pen"></i></button><button class="btn-del btn-sm" onclick="delExo('+e.id+')"><i class="fa-solid fa-trash"></i></button></div></div>').join('');
+}
+
+// ============================================================
+// ADMIN — BUILDER DE PROGRAMMES
+// ============================================================
+let progDraft=null; // {id,nom,objectif,niveau,dureeSem,isTemplate,seances:[{nom,exos:[...]}]}
+function renderAProgs(){
+  const list=document.getElementById('admin-progs-list');if(!list)return;
+  const progs=DB.getArr('programmes');
+  if(!progs.length){list.innerHTML='<div class="empty"><i class="fa-solid fa-clipboard-list"></i><p>Aucun programme. Crée ton premier programme ci-dessus.</p></div>';return;}
+  list.innerHTML=progs.map(p=>{const nEx=(p.seances||[]).reduce((s,se)=>s+(se.exos||[]).length,0);
+    return '<div class="ali"><div class="ali-icon">📋</div><div style="flex:1;min-width:0"><div class="ali-title">'+h(p.nom)+(p.isTemplate?' <span style="background:var(--gold-light);color:var(--gold);font-size:9px;font-weight:700;padding:2px 8px;border-radius:10px">MODÈLE</span>':'')+'</div><div class="ali-meta">'+h(p.objectif||'')+' · '+h(p.niveau||'')+' · '+(p.seances||[]).length+' séances · '+nEx+' exos</div></div><div class="ali-actions"><button class="btn-edit btn-sm" onclick="editProg('+p.id+')" title="Éditer"><i class="fa-solid fa-pen"></i></button><button class="btn-edit btn-sm" onclick="dupProg('+p.id+')" title="Dupliquer"><i class="fa-solid fa-copy"></i></button><button class="btn-del btn-sm" onclick="delProg('+p.id+')"><i class="fa-solid fa-trash"></i></button></div></div>';
+  }).join('');
+}
+function newProg(){progDraft={id:Date.now(),nom:'',objectif:'Prise de masse',niveau:'Débutant',dureeSem:6,isTemplate:true,seances:[]};openProgBuilder();}
+function editProg(id){const p=progById(id);if(!p)return;progDraft=JSON.parse(JSON.stringify(p));openProgBuilder();}
+function dupProg(id){const p=progById(id);if(!p)return;const progs=DB.getArr('programmes');progs.push(Object.assign(JSON.parse(JSON.stringify(p)),{id:Date.now(),nom:p.nom+' (copie)'}));DB.set('programmes',progs);renderAProgs();toast('Programme dupliqué ✅','success');}
+function delProg(id){if(!confirm('Supprimer ce programme ?\n(Les clients déjà attribués gardent leur copie.)'))return;DB.set('programmes',DB.getArr('programmes').filter(x=>x.id!==id));renderAProgs();toast('Supprimé');}
+function openProgBuilder(){
+  const p=progDraft;const iSt='width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:10px;background:var(--bg2);color:var(--text);font-size:16px';
+  let html='<button class="back-btn" onclick="closeProgBuilder()"><i class="fa-solid fa-arrow-left"></i> Retour aux programmes</button>'
+   +'<div class="afc"><h3>'+(progById(p.id)?'Modifier':'Nouveau')+' programme</h3>'
+   +'<div class="r2"><div class="fg2"><label>Nom</label><input type="text" id="pb-nom" value="'+escA(p.nom)+'" placeholder="Ex : Prise de masse 4 jours" style="'+iSt+'"></div><div class="fg2"><label>Objectif</label><select id="pb-obj" style="'+iSt+'">'+PROG_OBJECTIFS.map(o=>'<option '+(p.objectif===o?'selected':'')+'>'+o+'</option>').join('')+'</select></div></div>'
+   +'<div class="r3"><div class="fg2"><label>Niveau</label><select id="pb-niv" style="'+iSt+'">'+EXO_NIVEAUX.map(n=>'<option '+(p.niveau===n?'selected':'')+'>'+n+'</option>').join('')+'</select></div><div class="fg2"><label>Durée (semaines)</label><input type="number" id="pb-duree" value="'+(p.dureeSem||6)+'" min="1" max="52" style="'+iSt+'"></div><div class="fg2"><label>Modèle réutilisable</label><select id="pb-tpl" style="'+iSt+'"><option value="1" '+(p.isTemplate?'selected':'')+'>Oui (template)</option><option value="0" '+(!p.isTemplate?'selected':'')+'>Non</option></select></div></div>'
+   +'</div>'
+   +'<div id="pb-seances"></div>'
+   +'<button class="btn-sec" onclick="pbAddSeance()" style="width:100%;justify-content:center;margin-bottom:16px"><i class="fa-solid fa-plus"></i> Ajouter une séance</button>'
+   +'<div class="fa-row"><button class="btn" onclick="saveProgDraft()"><i class="fa-solid fa-save"></i> Enregistrer le programme</button></div>';
+  document.getElementById('aprog-builder').innerHTML=html;
+  document.getElementById('aprog-list-wrap').style.display='none';
+  document.getElementById('aprog-builder').style.display='block';
+  pbRenderSeances();
+}
+function closeProgBuilder(){progDraft=null;document.getElementById('aprog-builder').style.display='none';document.getElementById('aprog-list-wrap').style.display='block';renderAProgs();}
+function pbSyncMeta(){if(!progDraft)return;progDraft.nom=document.getElementById('pb-nom').value;progDraft.objectif=document.getElementById('pb-obj').value;progDraft.niveau=document.getElementById('pb-niv').value;progDraft.dureeSem=parseInt(document.getElementById('pb-duree').value)||6;progDraft.isTemplate=document.getElementById('pb-tpl').value==='1';}
+function pbAddSeance(){pbSyncMeta();progDraft.seances.push({nom:'Séance '+String.fromCharCode(65+progDraft.seances.length),exos:[]});pbRenderSeances();}
+function pbDelSeance(i){if(!confirm('Supprimer cette séance ?'))return;progDraft.seances.splice(i,1);pbRenderSeances();}
+function pbRenderSeances(){
+  const host=document.getElementById('pb-seances');if(!host)return;
+  if(!progDraft.seances.length){host.innerHTML='<div class="empty" style="padding:30px"><p>Ajoute ta première séance ci-dessous.</p></div>';return;}
+  host.innerHTML=progDraft.seances.map((se,si)=>{
+    const exoRows=(se.exos||[]).map((ex,xi)=>{
+      const e=ex.cardio?null:exById(ex.exId);
+      const nm=ex.cardio?('🔥 Cardio — '+(ex.cardio.type||'libre').toUpperCase()):(e?e.nom:'(exercice supprimé)');
+      const detail=ex.cardio?('<input type="text" value="'+escA(ex.cardio.dur||'')+'" oninput="pbEx('+si+','+xi+',\'cardioDur\',this.value)" placeholder="Durée (ex : 4 rounds, 10 min)" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-size:16px;margin-top:6px"><input type="text" value="'+escA(ex.cardio.desc||'')+'" oninput="pbEx('+si+','+xi+',\'cardioDesc\',this.value)" placeholder="Consigne (ex : 20s effort / 10s repos)" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-size:16px;margin-top:6px">')
+        :('<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:6px"><input type="text" value="'+escA(ex.series||'')+'" oninput="pbEx('+si+','+xi+',\'series\',this.value)" placeholder="Séries" style="padding:8px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-size:16px"><input type="text" value="'+escA(ex.reps||'')+'" oninput="pbEx('+si+','+xi+',\'reps\',this.value)" placeholder="Reps" style="padding:8px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-size:16px"><input type="text" value="'+escA(ex.charge||'')+'" oninput="pbEx('+si+','+xi+',\'charge\',this.value)" placeholder="Charge" style="padding:8px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-size:16px"></div>'
+          +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px"><input type="text" value="'+escA(ex.repos||'')+'" oninput="pbEx('+si+','+xi+',\'repos\',this.value)" placeholder="Repos (ex : 90s)" style="padding:8px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-size:16px"><input type="text" value="'+escA(ex.ss||'')+'" oninput="pbEx('+si+','+xi+',\'ss\',this.value)" placeholder="Superset (A,B...)" style="padding:8px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-size:16px"></div>'
+          +'<input type="text" value="'+escA(ex.note||'')+'" oninput="pbEx('+si+','+xi+',\'note\',this.value)" placeholder="Note du coach (optionnel)" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-size:16px;margin-top:6px">');
+      return '<div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px;margin-bottom:8px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:2px"><span style="font-weight:700;font-size:13px;flex:1">'+(ex.ss?'<span style="background:var(--blue-light);color:var(--blue);font-size:10px;font-weight:700;padding:1px 7px;border-radius:8px;margin-right:5px">SS '+h(ex.ss)+'</span>':'')+h(nm)+'</span><button onclick="pbMoveEx('+si+','+xi+',-1)" style="background:none;border:none;color:var(--text3);cursor:pointer;padding:3px"><i class="fa-solid fa-arrow-up"></i></button><button onclick="pbMoveEx('+si+','+xi+',1)" style="background:none;border:none;color:var(--text3);cursor:pointer;padding:3px"><i class="fa-solid fa-arrow-down"></i></button><button onclick="pbDelEx('+si+','+xi+')" style="background:none;border:none;color:var(--red);cursor:pointer;padding:3px"><i class="fa-solid fa-xmark"></i></button></div>'+detail+'</div>';
+    }).join('');
+    return '<div class="afc" style="padding:16px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:12px"><input type="text" value="'+escA(se.nom)+'" oninput="pbSeanceNom('+si+',this.value)" style="flex:1;padding:9px 12px;border:1.5px solid var(--border);border-radius:10px;background:var(--bg2);color:var(--text);font-size:16px;font-weight:700"><button class="btn-del btn-sm" onclick="pbDelSeance('+si+')"><i class="fa-solid fa-trash"></i></button></div>'
+     +exoRows
+     +'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px"><button class="btn-al" onclick="pbPickExo('+si+')"><i class="fa-solid fa-plus"></i> Exercice</button><button class="btn-al" style="background:var(--red-light);color:var(--red)" onclick="pbAddCardio('+si+')"><i class="fa-solid fa-heart-pulse"></i> Bloc cardio/HIIT</button></div></div>';
+  }).join('');
+}
+function pbSeanceNom(si,v){progDraft.seances[si].nom=v;}
+function pbEx(si,xi,field,v){const ex=progDraft.seances[si].exos[xi];if(field==='cardioDur'){ex.cardio.dur=v;}else if(field==='cardioDesc'){ex.cardio.desc=v;}else{ex[field]=v;}}
+function pbDelEx(si,xi){progDraft.seances[si].exos.splice(xi,1);pbRenderSeances();}
+function pbMoveEx(si,xi,dir){const a=progDraft.seances[si].exos;const ni=xi+dir;if(ni<0||ni>=a.length)return;const t=a[xi];a[xi]=a[ni];a[ni]=t;pbRenderSeances();}
+function pbAddCardio(si){progDraft.seances[si].exos.push({exId:null,series:1,reps:'',charge:'',tempo:'',repos:'',note:'',ss:'',cardio:{type:'tabata',dur:'',desc:''}});pbRenderSeances();}
+let _pbPickSi=null;
+function pbPickExo(si){
+  _pbPickSi=si;
+  const exos=DB.getArr('exercices').slice().sort((a,b)=>a.nom.localeCompare(b.nom));
+  document.getElementById('modal-content').innerHTML='<h3 style="font-family:var(--fd);font-size:18px;margin-bottom:10px">Choisir un exercice</h3><div class="sbar" style="margin-bottom:10px"><i class="fa-solid fa-magnifying-glass"></i><input type="text" id="pbpick-s" placeholder="Rechercher..." oninput="pbPickFilter()"></div><div id="pbpick-list" style="max-height:360px;overflow-y:auto"></div>';
+  openModal();pbPickRender(exos);setTimeout(()=>document.getElementById('pbpick-s')?.focus(),80);
+}
+function pbPickRender(list){const el=document.getElementById('pbpick-list');if(!el)return;el.innerHTML=list.map(e=>'<div onclick="pbAddExo('+e.id+')" style="display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid var(--border2);cursor:pointer"><span style="font-size:18px">'+(GRP_ICON[e.groupe]||'🏋️')+'</span><div style="flex:1"><div style="font-size:14px;font-weight:600">'+h(e.nom)+'</div><div style="font-size:11px;color:var(--text3)">'+h(e.groupe)+' · '+h(e.materiel)+'</div></div><i class="fa-solid fa-plus" style="color:var(--blue)"></i></div>').join('')||'<div class="empty" style="padding:24px"><p>Aucun exercice.</p></div>';}
+function pbPickFilter(){const q=(document.getElementById('pbpick-s').value||'').toLowerCase();pbPickRender(DB.getArr('exercices').filter(e=>e.nom.toLowerCase().includes(q)).sort((a,b)=>a.nom.localeCompare(b.nom)));}
+function pbAddExo(id){progDraft.seances[_pbPickSi].exos.push({exId:id,series:'3',reps:'10',charge:'',tempo:'',repos:'90s',note:'',ss:'',cardio:null});closeModal();pbRenderSeances();}
+function saveProgDraft(){
+  pbSyncMeta();
+  if(!progDraft.nom.trim()){toast('Donne un nom au programme','error');return;}
+  if(!progDraft.seances.length){toast('Ajoute au moins une séance','error');return;}
+  const progs=DB.getArr('programmes');const i=progs.findIndex(x=>x.id===progDraft.id);
+  if(i>=0)progs[i]=progDraft;else progs.push(progDraft);
+  DB.set('programmes',progs);toast('Programme enregistré ✅','success');closeProgBuilder();
+}
+
+// ============================================================
+// ATTRIBUTION + SUIVI CLIENT (admin, depuis la fiche)
+// ============================================================
+function aKey(c){return 'assign_'+c;}
+function wKey(c){return 'workouts_'+c;}
+function openTrainingClient(code){
+  const m=DB.getArr('members').find(x=>x.code===code);if(!m)return;
+  const assign=DB.get(aKey(code));const workouts=DB.getArr(wKey(code));
+  const progs=DB.getArr('programmes');
+  let html='<h3 style="font-family:var(--fd);font-size:19px;margin-bottom:4px"><i class="fa-solid fa-dumbbell" style="color:var(--blue)"></i> Entraînement — '+h(m.name)+'</h3>';
+  // attribution
+  html+='<div style="background:var(--bg2);border-radius:12px;padding:14px;margin:12px 0"><div style="font-size:12px;font-weight:700;text-transform:uppercase;color:var(--text2);margin-bottom:8px">Attribuer un programme</div><div style="display:flex;gap:8px;flex-wrap:wrap"><select id="assign-prog" class="pc-cat" style="flex:1;min-width:0;font-size:16px"><option value="">— Choisir —</option>'+progs.map(p=>'<option value="'+p.id+'">'+h(p.nom)+'</option>').join('')+'</select><input type="date" id="assign-date" value="'+localDate()+'" style="padding:9px;border:1.5px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text);font-size:16px"></div><button class="btn btn-sm" style="margin-top:10px" onclick="assignProg(\''+code+'\')"><i class="fa-solid fa-check"></i> Attribuer</button></div>';
+  if(assign&&assign.prog){
+    const planned=(assign.prog.seances||[]).length;
+    const done=workouts.length;
+    const since=assign.startDate?Math.max(1,Math.ceil((Date.now()-new Date(assign.startDate+'T12:00:00'))/(7*86400000))):1;
+    const target=planned*since;
+    const adh=target?Math.min(100,Math.round(done/target*100)):0;
+    html+='<div style="border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:12px"><div style="font-weight:700;font-size:15px">'+h(assign.prog.nom)+'</div><div style="font-size:12px;color:var(--text3);margin-bottom:8px">Depuis le '+fmtDate(assign.startDate)+' · '+planned+' séances/sem</div>'
+     +'<div style="display:flex;gap:8px;flex-wrap:wrap"><div style="flex:1;min-width:90px;background:var(--bg2);border-radius:10px;padding:10px;text-align:center"><div style="font-family:var(--fd);font-size:22px;font-weight:800;color:var(--blue)">'+done+'</div><div style="font-size:11px;color:var(--text3)">séances faites</div></div><div style="flex:1;min-width:90px;background:var(--bg2);border-radius:10px;padding:10px;text-align:center"><div style="font-family:var(--fd);font-size:22px;font-weight:800;color:'+(adh>=70?'var(--green)':adh>=40?'var(--orange)':'var(--red)')+'">'+adh+'%</div><div style="font-size:11px;color:var(--text3)">adhérence</div></div></div>'
+     +'<button class="btn-del btn-sm" style="margin-top:10px" onclick="unassignProg(\''+code+'\')"><i class="fa-solid fa-xmark"></i> Retirer le programme</button></div>';
+    // historique perfs
+    if(workouts.length){
+      html+='<div style="font-size:12px;font-weight:700;text-transform:uppercase;color:var(--text2);margin:14px 0 8px">Séances réalisées</div>';
+      html+=workouts.slice().sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,12).map(w=>{
+        const dz={1:'😖',2:'😕',3:'😐',4:'🙂',5:'😄'};
+        return '<div style="border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:8px"><div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700"><span>'+h(w.seanceNom||'Séance')+'</span><span style="color:var(--text3);font-weight:500">'+fmtDate(w.date)+'</span></div><div style="font-size:12px;color:var(--text3);margin-top:3px">RPE '+(w.rpe||'—')+'/10 · énergie '+(dz[w.energy]||'—')+(w.douleur?' · douleur : '+h(w.douleur):'')+'</div>'+(w.comment?'<div style="font-size:12px;color:var(--text2);margin-top:4px;font-style:italic">« '+h(w.comment)+' »</div>':'')
+         +'<details style="margin-top:6px"><summary style="font-size:12px;color:var(--blue);cursor:pointer">Détail des charges</summary>'+(w.logs||[]).map(l=>'<div style="font-size:12px;color:var(--text2);padding:2px 0">'+h(l.nom||'')+' : '+(l.sets||[]).filter(s=>s.w||s.r).map(s=>(s.w||'?')+'×'+(s.r||'?')).join(', ')+'</div>').join('')+'</details></div>';
+      }).join('');
+    }else html+='<p style="font-size:13px;color:var(--text3);margin-top:8px">Aucune séance réalisée pour l’instant.</p>';
+  }else html+='<p style="font-size:13px;color:var(--text3)">Aucun programme attribué. Choisis-en un ci-dessus.</p>';
+  document.getElementById('modal-content').innerHTML=html;openModal();
+}
+function assignProg(code){
+  const pid=parseInt(document.getElementById('assign-prog').value);
+  const p=progById(pid);if(!p){toast('Choisis un programme','error');return;}
+  const date=document.getElementById('assign-date').value||localDate();
+  DB.set(aKey(code),{progId:p.id,prog:JSON.parse(JSON.stringify(p)),startDate:date,assignedAt:new Date().toISOString()});
+  toast('Programme attribué ✅','success');openTrainingClient(code);
+}
+function unassignProg(code){if(!confirm('Retirer le programme de ce client ?\n(Son historique de séances est conservé.)'))return;DB.set(aKey(code),null);toast('Programme retiré');openTrainingClient(code);}
+
+// ============================================================
+// CLIENT — VUE PROGRAMME
+// ============================================================
+function nextSeanceIdx(){
+  const a=DB.get(aKey(CU.code||''));if(!a||!a.prog)return 0;
+  const w=DB.getArr(wKey(CU.code||''));const n=(a.prog.seances||[]).length||1;
+  return w.length%n;
+}
+function renderTraining(){
+  const wrap=document.getElementById('training-wrap');if(!wrap||!CU)return;
+  const a=DB.get(aKey(CU.code||''));
+  if(!a||!a.prog){wrap.innerHTML='<div class="empty"><i class="fa-solid fa-dumbbell"></i><p>Aucun programme attribué pour le moment.</p><p style="font-size:13px;margin-top:6px">Ton coach va bientôt t’en créer un sur mesure 💪</p></div>';return;}
+  const prog=a.prog;const workouts=DB.getArr(wKey(CU.code||''));
+  const nextIdx=nextSeanceIdx();
+  const dz={1:'😖',2:'😕',3:'😐',4:'🙂',5:'😄'};
+  let html='<div style="background:linear-gradient(135deg,var(--dark),var(--dark2));border-radius:var(--rxl);padding:24px;margin-bottom:18px;color:#fff"><div style="font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:.07em;font-weight:700">'+h(prog.objectif||'')+' · '+h(prog.niveau||'')+'</div><div style="font-family:var(--fd);font-size:24px;font-weight:800;margin:4px 0">'+h(prog.nom)+'</div><div style="font-size:13px;color:rgba(255,255,255,.6)">'+(prog.seances||[]).length+' séances · '+(prog.dureeSem||'?')+' semaines · '+workouts.length+' séances réalisées</div></div>';
+  // séance recommandée
+  const nx=prog.seances[nextIdx];
+  if(nx)html+='<div class="na-card" onclick="startSeance('+nextIdx+')" style="margin-bottom:18px"><div class="na-icon">▶️</div><div style="flex:1"><div class="na-lbl">Ta prochaine séance</div><div class="na-title">'+h(nx.nom)+' · '+(nx.exos||[]).length+' exercices</div></div><i class="fa-solid fa-arrow-right" style="color:var(--blue);font-size:18px"></i></div>';
+  // toutes les séances
+  html+='<div style="font-family:var(--fd);font-size:16px;font-weight:700;margin-bottom:10px">Mes séances</div><div style="display:flex;flex-direction:column;gap:10px">';
+  html+=prog.seances.map((se,i)=>{
+    const lastW=workouts.filter(w=>w.seanceIdx===i).sort((a,b)=>new Date(b.date)-new Date(a.date))[0];
+    return '<div class="dbc" onclick="startSeance('+i+')" style="cursor:pointer"><div class="dbc-hdr"><div class="dbc-icon" style="background:var(--blue-light);color:var(--blue)">'+(i===nextIdx?'▶️':'🏋️')+'</div><div style="flex:1"><div class="dbc-t">'+h(se.nom)+(i===nextIdx?' <span style="font-size:10px;background:var(--blue);color:#fff;padding:2px 8px;border-radius:10px;vertical-align:middle">À FAIRE</span>':'')+'</div><div class="dbc-s">'+(se.exos||[]).length+' exercices'+(lastW?' · dernière fois le '+fmtDate(lastW.date):'')+'</div></div><i class="fa-solid fa-chevron-right" style="color:var(--text3)"></i></div></div>';
+  }).join('')+'</div>';
+  // historique + progression
+  if(workouts.length){
+    html+='<div style="font-family:var(--fd);font-size:16px;font-weight:700;margin:22px 0 10px">Ma progression</div>';
+    html+='<button class="btn-sec" style="width:100%;justify-content:center;margin-bottom:14px" onclick="openProgression()"><i class="fa-solid fa-chart-line"></i> Voir ma progression par exercice</button>';
+    html+='<div style="font-family:var(--fd);font-size:15px;font-weight:700;margin-bottom:8px">Historique récent</div>';
+    html+=workouts.slice().sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,8).map(w=>'<div style="border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:8px;background:var(--surface)"><div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700"><span>'+h(w.seanceNom||'Séance')+'</span><span style="color:var(--text3);font-weight:500">'+fmtDate(w.date)+'</span></div><div style="font-size:12px;color:var(--text3);margin-top:3px">RPE '+(w.rpe||'—')+'/10 '+(dz[w.energy]||'')+'</div></div>').join('');
+  }
+  wrap.innerHTML=html;
+}
+
+// progression par exercice (mini graph SVG)
+function openProgression(){
+  const workouts=DB.getArr(wKey(CU.code||''));
+  const byEx={};
+  workouts.slice().sort((a,b)=>new Date(a.date)-new Date(b.date)).forEach(w=>{(w.logs||[]).forEach(l=>{if(!l.exId)return;const best=Math.max(0,...(l.sets||[]).map(s=>(parseFloat(s.w)||0)));if(best>0){(byEx[l.exId]=byEx[l.exId]||{nom:l.nom,pts:[]}).pts.push({d:w.date,w:best});}});});
+  const keys=Object.keys(byEx).filter(k=>byEx[k].pts.length>=1);
+  if(!keys.length){document.getElementById('modal-content').innerHTML='<h3 style="font-family:var(--fd);font-size:18px">Ma progression</h3><p style="font-size:13px;color:var(--text3);margin-top:10px">Fais quelques séances en notant tes charges pour voir tes courbes de progression ici 📈</p>';openModal();return;}
+  const svg=pts=>{if(pts.length<2)return '<div style="font-size:12px;color:var(--text3)">'+pts.length+' séance — continue pour voir la courbe</div>';const vals=pts.map(p=>p.w);const min=Math.min(...vals),max=Math.max(...vals);const W=280,H=60,P=6;const xf=i=>P+(W-2*P)*i/(pts.length-1);const yf=v=>H-P-(H-2*P)*(max===min?0.5:(v-min)/(max-min));const d=pts.map((p,i)=>(i?'L':'M')+xf(i).toFixed(0)+' '+yf(p.w).toFixed(0)).join(' ');return '<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:auto"><path d="'+d+'" fill="none" stroke="var(--blue)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>'+pts.map((p,i)=>'<circle cx="'+xf(i).toFixed(0)+'" cy="'+yf(p.w).toFixed(0)+'" r="3" fill="var(--blue)"/>').join('')+'</svg>';};
+  document.getElementById('modal-content').innerHTML='<h3 style="font-family:var(--fd);font-size:18px;margin-bottom:12px">📈 Ma progression</h3>'+keys.map(k=>{const e=byEx[k];const first=e.pts[0].w,last=e.pts[e.pts.length-1].w;const diff=last-first;return '<div style="border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:10px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-weight:700;font-size:14px">'+h(e.nom)+'</span><span style="font-size:13px;font-weight:700;color:'+(diff>0?'var(--green)':diff<0?'var(--orange)':'var(--text3)')+'">'+last+' kg'+(diff?' ('+(diff>0?'+':'')+diff.toFixed(1).replace('.0','')+')':'')+'</span></div>'+svg(e.pts)+'</div>';}).join('');
+  openModal();
+}
+
+// ============================================================
+// CLIENT — MODE SÉANCE LIVE
+// ============================================================
+let sess=null,sessTimer=null;
+function startSeance(idx){
+  const a=DB.get(aKey(CU.code||''));if(!a||!a.prog)return;
+  const seance=a.prog.seances[idx];if(!seance)return;
+  // perfs précédentes pour cette séance
+  const prev=DB.getArr(wKey(CU.code||'')).filter(w=>w.seanceIdx===idx).sort((a,b)=>new Date(b.date)-new Date(a.date))[0];
+  const prevMap={};if(prev)(prev.logs||[]).forEach(l=>{prevMap[l.exId]=l.sets;});
+  sess={idx,nom:seance.nom,startedAt:Date.now(),exos:seance.exos.map((ex,i)=>{
+    const nSets=ex.cardio?1:(parseInt(ex.series)||1);
+    return {ex,exId:ex.exId,nom:ex.cardio?('Cardio — '+(ex.cardio.type||'libre').toUpperCase()):(exById(ex.exId)?.nom||'Exercice'),sets:Array.from({length:nSets},()=>({w:'',r:'',done:false})),prev:prevMap[ex.exId]||null};
+  })};
+  renderSessLive();
+}
+function renderSessLive(){
+  let el=document.getElementById('sess-el');
+  if(!el){el=document.createElement('div');el.className='focus-mode';el.id='sess-el';document.body.appendChild(el);}
+  const totalSets=sess.exos.reduce((s,e)=>s+e.sets.length,0);
+  const doneSets=sess.exos.reduce((s,e)=>s+e.sets.filter(x=>x.done).length,0);
+  const pct=totalSets?Math.round(doneSets/totalSets*100):0;
+  let html='<div class="fm-hdr"><div class="fm-title">🏋️ '+h(sess.nom)+'</div><button class="fm-close" onclick="quitSeance()"><i class="fa-solid fa-xmark"></i></button></div>'
+   +'<div style="position:sticky;top:0;background:var(--surface);padding:6px 0 12px;z-index:5"><div class="pbw" style="max-width:none;margin:0"><div class="pbf" style="width:'+pct+'%"></div></div><div style="font-size:12px;color:var(--text3);margin-top:4px;text-align:center">'+doneSets+'/'+totalSets+' séries · '+pct+'%</div></div>'
+   +'<div class="fm-body">';
+  html+=sess.exos.map((e,ei)=>{
+    const exo=e.exId?exById(e.exId):null;const p=e.ex;
+    const consigne=p.cardio?(h(p.cardio.dur||'')+(p.cardio.desc?' — '+h(p.cardio.desc):'')):'';
+    let head='<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="font-family:var(--fd);font-size:17px;font-weight:800;flex:1">'+(p.ss?'<span style="background:var(--blue-light);color:var(--blue);font-size:11px;padding:2px 8px;border-radius:8px;margin-right:6px">SS '+h(p.ss)+'</span>':'')+h(e.nom)+'</span>'+(exo&&exo.video?'<button class="btn-sec btn-sm" onclick="openExoVideo('+exo.id+')"><i class="fa-solid fa-circle-play"></i> Vidéo</button>':'')+(exo?'<button class="btn-sec btn-sm" onclick="openExoInfo('+exo.id+')"><i class="fa-solid fa-circle-info"></i></button>':'')+'</div>';
+    let target=p.cardio?('<div style="font-size:13px;color:var(--blue);font-weight:600;margin-bottom:8px">'+consigne+'</div>'):('<div style="font-size:13px;color:var(--text2);margin-bottom:8px">🎯 '+h(p.series||'?')+' × '+h(p.reps||'?')+(p.charge?' @ '+h(p.charge):'')+(p.repos?' · repos '+h(p.repos):'')+'</div>');
+    if(p.note)target+='<div style="font-size:12px;color:var(--gold-dark);background:var(--gold-light);border-radius:8px;padding:6px 10px;margin-bottom:8px">💬 '+h(p.note)+'</div>';
+    let cardioBtns='';
+    if(p.cardio){const ct=p.cardio.type||'libre';cardioBtns='<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px"><button class="btn-sec btn-sm" onclick="openHIIT(\'tabata\')">Tabata</button><button class="btn-sec btn-sm" onclick="openHIIT(\'emom\')">EMOM</button><button class="btn-sec btn-sm" onclick="openHIIT(\'amrap\')">AMRAP</button><button class="btn-sec btn-sm" onclick="openHIIT(\'libre\')">Minuteur libre</button></div>';}
+    const sets=e.sets.map((s,si)=>{
+      const prevTxt=(e.prev&&e.prev[si]&&(e.prev[si].w||e.prev[si].r))?('<span style="font-size:11px;color:var(--text3);white-space:nowrap">↩︎ '+(e.prev[si].w||'?')+'×'+(e.prev[si].r||'?')+'</span>'):'';
+      if(p.cardio)return '<label style="display:flex;align-items:center;gap:10px;padding:8px 0"><input type="checkbox" '+(s.done?'checked':'')+' onchange="sessSetDone('+ei+','+si+',this.checked)" style="width:24px;height:24px;accent-color:var(--green)"><span style="font-size:14px;font-weight:600">Bloc terminé</span></label>';
+      return '<div style="display:flex;align-items:center;gap:7px;padding:5px 0"><span style="font-size:13px;font-weight:700;width:46px;color:var(--text3)">Série '+(si+1)+'</span><input type="number" inputmode="decimal" value="'+escA(s.w)+'" oninput="sessSet('+ei+','+si+',\'w\',this.value)" placeholder="kg" style="width:64px;padding:9px;border:1.5px solid var(--border);border-radius:9px;background:var(--bg2);color:var(--text);font-size:16px;text-align:center"><span style="color:var(--text3)">×</span><input type="number" inputmode="numeric" value="'+escA(s.r)+'" oninput="sessSet('+ei+','+si+',\'r\',this.value)" placeholder="reps" style="width:64px;padding:9px;border:1.5px solid var(--border);border-radius:9px;background:var(--bg2);color:var(--text);font-size:16px;text-align:center">'+prevTxt+'<button onclick="sessToggle('+ei+','+si+')" style="margin-left:auto;width:38px;height:38px;border-radius:50%;border:2px solid '+(s.done?'var(--green)':'var(--border)')+';background:'+(s.done?'var(--green)':'transparent')+';color:'+(s.done?'#fff':'var(--text3)')+';cursor:pointer;flex-shrink:0"><i class="fa-solid fa-check"></i></button></div>';
+    }).join('');
+    const restBtn=(!p.cardio&&p.repos)?'<button class="btn-sec btn-sm" style="margin-top:6px" onclick="startRest('+restSeconds(p.repos)+')"><i class="fa-solid fa-stopwatch"></i> Repos '+h(p.repos)+'</button>':'';
+    return '<div style="border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:14px;background:var(--surface)">'+head+target+cardioBtns+sets+restBtn+'</div>';
+  }).join('');
+  html+='<button class="btn-done" style="width:100%;justify-content:center;margin-top:6px" onclick="finishSeance()"><i class="fa-solid fa-flag-checkered"></i> Terminer la séance</button></div>';
+  el.innerHTML=html;
+}
+function sessSet(ei,si,f,v){sess.exos[ei].sets[si][f]=v;}
+function sessToggle(ei,si){const s=sess.exos[ei].sets[si];s.done=!s.done;renderSessLive();if(s.done){const p=sess.exos[ei].ex;if(p&&p.repos&&!p.cardio)startRest(restSeconds(p.repos));}}
+function sessSetDone(ei,si,v){sess.exos[ei].sets[si].done=v;renderSessLive();}
+function restSeconds(txt){const m=String(txt||'').match(/(\d+)\s*(min|m)?/i);if(!m)return 90;let n=parseInt(m[1]);if(/min|m/i.test(m[2]||'')||n<=10)n=n*60;return n;}
+function quitSeance(){if(!confirm('Quitter la séance ? Ta saisie en cours sera perdue.'))return;stopRest();document.getElementById('sess-el')?.remove();sess=null;}
+
+// minuteur de repos
+let restState=null,restInt=null;
+function startRest(sec){
+  stopRest();restState={remain:sec,total:sec};
+  let ov=document.getElementById('rest-ov');
+  if(!ov){ov=document.createElement('div');ov.id='rest-ov';ov.style.cssText='position:fixed;left:0;right:0;bottom:0;z-index:720;background:var(--dark);color:#fff;padding:16px 18px calc(18px + env(safe-area-inset-bottom));box-shadow:0 -8px 30px rgba(0,0,0,.4);display:flex;align-items:center;gap:14px';document.body.appendChild(ov);}
+  const draw=()=>{ov.innerHTML='<div style="font-family:var(--fd);font-size:28px;font-weight:800;color:var(--gold);min-width:64px">'+fmtSec(restState.remain)+'</div><div style="flex:1"><div style="font-size:12px;color:rgba(255,255,255,.6);margin-bottom:4px">Repos en cours</div><div style="height:6px;background:rgba(255,255,255,.15);border-radius:3px;overflow:hidden"><div style="height:100%;background:var(--gold);width:'+Math.round(restState.remain/restState.total*100)+'%;transition:width 1s linear"></div></div></div><button onclick="addRest(15)" style="background:rgba(255,255,255,.12);border:none;color:#fff;border-radius:9px;padding:9px 12px;font-size:14px;cursor:pointer">+15s</button><button onclick="stopRest()" style="background:rgba(255,255,255,.12);border:none;color:#fff;border-radius:9px;padding:9px 12px;font-size:14px;cursor:pointer"><i class="fa-solid fa-xmark"></i></button>';};
+  draw();
+  restInt=setInterval(()=>{restState.remain--;if(restState.remain<=0){stopRest();recBeep();if(navigator.vibrate)try{navigator.vibrate([200,100,200]);}catch(e){}toast('⏰ Repos terminé — go !','gold');return;}draw();},1000);
+}
+function addRest(s){if(restState){restState.remain+=s;restState.total+=s;}}
+function stopRest(){if(restInt){clearInterval(restInt);restInt=null;}document.getElementById('rest-ov')?.remove();restState=null;}
+
+// minuteurs HIIT
+let hiitInt=null;
+function openHIIT(type){
+  stopHIIT();
+  const cfg={tabata:{work:20,rest:10,rounds:8,lbl:'Tabata 20s/10s × 8'},emom:{work:60,rest:0,rounds:10,lbl:'EMOM 10 min'},amrap:{work:600,rest:0,rounds:1,lbl:'AMRAP 10 min'},libre:{work:300,rest:0,rounds:1,lbl:'Minuteur 5 min'}}[type]||{work:60,rest:0,rounds:1,lbl:'Minuteur'};
+  let phase='work',round=1,remain=cfg.work;
+  const el=document.createElement('div');el.id='hiit-ov';el.style.cssText='position:fixed;inset:0;z-index:760;background:linear-gradient(160deg,#0d1b2a,#070b12);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px';
+  const render=()=>{el.innerHTML='<div style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.5)">'+cfg.lbl+'</div><div style="font-size:15px;font-weight:700;color:'+(phase==='work'?'var(--green)':'var(--gold)')+';margin:10px 0">'+(phase==='work'?'EFFORT':'REPOS')+(cfg.rounds>1?' · round '+round+'/'+cfg.rounds:'')+'</div><div style="font-family:var(--fd);font-size:84px;font-weight:800;color:#fff;line-height:1">'+fmtSec(remain)+'</div><div style="display:flex;gap:10px;margin-top:30px"><button class="btn-sec" onclick="stopHIIT()" style="background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.2)"><i class="fa-solid fa-xmark"></i> Fermer</button></div>';};
+  render();document.body.appendChild(el);
+  hiitInt=setInterval(()=>{
+    remain--;
+    if(remain<0){
+      recBeep();if(navigator.vibrate)try{navigator.vibrate(150);}catch(e){}
+      if(phase==='work'&&cfg.rest>0){phase='rest';remain=cfg.rest;}
+      else{round++;if(round>cfg.rounds){stopHIIT();toast('✅ Terminé !','success');return;}phase='work';remain=cfg.work;}
+    }
+    if(document.getElementById('hiit-ov'))render();else stopHIIT();
+  },1000);
+}
+function stopHIIT(){if(hiitInt){clearInterval(hiitInt);hiitInt=null;}document.getElementById('hiit-ov')?.remove();}
+
+function openExoVideo(id){const e=exById(id);if(!e||!e.video)return;const u=safeUrl(e.video);if(u==='#'){toast('Lien vidéo invalide','error');return;}window.open(u,'_blank','noopener');}
+function openExoInfo(id){const e=exById(id);if(!e)return;document.getElementById('modal-content').innerHTML='<h3 style="font-family:var(--fd);font-size:19px;margin-bottom:4px">'+h(e.nom)+'</h3><div style="font-size:12px;color:var(--text3);margin-bottom:12px">'+h(e.groupe)+' · '+h(e.materiel)+' · '+h(e.niveau)+'</div>'+(e.video?'<button class="btn" style="width:100%;justify-content:center;margin-bottom:12px" onclick="openExoVideo('+e.id+')"><i class="fa-solid fa-circle-play"></i> Voir la vidéo de démo</button>':'')+(e.consignes?'<div style="font-size:12px;font-weight:700;text-transform:uppercase;color:var(--text2);margin-bottom:4px">Exécution</div><div style="font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:12px">'+h(e.consignes)+'</div>':'')+(e.securite?'<div style="font-size:12px;font-weight:700;text-transform:uppercase;color:var(--text2);margin-bottom:4px">⚠️ Sécurité</div><div style="font-size:14px;color:var(--text2);line-height:1.6">'+h(e.securite)+'</div>':'');openModal();}
+
+function finishSeance(){
+  const dz='<div style="display:flex;gap:8px;justify-content:center;margin:8px 0">'+[1,2,3,4,5].map(i=>'<button class="fin-en" data-v="'+i+'" onclick="finEnergy('+i+')" style="background:none;border:2px solid var(--border);border-radius:12px;width:48px;height:48px;font-size:22px;cursor:pointer">'+['😖','😕','😐','🙂','😄'][i-1]+'</button>').join('')+'</div>';
+  document.getElementById('modal-content').innerHTML='<h3 style="font-family:var(--fd);font-size:19px;margin-bottom:14px">💪 Bilan de ta séance</h3>'
+   +'<label style="font-size:12px;font-weight:700;text-transform:uppercase;color:var(--text2)">Difficulté ressentie (RPE) : <span id="fin-rpe-v">7</span>/10</label><input type="range" id="fin-rpe" min="1" max="10" value="7" oninput="document.getElementById(\'fin-rpe-v\').textContent=this.value" style="width:100%;accent-color:var(--blue);margin:10px 0 16px">'
+   +'<label style="font-size:12px;font-weight:700;text-transform:uppercase;color:var(--text2)">Niveau d’énergie</label>'+dz
+   +'<label style="font-size:12px;font-weight:700;text-transform:uppercase;color:var(--text2);display:block;margin-top:10px">Douleur ? (zone, optionnel)</label><input type="text" id="fin-douleur" placeholder="Ex : genou droit, ou rien" style="width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:10px;background:var(--bg2);color:var(--text);font-size:16px;margin-top:6px">'
+   +'<label style="font-size:12px;font-weight:700;text-transform:uppercase;color:var(--text2);display:block;margin-top:10px">Commentaire</label><textarea id="fin-comment" maxlength="500" placeholder="Sensations, remarques pour ton coach..." style="width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:10px;background:var(--bg2);color:var(--text);font-size:16px;margin-top:6px;min-height:70px;resize:vertical"></textarea>'
+   +'<button class="btn" style="margin-top:16px;width:100%;justify-content:center" onclick="saveSeance()"><i class="fa-solid fa-save"></i> Enregistrer ma séance</button>';
+  window._finEnergy=4;openModal();
+}
+function finEnergy(v){window._finEnergy=v;document.querySelectorAll('.fin-en').forEach(b=>{b.style.borderColor=parseInt(b.dataset.v)===v?'var(--blue)':'var(--border)';b.style.background=parseInt(b.dataset.v)===v?'var(--blue-xlight)':'none';});}
+function saveSeance(){
+  const logs=sess.exos.map(e=>({exId:e.exId,nom:e.nom,sets:e.sets.map(s=>({w:s.w,r:s.r,done:s.done}))}));
+  const w={id:Date.now(),seanceIdx:sess.idx,seanceNom:sess.nom,date:localDate(),logs,rpe:parseInt(document.getElementById('fin-rpe').value)||7,energy:window._finEnergy||4,douleur:(document.getElementById('fin-douleur').value||'').trim().slice(0,100),comment:(document.getElementById('fin-comment').value||'').trim().slice(0,500),at:new Date().toISOString()};
+  const arr=DB.getArr(wKey(CU.code||''));arr.push(w);DB.set(wKey(CU.code||''),arr);
+  // gamification : +XP, coche la séance du jour (quête/streak/engagement)
+  if(!CU.isPreview){CU.xp=(CU.xp||0)+30;saveCU();const x=document.getElementById('tb-xp-val');if(x)x.textContent=(CU.xp||0)+' XP';
+    try{const k='nc3_ck_'+(CU.code||'')+'_'+localDate();const ck=JSON.parse(localStorage.getItem(k))||{};ck.s1=true;localStorage.setItem(k,JSON.stringify(ck));}catch(e){}
+    checkBadges();
+  }
+  closeModal();stopRest();document.getElementById('sess-el')?.remove();sess=null;
+  fireConfetti();toast('Séance enregistrée ! +30 XP 🔥','gold');addNotif('🏋️','Séance terminée',w.seanceNom);
+  gotoS('training');
+}
+
+// ---------- intégration : alerte menu "séance à faire" ----------
+(function(){
+  if(typeof memberAlerts==='function'){
+    const _ma=memberAlerts;
+    memberAlerts=function(){const a=_ma();try{if(CU&&!CU.isAdmin&&!CU.isPreview){const ass=DB.get('assign_'+(CU.code||''));if(ass&&ass.prog){const w=DB.getArr('workouts_'+(CU.code||''));const today=localDate();if(!w.some(x=>x.date===today))a.training=true;}}}catch(e){}return a;};
+  }
+})();
 </script>
 </body>
 </html>
