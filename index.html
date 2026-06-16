@@ -236,7 +236,7 @@ input,select,textarea{font-family:var(--fb);}
 .ii-unused{background:var(--gold-light);color:var(--gold);}
 
 /* MODAL */
-.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);z-index:600;display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);z-index:1200;display:none;align-items:center;justify-content:center;padding:20px;}
 .modal-ov.active{display:flex;}
 .modal-box{background:var(--surface);border-radius:var(--rxl);padding:32px;max-width:600px;width:100%;max-height:88vh;overflow-y:auto;position:relative;animation:su .3s ease;box-shadow:var(--shl);}
 .modal-close{position:absolute;top:18px;right:18px;background:var(--bg2);border:none;width:34px;height:34px;border-radius:50%;cursor:pointer;color:var(--text2);display:flex;align-items:center;justify-content:center;font-size:14px;transition:all var(--t);}
@@ -5215,17 +5215,25 @@ function pbRenderSeances(){
     const exoRows=(se.exos||[]).map((ex,xi)=>{
       const e=ex.cardio?null:exById(ex.exId);
       const nm=ex.cardio?('🔥 Cardio — '+(ex.cardio.type||'libre').toUpperCase()):(e?e.nom:'(exercice supprimé)');
-      const detail=ex.cardio?('<input type="text" value="'+escA(ex.cardio.dur||'')+'" oninput="pbEx('+si+','+xi+',\'cardioDur\',this.value)" placeholder="Durée (ex : 4 rounds, 10 min)" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-size:16px;margin-top:6px"><input type="text" value="'+escA(ex.cardio.desc||'')+'" oninput="pbEx('+si+','+xi+',\'cardioDesc\',this.value)" placeholder="Consigne (ex : 20s effort / 10s repos)" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-size:16px;margin-top:6px">')
-        :('<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:6px"><input type="text" value="'+escA(ex.series||'')+'" oninput="pbEx('+si+','+xi+',\'series\',this.value)" placeholder="Séries" style="padding:8px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-size:16px"><input type="text" value="'+escA(ex.reps||'')+'" oninput="pbEx('+si+','+xi+',\'reps\',this.value)" placeholder="Reps" style="padding:8px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-size:16px"><input type="text" value="'+escA(ex.charge||'')+'" oninput="pbEx('+si+','+xi+',\'charge\',this.value)" placeholder="Charge" style="padding:8px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-size:16px"></div>'
-          +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px"><input type="text" value="'+escA(ex.repos||'')+'" oninput="pbEx('+si+','+xi+',\'repos\',this.value)" placeholder="Repos (ex : 90s)" style="padding:8px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-size:16px"><input type="text" value="'+escA(ex.ss||'')+'" oninput="pbEx('+si+','+xi+',\'ss\',this.value)" placeholder="Superset (A,B...)" style="padding:8px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-size:16px"></div>'
-          +'<input type="text" value="'+escA(ex.note||'')+'" oninput="pbEx('+si+','+xi+',\'note\',this.value)" placeholder="Note du coach (optionnel)" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-size:16px;margin-top:6px">');
-      return '<div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px;margin-bottom:8px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:2px"><span style="font-weight:700;font-size:13px;flex:1">'+(ex.ss?'<span style="background:var(--blue-light);color:var(--blue);font-size:10px;font-weight:700;padding:1px 7px;border-radius:8px;margin-right:5px">SS '+h(ex.ss)+'</span>':'')+h(nm)+'</span><button onclick="pbMoveEx('+si+','+xi+',-1)" style="background:none;border:none;color:var(--text3);cursor:pointer;padding:3px"><i class="fa-solid fa-arrow-up"></i></button><button onclick="pbMoveEx('+si+','+xi+',1)" style="background:none;border:none;color:var(--text3);cursor:pointer;padding:3px"><i class="fa-solid fa-arrow-down"></i></button><button onclick="pbDelEx('+si+','+xi+')" style="background:none;border:none;color:var(--red);cursor:pointer;padding:3px"><i class="fa-solid fa-xmark"></i></button></div>'+detail+'</div>';
+      const inp='padding:8px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-size:16px';
+      const tBadge=(ex.type&&ex.type!=='mono')?'<span style="background:var(--blue-light);color:var(--blue);font-size:10px;font-weight:700;padding:1px 7px;border-radius:8px;margin-right:5px">'+(exoBlockLabel(ex)||ex.type.toUpperCase())+'</span>':(ex.ss?'<span style="background:var(--blue-light);color:var(--blue);font-size:10px;font-weight:700;padding:1px 7px;border-radius:8px;margin-right:5px">SS '+h(ex.ss)+'</span>':'');
+      const types=[['mono','Monoset'],['superset','Superset'],['triset','Triset'],['giant','Giant set'],['dropset','Dropset'],['amrap','AMRAP'],['emom','EMOM'],['tabata','Tabata'],['fortime','For Time']];
+      const detail=ex.cardio?('<input type="text" value="'+escA(ex.cardio.dur||'')+'" oninput="pbEx('+si+','+xi+',\'cardioDur\',this.value)" placeholder="Durée (ex : 4 rounds, 10 min)" style="width:100%;'+inp+';margin-top:6px"><input type="text" value="'+escA(ex.cardio.desc||'')+'" oninput="pbEx('+si+','+xi+',\'cardioDesc\',this.value)" placeholder="Consigne (ex : 20s effort / 10s repos)" style="width:100%;'+inp+';margin-top:6px">')
+        :('<select onchange="pbEx('+si+','+xi+',\'type\',this.value)" style="width:100%;'+inp+';margin-top:6px">'+types.map(t=>'<option value="'+t[0]+'" '+((ex.type||'mono')===t[0]?'selected':'')+'>'+t[1]+'</option>').join('')+'</select>'
+          +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px"><input type="text" value="'+escA(ex.series||'')+'" oninput="pbEx('+si+','+xi+',\'series\',this.value)" placeholder="Séries / tours" style="'+inp+'"><input type="text" value="'+escA(ex.reps||'')+'" oninput="pbEx('+si+','+xi+',\'reps\',this.value)" placeholder="Reps (ex : 8-12 ou 30s)" style="'+inp+'"></div>'
+          +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px"><select onchange="pbEx('+si+','+xi+',\'chargeMode\',this.value)" style="'+inp+'"><option value="kg" '+((ex.chargeMode||'kg')==='kg'?'selected':'')+'>Charge en kg</option><option value="pct" '+(ex.chargeMode==='pct'?'selected':'')+'>% du 1RM</option><option value="rpe" '+(ex.chargeMode==='rpe'?'selected':'')+'>Au ressenti</option></select><input type="text" value="'+escA(ex.charge||'')+'" oninput="pbEx('+si+','+xi+',\'charge\',this.value)" placeholder="Valeur (ex : 80)" style="'+inp+'"></div>'
+          +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px"><input type="text" value="'+escA(ex.tempo||'')+'" oninput="pbEx('+si+','+xi+',\'tempo\',this.value)" placeholder="Tempo (ex : 3-1-1-0)" style="'+inp+'"><input type="text" value="'+escA(ex.repos||'')+'" oninput="pbEx('+si+','+xi+',\'repos\',this.value)" placeholder="Repos (ex : 90s)" style="'+inp+'"></div>'
+          +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px"><input type="text" value="'+escA(ex.ss||'')+'" oninput="pbEx('+si+','+xi+',\'ss\',this.value)" placeholder="Groupe superset (A, B...)" style="'+inp+'"><input type="text" value="'+escA(ex.rir||'')+'" oninput="pbEx('+si+','+xi+',\'rir\',this.value)" placeholder="Cible RIR/RPE (ex : RPE 8)" style="'+inp+'"></div>'
+          +'<input type="text" value="'+escA(ex.note||'')+'" oninput="pbEx('+si+','+xi+',\'note\',this.value)" placeholder="Note du coach (ex : ralentis la descente)" style="width:100%;'+inp+';margin-top:6px">');
+      return '<div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px;margin-bottom:8px"><div style="display:flex;align-items:center;gap:6px;margin-bottom:2px"><span style="font-weight:700;font-size:13px;flex:1">'+tBadge+h(nm)+'</span><button onclick="pbMoveEx('+si+','+xi+',-1)" style="background:none;border:none;color:var(--text3);cursor:pointer;padding:3px"><i class="fa-solid fa-arrow-up"></i></button><button onclick="pbMoveEx('+si+','+xi+',1)" style="background:none;border:none;color:var(--text3);cursor:pointer;padding:3px"><i class="fa-solid fa-arrow-down"></i></button><button onclick="pbDupEx('+si+','+xi+')" style="background:none;border:none;color:var(--blue);cursor:pointer;padding:3px" title="Dupliquer"><i class="fa-solid fa-copy"></i></button><button onclick="pbDelEx('+si+','+xi+')" style="background:none;border:none;color:var(--red);cursor:pointer;padding:3px"><i class="fa-solid fa-xmark"></i></button></div>'+detail+'</div>';
     }).join('');
-    return '<div class="afc" style="padding:16px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:12px"><input type="text" value="'+escA(se.nom)+'" oninput="pbSeanceNom('+si+',this.value)" style="flex:1;padding:9px 12px;border:1.5px solid var(--border);border-radius:10px;background:var(--bg2);color:var(--text);font-size:16px;font-weight:700"><button class="btn-del btn-sm" onclick="pbDelSeance('+si+')"><i class="fa-solid fa-trash"></i></button></div>'
+    return '<div class="afc" style="padding:16px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:12px"><input type="text" value="'+escA(se.nom)+'" oninput="pbSeanceNom('+si+',this.value)" style="flex:1;padding:9px 12px;border:1.5px solid var(--border);border-radius:10px;background:var(--bg2);color:var(--text);font-size:16px;font-weight:700"><button class="btn-edit btn-sm" onclick="pbDupSeance('+si+')" title="Dupliquer la séance"><i class="fa-solid fa-copy"></i></button><button class="btn-del btn-sm" onclick="pbDelSeance('+si+')"><i class="fa-solid fa-trash"></i></button></div>'
      +exoRows
      +'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px"><button class="btn-al" onclick="pbPickExo('+si+')"><i class="fa-solid fa-plus"></i> Exercice</button><button class="btn-al" style="background:var(--red-light);color:var(--red)" onclick="pbAddCardio('+si+')"><i class="fa-solid fa-heart-pulse"></i> Bloc cardio/HIIT</button></div></div>';
   }).join('');
 }
+function pbDupEx(si,xi){const a=progDraft.seances[si].exos;a.splice(xi+1,0,JSON.parse(JSON.stringify(a[xi])));pbRenderSeances();}
+function pbDupSeance(si){pbSyncMeta();const cp=JSON.parse(JSON.stringify(progDraft.seances[si]));cp.nom=cp.nom+' (copie)';progDraft.seances.splice(si+1,0,cp);pbRenderSeances();toast('Séance dupliquée');}
 function pbSeanceNom(si,v){progDraft.seances[si].nom=v;}
 function pbEx(si,xi,field,v){const ex=progDraft.seances[si].exos[xi];if(field==='cardioDur'){ex.cardio.dur=v;}else if(field==='cardioDesc'){ex.cardio.desc=v;}else{ex[field]=v;}}
 function pbDelEx(si,xi){progDraft.seances[si].exos.splice(xi,1);pbRenderSeances();}
@@ -5240,7 +5248,7 @@ function pbPickExo(si){
 }
 function pbPickRender(list){const el=document.getElementById('pbpick-list');if(!el)return;el.innerHTML=list.map(e=>'<div onclick="pbAddExo('+e.id+')" style="display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid var(--border2);cursor:pointer"><span style="font-size:18px">'+(GRP_ICON[e.groupe]||'🏋️')+'</span><div style="flex:1"><div style="font-size:14px;font-weight:600">'+h(e.nom)+'</div><div style="font-size:11px;color:var(--text3)">'+h(e.groupe)+' · '+h(e.materiel)+'</div></div><i class="fa-solid fa-plus" style="color:var(--blue)"></i></div>').join('')||'<div class="empty" style="padding:24px"><p>Aucun exercice.</p></div>';}
 function pbPickFilter(){const q=(document.getElementById('pbpick-s').value||'').toLowerCase();pbPickRender(DB.getArr('exercices').filter(e=>e.nom.toLowerCase().includes(q)).sort((a,b)=>a.nom.localeCompare(b.nom)));}
-function pbAddExo(id){progDraft.seances[_pbPickSi].exos.push({exId:id,series:'3',reps:'10',charge:'',tempo:'',repos:'90s',note:'',ss:'',cardio:null});closeModal();pbRenderSeances();}
+function pbAddExo(id){progDraft.seances[_pbPickSi].exos.push({exId:id,type:'mono',series:'3',reps:'8-12',charge:'',chargeMode:'kg',tempo:'',repos:'90s',rir:'',note:'',ss:'',cardio:null});closeModal();pbRenderSeances();}
 function saveProgDraft(){
   pbSyncMeta();
   if(!progDraft.nom.trim()){toast('Donne un nom au programme','error');return;}
@@ -5277,7 +5285,7 @@ function openTrainingClient(code){
       html+=workouts.slice().sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,12).map(w=>{
         const dz={1:'😖',2:'😕',3:'😐',4:'🙂',5:'😄'};
         return '<div style="border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:8px"><div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700"><span>'+h(w.seanceNom||'Séance')+'</span><span style="color:var(--text3);font-weight:500">'+fmtDate(w.date)+'</span></div><div style="font-size:12px;color:var(--text3);margin-top:3px">RPE '+(w.rpe||'—')+'/10 · énergie '+(dz[w.energy]||'—')+(w.douleur?' · douleur : '+h(w.douleur):'')+'</div>'+(w.comment?'<div style="font-size:12px;color:var(--text2);margin-top:4px;font-style:italic">« '+h(w.comment)+' »</div>':'')
-         +'<details style="margin-top:6px"><summary style="font-size:12px;color:var(--blue);cursor:pointer">Détail des charges</summary>'+(w.logs||[]).map(l=>'<div style="font-size:12px;color:var(--text2);padding:2px 0">'+h(l.nom||'')+' : '+(l.sets||[]).filter(s=>s.w||s.r).map(s=>(s.w||'?')+'×'+(s.r||'?')).join(', ')+'</div>').join('')+'</details></div>';
+         +'<details style="margin-top:6px"><summary style="font-size:12px;color:var(--blue);cursor:pointer">Détail des charges'+(w.duree?' · '+w.duree+' min':'')+'</summary>'+(w.logs||[]).map(l=>'<div style="font-size:12px;color:var(--text2);padding:3px 0">'+h(l.nom||'')+' : '+((l.sets||[]).filter(s=>s.w||s.r).map(s=>(s.w||'?')+'×'+(s.r||'?')+(s.rpe?' @RPE'+s.rpe:'')).join(', ')||'—')+(l.note?'<div style="font-size:11px;color:var(--blue)">📝 '+h(l.note)+'</div>':'')+'</div>').join('')+'</details></div>';
       }).join('');
     }else html+='<p style="font-size:13px;color:var(--text3);margin-top:8px">Aucune séance réalisée pour l’instant.</p>';
   }else html+='<p style="font-size:13px;color:var(--text3)">Aucun programme attribué. Choisis-en un ci-dessus.</p>';
@@ -5307,7 +5315,10 @@ function renderTraining(){
   const prog=a.prog;const workouts=DB.getArr(wKey(CU.code||''));
   const nextIdx=nextSeanceIdx();
   const dz={1:'😖',2:'😕',3:'😐',4:'🙂',5:'😄'};
-  let html='<div style="background:linear-gradient(135deg,var(--dark),var(--dark2));border-radius:var(--rxl);padding:24px;margin-bottom:18px;color:#fff"><div style="font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:.07em;font-weight:700">'+h(prog.objectif||'')+' · '+h(prog.niveau||'')+'</div><div style="font-family:var(--fd);font-size:24px;font-weight:800;margin:4px 0">'+h(prog.nom)+'</div><div style="font-size:13px;color:rgba(255,255,255,.6)">'+(prog.seances||[]).length+' séances · '+(prog.dureeSem||'?')+' semaines · '+workouts.length+' séances réalisées</div></div>';
+  let html='';
+  let saved=null;try{saved=JSON.parse(localStorage.getItem(sessKey()));}catch(e){}
+  if(saved&&saved.exos){const dn=saved.exos.reduce((s,e)=>s+(e.sets||[]).filter(x=>x.done).length,0);html+='<div class="na-card" style="margin-bottom:18px;border-color:rgba(201,151,42,.45);background:var(--gold-light)" onclick="resumeSeance()"><div class="na-icon" style="background:var(--gold)">⏸️</div><div style="flex:1"><div class="na-lbl" style="color:var(--gold-dark)">Séance en pause</div><div class="na-title">'+h(saved.nom)+' — reprendre ('+dn+' séries faites)</div></div><i class="fa-solid fa-play" style="color:var(--gold);font-size:18px"></i></div>';}
+  html+='<div style="background:linear-gradient(135deg,var(--dark),var(--dark2));border-radius:var(--rxl);padding:24px;margin-bottom:18px;color:#fff"><div style="font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:.07em;font-weight:700">'+h(prog.objectif||'')+' · '+h(prog.niveau||'')+'</div><div style="font-family:var(--fd);font-size:24px;font-weight:800;margin:4px 0">'+h(prog.nom)+'</div><div style="font-size:13px;color:rgba(255,255,255,.6)">'+(prog.seances||[]).length+' séances · '+(prog.dureeSem||'?')+' semaines · '+workouts.length+' séances réalisées</div></div>';
   // séance recommandée
   const nx=prog.seances[nextIdx];
   if(nx)html+='<div class="na-card" onclick="startSeance('+nextIdx+')" style="margin-bottom:18px"><div class="na-icon">▶️</div><div style="flex:1"><div class="na-lbl">Ta prochaine séance</div><div class="na-title">'+h(nx.nom)+' · '+(nx.exos||[]).length+' exercices</div></div><i class="fa-solid fa-arrow-right" style="color:var(--blue);font-size:18px"></i></div>';
@@ -5343,18 +5354,24 @@ function openProgression(){
 // CLIENT — MODE SÉANCE LIVE
 // ============================================================
 let sess=null,sessTimer=null;
-function startSeance(idx){
+function sessKey(){return 'nc3_sess_'+(CU&&CU.code||'');}
+function exoIsTimed(p){return !!(p.cardio||['amrap','emom','tabata','fortime'].includes(p.type));}
+function exoBlockLabel(p){const t=p.type||(p.cardio?'cardio':(p.ss?'superset':'mono'));return {superset:'SUPERSET',triset:'TRISET',giant:'GIANT SET',dropset:'DROPSET',amrap:'AMRAP',emom:'EMOM',tabata:'TABATA',fortime:'FOR TIME',cardio:'CARDIO'}[t]||'';}
+function startSeance(idx,resumeData){
   const a=DB.get(aKey(CU.code||''));if(!a||!a.prog)return;
   const seance=a.prog.seances[idx];if(!seance)return;
-  // perfs précédentes pour cette séance
+  if(resumeData){sess=resumeData;renderSessLive();return;}
   const prev=DB.getArr(wKey(CU.code||'')).filter(w=>w.seanceIdx===idx).sort((a,b)=>new Date(b.date)-new Date(a.date))[0];
   const prevMap={};if(prev)(prev.logs||[]).forEach(l=>{prevMap[l.exId]=l.sets;});
   sess={idx,nom:seance.nom,startedAt:Date.now(),exos:seance.exos.map((ex,i)=>{
-    const nSets=ex.cardio?1:(parseInt(ex.series)||1);
-    return {ex,exId:ex.exId,nom:ex.cardio?('Cardio — '+(ex.cardio.type||'libre').toUpperCase()):(exById(ex.exId)?.nom||'Exercice'),sets:Array.from({length:nSets},()=>({w:'',r:'',done:false})),prev:prevMap[ex.exId]||null};
+    const nSets=exoIsTimed(ex)?1:(parseInt(ex.series)||1);
+    return {ex,exId:ex.exId,nom:ex.cardio?('Bloc '+(ex.cardio.type||'libre').toUpperCase()):(exById(ex.exId)?.nom||'Exercice'),note:'',sets:Array.from({length:nSets},()=>({w:'',r:'',rpe:'',done:false})),prev:prevMap[ex.exId]||null};
   })};
-  renderSessLive();
+  autosaveSess();renderSessLive();
 }
+function autosaveSess(){try{if(sess)localStorage.setItem(sessKey(),JSON.stringify(sess));}catch(e){}}
+function clearSessSave(){try{localStorage.removeItem(sessKey());}catch(e){}}
+function resumeSeance(){let saved=null;try{saved=JSON.parse(localStorage.getItem(sessKey()));}catch(e){}if(!saved||!saved.exos){toast('Aucune séance en pause','error');renderTraining();return;}startSeance(saved.idx,saved);}
 function renderSessLive(){
   let el=document.getElementById('sess-el');
   if(!el){el=document.createElement('div');el.className='focus-mode';el.id='sess-el';document.body.appendChild(el);}
@@ -5362,32 +5379,57 @@ function renderSessLive(){
   const doneSets=sess.exos.reduce((s,e)=>s+e.sets.filter(x=>x.done).length,0);
   const pct=totalSets?Math.round(doneSets/totalSets*100):0;
   let html='<div class="fm-hdr"><div class="fm-title">🏋️ '+h(sess.nom)+'</div><button class="fm-close" onclick="quitSeance()"><i class="fa-solid fa-xmark"></i></button></div>'
-   +'<div style="position:sticky;top:0;background:var(--surface);padding:6px 0 12px;z-index:5"><div class="pbw" style="max-width:none;margin:0"><div class="pbf" style="width:'+pct+'%"></div></div><div style="font-size:12px;color:var(--text3);margin-top:4px;text-align:center">'+doneSets+'/'+totalSets+' séries · '+pct+'%</div></div>'
+   +'<div style="position:sticky;top:0;background:var(--surface);padding:6px 0 12px;z-index:5"><div class="pbw" style="max-width:none;margin:0"><div class="pbf" style="width:'+pct+'%"></div></div><div style="font-size:12px;color:var(--text3);margin-top:4px;text-align:center">'+doneSets+'/'+totalSets+' séries · '+pct+'% <span style="color:var(--green)">· sauvegarde auto</span></div></div>'
    +'<div class="fm-body">';
-  html+=sess.exos.map((e,ei)=>{
-    const exo=e.exId?exById(e.exId):null;const p=e.ex;
-    const consigne=p.cardio?(h(p.cardio.dur||'')+(p.cardio.desc?' — '+h(p.cardio.desc):'')):'';
-    let head='<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="font-family:var(--fd);font-size:17px;font-weight:800;flex:1">'+(p.ss?'<span style="background:var(--blue-light);color:var(--blue);font-size:11px;padding:2px 8px;border-radius:8px;margin-right:6px">SS '+h(p.ss)+'</span>':'')+h(e.nom)+'</span>'+(exo&&exo.video?'<button class="btn-sec btn-sm" onclick="openExoVideo('+exo.id+')"><i class="fa-solid fa-circle-play"></i> Vidéo</button>':'')+(exo?'<button class="btn-sec btn-sm" onclick="openExoInfo('+exo.id+')"><i class="fa-solid fa-circle-info"></i></button>':'')+'</div>';
-    let target=p.cardio?('<div style="font-size:13px;color:var(--blue);font-weight:600;margin-bottom:8px">'+consigne+'</div>'):('<div style="font-size:13px;color:var(--text2);margin-bottom:8px">🎯 '+h(p.series||'?')+' × '+h(p.reps||'?')+(p.charge?' @ '+h(p.charge):'')+(p.repos?' · repos '+h(p.repos):'')+'</div>');
-    if(p.note)target+='<div style="font-size:12px;color:var(--gold-dark);background:var(--gold-light);border-radius:8px;padding:6px 10px;margin-bottom:8px">💬 '+h(p.note)+'</div>';
-    let cardioBtns='';
-    if(p.cardio){const ct=p.cardio.type||'libre';cardioBtns='<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px"><button class="btn-sec btn-sm" onclick="openHIIT(\'tabata\')">Tabata</button><button class="btn-sec btn-sm" onclick="openHIIT(\'emom\')">EMOM</button><button class="btn-sec btn-sm" onclick="openHIIT(\'amrap\')">AMRAP</button><button class="btn-sec btn-sm" onclick="openHIIT(\'libre\')">Minuteur libre</button></div>';}
-    const sets=e.sets.map((s,si)=>{
-      const prevTxt=(e.prev&&e.prev[si]&&(e.prev[si].w||e.prev[si].r))?('<span style="font-size:11px;color:var(--text3);white-space:nowrap">↩︎ '+(e.prev[si].w||'?')+'×'+(e.prev[si].r||'?')+'</span>'):'';
-      if(p.cardio)return '<label style="display:flex;align-items:center;gap:10px;padding:8px 0"><input type="checkbox" '+(s.done?'checked':'')+' onchange="sessSetDone('+ei+','+si+',this.checked)" style="width:24px;height:24px;accent-color:var(--green)"><span style="font-size:14px;font-weight:600">Bloc terminé</span></label>';
-      return '<div style="display:flex;align-items:center;gap:7px;padding:5px 0"><span style="font-size:13px;font-weight:700;width:46px;color:var(--text3)">Série '+(si+1)+'</span><input type="number" inputmode="decimal" value="'+escA(s.w)+'" oninput="sessSet('+ei+','+si+',\'w\',this.value)" placeholder="kg" style="width:64px;padding:9px;border:1.5px solid var(--border);border-radius:9px;background:var(--bg2);color:var(--text);font-size:16px;text-align:center"><span style="color:var(--text3)">×</span><input type="number" inputmode="numeric" value="'+escA(s.r)+'" oninput="sessSet('+ei+','+si+',\'r\',this.value)" placeholder="reps" style="width:64px;padding:9px;border:1.5px solid var(--border);border-radius:9px;background:var(--bg2);color:var(--text);font-size:16px;text-align:center">'+prevTxt+'<button onclick="sessToggle('+ei+','+si+')" style="margin-left:auto;width:38px;height:38px;border-radius:50%;border:2px solid '+(s.done?'var(--green)':'var(--border)')+';background:'+(s.done?'var(--green)':'transparent')+';color:'+(s.done?'#fff':'var(--text3)')+';cursor:pointer;flex-shrink:0"><i class="fa-solid fa-check"></i></button></div>';
-    }).join('');
-    const restBtn=(!p.cardio&&p.repos)?'<button class="btn-sec btn-sm" style="margin-top:6px" onclick="startRest('+restSeconds(p.repos)+')"><i class="fa-solid fa-stopwatch"></i> Repos '+h(p.repos)+'</button>':'';
-    return '<div style="border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:14px;background:var(--surface)">'+head+target+cardioBtns+sets+restBtn+'</div>';
+  // regroupe les exos consécutifs partageant la même lettre de superset
+  const groups=[];sess.exos.forEach((e,ei)=>{const ss=(e.ex.ss||'').trim();const last=groups[groups.length-1];if(ss&&last&&last.ss===ss)last.items.push(ei);else groups.push({ss,items:[ei]});});
+  html+=groups.map(g=>{
+    const grouped=g.items.length>1&&g.ss;
+    const inner=g.items.map(ei=>renderSessExo(ei,grouped)).join('');
+    if(grouped)return '<div style="border:2px solid var(--blue);border-radius:16px;padding:6px 6px 2px;margin-bottom:14px;background:var(--blue-xlight)"><div style="font-size:11px;font-weight:800;color:var(--blue);letter-spacing:.06em;padding:6px 8px">🔗 SUPERSET '+h(g.ss)+' — enchaîne sans repos</div>'+inner+'</div>';
+    return inner;
   }).join('');
   html+='<button class="btn-done" style="width:100%;justify-content:center;margin-top:6px" onclick="finishSeance()"><i class="fa-solid fa-flag-checkered"></i> Terminer la séance</button></div>';
   el.innerHTML=html;
 }
-function sessSet(ei,si,f,v){sess.exos[ei].sets[si][f]=v;}
-function sessToggle(ei,si){const s=sess.exos[ei].sets[si];s.done=!s.done;renderSessLive();if(s.done){const p=sess.exos[ei].ex;if(p&&p.repos&&!p.cardio)startRest(restSeconds(p.repos));}}
-function sessSetDone(ei,si,v){sess.exos[ei].sets[si].done=v;renderSessLive();}
+function renderSessExo(ei,grouped){
+  const e=sess.exos[ei];const exo=e.exId?exById(e.exId):null;const p=e.ex;
+  const timed=exoIsTimed(p);const blockLbl=exoBlockLabel(p);
+  let head='<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><span style="font-family:var(--fd);font-size:17px;font-weight:800;flex:1">'+((blockLbl&&!grouped&&blockLbl!=='SUPERSET')?'<span style="background:var(--blue-light);color:var(--blue);font-size:10px;padding:2px 8px;border-radius:8px;margin-right:6px;vertical-align:middle">'+blockLbl+'</span>':'')+h(e.nom)+'</span>'+(exo&&exo.video?'<button class="btn-sec btn-sm" onclick="openExoVideo('+exo.id+')"><i class="fa-solid fa-circle-play"></i></button>':'')+(exo?'<button class="btn-sec btn-sm" onclick="openExoInfo('+exo.id+')"><i class="fa-solid fa-circle-info"></i></button>':'')+'<button class="btn-sec btn-sm" onclick="sessOpenNote('+ei+')" title="Ma note"><i class="fa-'+(e.note?'solid':'regular')+' fa-note-sticky" style="'+(e.note?'color:var(--gold)':'')+'"></i></button></div>';
+  // ligne cible (coach)
+  const chargeTxt=p.cardio?'':(p.chargeMode==='pct'?(p.charge?h(p.charge)+' % 1RM':''):p.chargeMode==='rpe'?'au ressenti':(p.charge?h(p.charge)+' kg':''));
+  let target=timed?('<div style="font-size:13px;color:var(--blue);font-weight:600;margin-bottom:6px">'+h((p.cardio?(p.cardio.dur||''):(p.reps||p.series||''))||'')+(p.cardio&&p.cardio.desc?' — '+h(p.cardio.desc):'')+'</div>')
+    :('<div style="font-size:13px;color:var(--text2);margin-bottom:6px">🎯 '+h(p.series||'?')+' × '+h(p.reps||'?')+(chargeTxt?' @ '+chargeTxt:'')+(p.tempo?' · tempo '+h(p.tempo):'')+(p.rir?' · <strong style="color:var(--blue)">'+h(p.rir)+'</strong>':'')+(p.repos?' · repos '+h(p.repos):'')+'</div>');
+  if(p.note)target+='<div style="font-size:12px;color:var(--gold-dark);background:var(--gold-light);border-radius:8px;padding:6px 10px;margin-bottom:8px">💬 Coach : '+h(p.note)+'</div>';
+  if(e.note)target+='<div id="sess-note-'+ei+'" style="font-size:12px;color:var(--blue);background:var(--blue-xlight);border-radius:8px;padding:6px 10px;margin-bottom:8px">📝 Toi : '+h(e.note)+'</div>';
+  let timerBtns='';
+  if(timed){const tt=p.cardio?(p.cardio.type||'libre'):p.type;timerBtns='<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px"><button class="btn-sec btn-sm" onclick="openHIIT(\'tabata\')">Tabata</button><button class="btn-sec btn-sm" onclick="openHIIT(\'emom\')">EMOM</button><button class="btn-sec btn-sm" onclick="openHIIT(\'amrap\')">AMRAP</button><button class="btn-sec btn-sm" onclick="openHIIT(\'libre\')">Minuteur</button></div>';}
+  const rpeBtns=si=>'<div style="display:flex;gap:4px;margin-top:5px;flex-wrap:wrap"><span style="font-size:11px;color:var(--text3);align-self:center;margin-right:2px">RPE</span>'+[6,7,8,9,10].map(v=>'<button onclick="sessRpe('+ei+','+si+','+v+')" style="width:34px;height:34px;border-radius:9px;border:1.5px solid '+(String(sess.exos[ei].sets[si].rpe)==String(v)?'var(--blue)':'var(--border)')+';background:'+(String(sess.exos[ei].sets[si].rpe)==String(v)?'var(--blue)':'var(--bg2)')+';color:'+(String(sess.exos[ei].sets[si].rpe)==String(v)?'#fff':'var(--text2)')+';font-size:13px;font-weight:700;cursor:pointer">'+v+'</button>').join('')+'</div>';
+  const stepper=(ei,si,f,step)=>'<button onclick="sessStep('+ei+','+si+',\''+f+'\','+step+')" style="width:34px;height:38px;border:1.5px solid var(--border);background:var(--bg2);color:var(--text2);border-radius:9px;font-size:18px;font-weight:700;cursor:pointer;flex-shrink:0">'+(step>0?'+':'−')+'</button>';
+  const sets=e.sets.map((s,si)=>{
+    const prevTxt=(e.prev&&e.prev[si]&&(e.prev[si].w||e.prev[si].r))?('<div style="font-size:11px;color:var(--text3);white-space:nowrap;align-self:center">↩︎ '+(e.prev[si].w||'?')+'×'+(e.prev[si].r||'?')+'</div>'):'';
+    if(timed)return '<label style="display:flex;align-items:center;gap:10px;padding:8px 0"><input type="checkbox" '+(s.done?'checked':'')+' onchange="sessSetDone('+ei+','+si+',this.checked)" style="width:26px;height:26px;accent-color:var(--green)"><span style="font-size:14px;font-weight:600">Bloc terminé</span></label>';
+    return '<div style="padding:8px 0;border-top:1px solid var(--border2);'+(s.done?'opacity:.65':'')+'">'
+      +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><span style="font-size:13px;font-weight:700;color:var(--text3)">Série '+(si+1)+'</span>'+prevTxt+'<button onclick="sessToggle('+ei+','+si+')" style="margin-left:auto;width:42px;height:42px;border-radius:50%;border:2px solid '+(s.done?'var(--green)':'var(--border)')+';background:'+(s.done?'var(--green)':'transparent')+';color:'+(s.done?'#fff':'var(--text3)')+';cursor:pointer;flex-shrink:0;font-size:16px"><i class="fa-solid fa-check"></i></button></div>'
+      +'<div style="display:flex;align-items:center;gap:4px;justify-content:center">'+stepper(ei,si,'w',-2.5)+'<input type="number" inputmode="decimal" value="'+escA(s.w)+'" oninput="sessSet('+ei+','+si+',\'w\',this.value)" placeholder="kg" style="flex:1;min-width:0;max-width:80px;padding:11px 4px;border:1.5px solid var(--border);border-radius:9px;background:var(--bg2);color:var(--text);font-size:16px;text-align:center">'+stepper(ei,si,'w',2.5)+'<span style="color:var(--text3);font-size:14px;padding:0 2px">×</span>'+stepper(ei,si,'r',-1)+'<input type="number" inputmode="numeric" value="'+escA(s.r)+'" oninput="sessSet('+ei+','+si+',\'r\',this.value)" placeholder="reps" style="flex:1;min-width:0;max-width:80px;padding:11px 4px;border:1.5px solid var(--border);border-radius:9px;background:var(--bg2);color:var(--text);font-size:16px;text-align:center">'+stepper(ei,si,'r',1)+'</div>'
+      +rpeBtns(si)+'</div>';
+  }).join('');
+  const restBtn=(!timed&&p.repos)?'<button class="btn-sec btn-sm" style="margin-top:8px" onclick="startRest('+restSeconds(p.repos)+')"><i class="fa-solid fa-stopwatch"></i> Lancer le repos ('+h(p.repos)+')</button>':'';
+  return '<div style="border:1px solid var(--border);border-radius:14px;padding:13px;margin-bottom:'+(grouped?'8px':'14px')+';background:var(--surface)">'+head+target+timerBtns+sets+restBtn+'</div>';
+}
+function sessSet(ei,si,f,v){sess.exos[ei].sets[si][f]=v;autosaveSess();}
+function sessStep(ei,si,f,step){const s=sess.exos[ei].sets[si];let n=parseFloat(s[f])||0;n=Math.max(0,Math.round((n+step)*100)/100);s[f]=String(n);autosaveSess();renderSessLive();}
+function sessRpe(ei,si,v){const s=sess.exos[ei].sets[si];s.rpe=(String(s.rpe)==String(v))?'':v;autosaveSess();renderSessLive();}
+function sessToggle(ei,si){const s=sess.exos[ei].sets[si];s.done=!s.done;autosaveSess();renderSessLive();if(s.done){const p=sess.exos[ei].ex;if(p&&p.repos&&!exoIsTimed(p))startRest(restSeconds(p.repos));}}
+function sessSetDone(ei,si,v){sess.exos[ei].sets[si].done=v;autosaveSess();renderSessLive();}
+function sessOpenNote(ei){
+  const e=sess.exos[ei];
+  document.getElementById('modal-content').innerHTML='<h3 style="font-family:var(--fd);font-size:18px;margin-bottom:4px">📝 Ma note — '+h(e.nom)+'</h3><p style="font-size:12px;color:var(--text3);margin-bottom:10px">Visible par ton coach (ex : douleur, sensation, charge baissée...).</p><textarea id="sess-note-txt" maxlength="300" style="width:100%;min-height:110px;padding:12px;border:1.5px solid var(--border);border-radius:12px;background:var(--bg2);color:var(--text);font-size:16px;resize:vertical">'+h(e.note||'')+'</textarea><button class="btn" style="margin-top:12px;width:100%;justify-content:center" onclick="sessSaveNote('+ei+')"><i class="fa-solid fa-check"></i> Enregistrer</button>';
+  openModalTop();
+}
+function sessSaveNote(ei){sess.exos[ei].note=(document.getElementById('sess-note-txt').value||'').trim().slice(0,300);autosaveSess();closeModal();renderSessLive();}
 function restSeconds(txt){const m=String(txt||'').match(/(\d+)\s*(min|m)?/i);if(!m)return 90;let n=parseInt(m[1]);if(/min|m/i.test(m[2]||'')||n<=10)n=n*60;return n;}
-function quitSeance(){if(!confirm('Quitter la séance ? Ta saisie en cours sera perdue.'))return;stopRest();document.getElementById('sess-el')?.remove();sess=null;}
+function quitSeance(){if(!confirm('Mettre la séance en pause ?\n\nTa saisie est sauvegardée : tu pourras reprendre où tu t’es arrêté depuis « Mon entraînement ».'))return;stopRest();autosaveSess();document.getElementById('sess-el')?.remove();sess=null;gotoS('training');}
 
 // minuteur de repos
 let restState=null,restInt=null;
@@ -5427,29 +5469,39 @@ function openExoVideo(id){const e=exById(id);if(!e||!e.video)return;const u=safe
 function openExoInfo(id){const e=exById(id);if(!e)return;document.getElementById('modal-content').innerHTML='<h3 style="font-family:var(--fd);font-size:19px;margin-bottom:4px">'+h(e.nom)+'</h3><div style="font-size:12px;color:var(--text3);margin-bottom:12px">'+h(e.groupe)+' · '+h(e.materiel)+' · '+h(e.niveau)+'</div>'+(e.video?'<button class="btn" style="width:100%;justify-content:center;margin-bottom:12px" onclick="openExoVideo('+e.id+')"><i class="fa-solid fa-circle-play"></i> Voir la vidéo de démo</button>':'')+(e.consignes?'<div style="font-size:12px;font-weight:700;text-transform:uppercase;color:var(--text2);margin-bottom:4px">Exécution</div><div style="font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:12px">'+h(e.consignes)+'</div>':'')+(e.securite?'<div style="font-size:12px;font-weight:700;text-transform:uppercase;color:var(--text2);margin-bottom:4px">⚠️ Sécurité</div><div style="font-size:14px;color:var(--text2);line-height:1.6">'+h(e.securite)+'</div>':'');openModal();}
 
 function finishSeance(){
-  const dz='<div style="display:flex;gap:8px;justify-content:center;margin:8px 0">'+[1,2,3,4,5].map(i=>'<button class="fin-en" data-v="'+i+'" onclick="finEnergy('+i+')" style="background:none;border:2px solid var(--border);border-radius:12px;width:48px;height:48px;font-size:22px;cursor:pointer">'+['😖','😕','😐','🙂','😄'][i-1]+'</button>').join('')+'</div>';
-  document.getElementById('modal-content').innerHTML='<h3 style="font-family:var(--fd);font-size:19px;margin-bottom:14px">💪 Bilan de ta séance</h3>'
-   +'<label style="font-size:12px;font-weight:700;text-transform:uppercase;color:var(--text2)">Difficulté ressentie (RPE) : <span id="fin-rpe-v">7</span>/10</label><input type="range" id="fin-rpe" min="1" max="10" value="7" oninput="document.getElementById(\'fin-rpe-v\').textContent=this.value" style="width:100%;accent-color:var(--blue);margin:10px 0 16px">'
+  // rendu DANS l'overlay de séance (évite tout conflit de z-index)
+  const el=document.getElementById('sess-el');if(!el)return;
+  stopRest();
+  const dur=Math.max(1,Math.round((Date.now()-(sess.startedAt||Date.now()))/60000));
+  const totalSets=sess.exos.reduce((s,e)=>s+e.sets.length,0);const doneSets=sess.exos.reduce((s,e)=>s+e.sets.filter(x=>x.done).length,0);
+  const dz='<div style="display:flex;gap:8px;justify-content:center;margin:8px 0">'+[1,2,3,4,5].map(i=>'<button class="fin-en" data-v="'+i+'" onclick="finEnergy('+i+')" style="background:none;border:2px solid var(--border);border-radius:12px;width:52px;height:52px;font-size:24px;cursor:pointer">'+['😖','😕','😐','🙂','😄'][i-1]+'</button>').join('')+'</div>';
+  el.innerHTML='<div class="fm-hdr"><div class="fm-title">💪 Bilan de ta séance</div><button class="fm-close" onclick="renderSessLive()"><i class="fa-solid fa-arrow-left"></i> Retour</button></div><div class="fm-body">'
+   +'<div style="background:var(--bg2);border-radius:12px;padding:12px;margin-bottom:16px;display:flex;gap:8px;text-align:center"><div style="flex:1"><div style="font-family:var(--fd);font-size:20px;font-weight:800;color:var(--blue)">'+doneSets+'/'+totalSets+'</div><div style="font-size:11px;color:var(--text3)">séries faites</div></div><div style="flex:1"><div style="font-family:var(--fd);font-size:20px;font-weight:800;color:var(--blue)">'+dur+' min</div><div style="font-size:11px;color:var(--text3)">durée</div></div></div>'
+   +'<label style="font-size:12px;font-weight:700;text-transform:uppercase;color:var(--text2)">Difficulté de la séance (RPE) : <span id="fin-rpe-v">7</span>/10</label><input type="range" id="fin-rpe" min="1" max="10" value="7" oninput="document.getElementById(\'fin-rpe-v\').textContent=this.value" style="width:100%;accent-color:var(--blue);margin:10px 0 16px;height:30px">'
    +'<label style="font-size:12px;font-weight:700;text-transform:uppercase;color:var(--text2)">Niveau d’énergie</label>'+dz
-   +'<label style="font-size:12px;font-weight:700;text-transform:uppercase;color:var(--text2);display:block;margin-top:10px">Douleur ? (zone, optionnel)</label><input type="text" id="fin-douleur" placeholder="Ex : genou droit, ou rien" style="width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:10px;background:var(--bg2);color:var(--text);font-size:16px;margin-top:6px">'
-   +'<label style="font-size:12px;font-weight:700;text-transform:uppercase;color:var(--text2);display:block;margin-top:10px">Commentaire</label><textarea id="fin-comment" maxlength="500" placeholder="Sensations, remarques pour ton coach..." style="width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:10px;background:var(--bg2);color:var(--text);font-size:16px;margin-top:6px;min-height:70px;resize:vertical"></textarea>'
-   +'<button class="btn" style="margin-top:16px;width:100%;justify-content:center" onclick="saveSeance()"><i class="fa-solid fa-save"></i> Enregistrer ma séance</button>';
-  window._finEnergy=4;openModal();
+   +'<label style="font-size:12px;font-weight:700;text-transform:uppercase;color:var(--text2);display:block;margin-top:10px">Douleur ? (zone, optionnel)</label><input type="text" id="fin-douleur" placeholder="Ex : genou droit, ou rien" style="width:100%;padding:12px 13px;border:1.5px solid var(--border);border-radius:10px;background:var(--bg2);color:var(--text);font-size:16px;margin-top:6px">'
+   +'<label style="font-size:12px;font-weight:700;text-transform:uppercase;color:var(--text2);display:block;margin-top:10px">Commentaire pour ton coach</label><textarea id="fin-comment" maxlength="500" placeholder="Sensations, remarques..." style="width:100%;padding:12px 13px;border:1.5px solid var(--border);border-radius:10px;background:var(--bg2);color:var(--text);font-size:16px;margin-top:6px;min-height:80px;resize:vertical"></textarea>'
+   +'<button class="btn-done" style="margin-top:16px;width:100%;justify-content:center" onclick="saveSeance()"><i class="fa-solid fa-check"></i> Valider et enregistrer ma séance</button>'
+   +'<div style="height:30px"></div></div>';
+  window._finEnergy=4;
 }
 function finEnergy(v){window._finEnergy=v;document.querySelectorAll('.fin-en').forEach(b=>{b.style.borderColor=parseInt(b.dataset.v)===v?'var(--blue)':'var(--border)';b.style.background=parseInt(b.dataset.v)===v?'var(--blue-xlight)':'none';});}
 function saveSeance(){
-  const logs=sess.exos.map(e=>({exId:e.exId,nom:e.nom,sets:e.sets.map(s=>({w:s.w,r:s.r,done:s.done}))}));
-  const w={id:Date.now(),seanceIdx:sess.idx,seanceNom:sess.nom,date:localDate(),logs,rpe:parseInt(document.getElementById('fin-rpe').value)||7,energy:window._finEnergy||4,douleur:(document.getElementById('fin-douleur').value||'').trim().slice(0,100),comment:(document.getElementById('fin-comment').value||'').trim().slice(0,500),at:new Date().toISOString()};
+  if(!sess){return;}
+  const dur=Math.max(1,Math.round((Date.now()-(sess.startedAt||Date.now()))/60000));
+  const logs=sess.exos.map(e=>({exId:e.exId,nom:e.nom,note:e.note||'',sets:e.sets.map(s=>({w:s.w,r:s.r,rpe:s.rpe||'',done:s.done}))}));
+  const w={id:Date.now(),seanceIdx:sess.idx,seanceNom:sess.nom,date:localDate(),duree:dur,logs,rpe:parseInt(document.getElementById('fin-rpe')?.value)||7,energy:window._finEnergy||4,douleur:(document.getElementById('fin-douleur')?.value||'').trim().slice(0,100),comment:(document.getElementById('fin-comment')?.value||'').trim().slice(0,500),at:new Date().toISOString()};
   const arr=DB.getArr(wKey(CU.code||''));arr.push(w);DB.set(wKey(CU.code||''),arr);
-  // gamification : +XP, coche la séance du jour (quête/streak/engagement)
+  clearSessSave();
   if(!CU.isPreview){CU.xp=(CU.xp||0)+30;saveCU();const x=document.getElementById('tb-xp-val');if(x)x.textContent=(CU.xp||0)+' XP';
     try{const k='nc3_ck_'+(CU.code||'')+'_'+localDate();const ck=JSON.parse(localStorage.getItem(k))||{};ck.s1=true;localStorage.setItem(k,JSON.stringify(ck));}catch(e){}
     checkBadges();
   }
-  closeModal();stopRest();document.getElementById('sess-el')?.remove();sess=null;
-  fireConfetti();toast('Séance enregistrée ! +30 XP 🔥','gold');addNotif('🏋️','Séance terminée',w.seanceNom);
+  stopRest();document.getElementById('sess-el')?.remove();sess=null;
+  fireConfetti();toast('Séance validée ! +30 XP 🔥','gold');addNotif('🏋️','Séance terminée',w.seanceNom);
   gotoS('training');
 }
+function openModalTop(){openModal();}
 
 // ---------- intégration : alerte menu "séance à faire" ----------
 (function(){
