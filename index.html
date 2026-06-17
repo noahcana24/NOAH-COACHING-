@@ -1043,6 +1043,35 @@ button{touch-action:manipulation;}
 /* Dark mode : surfaces un poil plus contrastées pour les nouvelles cartes */
 [data-theme="dark"] .nav-dot{box-shadow:0 0 8px var(--gold);}
 
+/* ---- 14. ÉDITEUR DE SÉANCE v2 (accordéon mobile + semaine type) ---- */
+.pbexo{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:10px;margin-bottom:10px;}
+.pbtag{background:var(--blue-light);color:var(--blue);font-size:10px;font-weight:700;padding:1px 7px;border-radius:8px;margin-right:5px;vertical-align:middle;}
+.pbact{background:none;border:none;color:var(--text3);cursor:pointer;padding:6px 7px;font-size:14px;border-radius:8px;}
+.pbact:active{background:var(--bg);transform:scale(.92);}
+.pbsec{border-top:1px solid var(--border2);}
+.pbsec>summary{list-style:none;cursor:pointer;padding:9px 2px;font-size:13px;font-weight:600;color:var(--text2);display:flex;align-items:center;gap:6px;user-select:none;}
+.pbsec>summary::-webkit-details-marker{display:none;}
+.pbsec>summary::after{content:'\f078';font-family:'Font Awesome 6 Free';font-weight:900;font-size:10px;color:var(--text3);margin-left:auto;transition:transform .2s ease;}
+.pbsec[open]>summary::after{transform:rotate(180deg);}
+.pbgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:8px;padding:2px 0 10px;}
+.pbfield{display:flex;flex-direction:column;gap:4px;min-width:0;}
+.pbfield>span{font-size:11px;color:var(--text3);font-weight:600;}
+.pbf-in{width:100%;box-sizing:border-box;padding:10px 11px;border:1.5px solid var(--border);border-radius:9px;background:var(--surface);color:var(--text);font-size:16px;min-width:0;}
+.pbweek{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;}
+.pbday{background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;padding:6px 4px;text-align:center;min-width:0;}
+.pbday.has{border-color:var(--blue);background:var(--blue-xlight);}
+.pbday-d{font-size:10px;font-weight:800;color:var(--text2);text-transform:uppercase;margin-bottom:4px;}
+.pbday-sel{width:100%;box-sizing:border-box;padding:5px 2px;border:1px solid var(--border);border-radius:7px;background:var(--surface);color:var(--text);font-size:11px;min-width:0;}
+.pbday-go{margin-top:4px;width:100%;border:none;background:var(--blue);color:#fff;border-radius:7px;padding:4px 0;font-size:11px;cursor:pointer;}
+.pbseance{scroll-margin-top:12px;}
+.pbflash{animation:pbFlash 1.2s ease;}
+@keyframes pbFlash{0%,100%{box-shadow:0 0 0 0 transparent;}25%{box-shadow:0 0 0 3px rgba(26,107,191,.45);}}
+@media (max-width:420px){.pbweek{grid-template-columns:repeat(7,1fr);gap:3px;}.pbday{padding:5px 2px;}.pbday-d{font-size:9px;}.pbday-sel{font-size:10px;}}
+/* Mode salle : gros chiffres pendant la séance live */
+.focus-mode.gym .fm-body input[type=number]{font-size:26px!important;padding:16px 6px!important;font-weight:800;}
+.focus-mode.gym .fm-body{font-size:108%;}
+.focus-mode.gym .fm-title{font-size:18px;}
+
 /* ---- 13. EFFETS PREMIUM (micro-interactions, loaders) — transform/opacity uniquement ---- */
 /* Micro-interactions au survol : desktop seulement (hover:hover), GPU-friendly */
 @media (hover:hover) and (pointer:fine){
@@ -1544,8 +1573,9 @@ button{touch-action:manipulation;}
         <div class="sec-header"><h2>Bibliothèque d'exercices</h2><p>Ton catalogue d'exercices, réutilisé dans les programmes</p></div>
         <div class="afc">
           <h3 id="exo-form-title">Nouvel exercice</h3>
-          <div class="r2"><div class="fg2"><label>Nom</label><input type="text" id="exo-nom" placeholder="Ex : Développé couché barre"></div><div class="fg2"><label>Groupe musculaire</label><select id="exo-groupe"><option>Pectoraux</option><option>Dos</option><option>Jambes</option><option>Épaules</option><option>Bras</option><option>Abdos</option><option>Full body</option><option>Cardio</option></select></div></div>
-          <div class="r2"><div class="fg2"><label>Matériel</label><select id="exo-materiel"><option>Barre</option><option>Haltères</option><option>Machine</option><option>Poulie</option><option>Poids du corps</option><option>Élastique</option><option>Kettlebell</option></select></div><div class="fg2"><label>Niveau</label><select id="exo-niveau"><option>Débutant</option><option>Intermédiaire</option><option>Avancé</option></select></div></div>
+          <div class="r2"><div class="fg2"><label>Nom</label><input type="text" id="exo-nom" placeholder="Ex : Développé couché barre"></div><div class="fg2"><label>Groupe musculaire</label><select id="exo-groupe"></select></div></div>
+          <div class="r2"><div class="fg2"><label>Partie ciblée (sous-groupe)</label><input type="text" id="exo-sousgroupe" list="dl-exo-sous" placeholder="ex : Haut, Largeur, Latéral…" autocomplete="off"><datalist id="dl-exo-sous"></datalist></div><div class="fg2"><label>Discipline / type</label><input type="text" id="exo-discipline" list="dl-exo-disc" placeholder="ex : Musculation, Powerlifting…" autocomplete="off"><datalist id="dl-exo-disc"></datalist></div></div>
+          <div class="r2"><div class="fg2"><label>Matériel</label><input type="text" id="exo-materiel" list="dl-exo-mat" placeholder="ex : Barre, Poulie/Câble…" autocomplete="off"><datalist id="dl-exo-mat"></datalist></div><div class="fg2"><label>Niveau</label><select id="exo-niveau"><option>Débutant</option><option>Intermédiaire</option><option>Avancé</option></select></div></div>
           <div class="fg2"><label>Consignes d'exécution</label><textarea id="exo-consignes" placeholder="Comment réaliser le mouvement correctement..."></textarea></div>
           <div class="fg2"><label>Conseils de sécurité</label><textarea id="exo-securite" placeholder="Points d'attention, erreurs à éviter..."></textarea></div>
           <div class="fg2"><label>Lien vidéo de démonstration (YouTube, Vimeo...) ou téléverse ci-dessous</label><input type="text" id="exo-video" placeholder="https://youtube.com/... ou téléverse une vidéo"></div>
@@ -1561,7 +1591,7 @@ button{touch-action:manipulation;}
           </div>
           <div class="fa-row"><button class="btn" onclick="saveExo()"><i class="fa-solid fa-save"></i> <span id="save-exo-txt">Ajouter</span></button><button class="btn-sec" id="cancel-exo-btn" onclick="cancelExo()" style="display:none">Annuler</button></div>
         </div>
-        <div class="ftabs" style="gap:8px"><select id="exo-filter-g" class="pc-cat" style="font-size:16px"></select><select id="exo-filter-m" class="pc-cat" style="font-size:16px"></select><select id="exo-filter-n" class="pc-cat" style="font-size:16px"></select></div>
+        <div class="ftabs" style="gap:8px;flex-wrap:wrap"><select id="exo-filter-g" class="pc-cat" style="font-size:16px"></select><select id="exo-filter-s" class="pc-cat" style="font-size:16px"></select><select id="exo-filter-m" class="pc-cat" style="font-size:16px"></select><select id="exo-filter-n" class="pc-cat" style="font-size:16px"></select><select id="exo-filter-d" class="pc-cat" style="font-size:16px"></select></div>
         <div class="sbar"><i class="fa-solid fa-magnifying-glass"></i><input type="text" id="exo-search" placeholder="Rechercher un exercice..." oninput="renderAExos()"></div>
         <div id="exo-count" style="font-size:13px;color:var(--text3);margin:-6px 0 12px;font-weight:500"></div>
         <div id="admin-exos-list"></div>
@@ -2025,7 +2055,7 @@ function fireConfetti(){const c=document.getElementById('confetti-c');const cols
 document.addEventListener('DOMContentLoaded',async()=>{
   // Tire les données partagées du cloud AVANT d'afficher (si Supabase dispo)
   await cloudPullAll();
-  seedData();seedFormules();seedV3();seedV4();seedTraining();seedTrainV2();
+  seedData();seedFormules();seedV3();seedV4();seedTraining();seedTrainV2();seedTrainV3();
   document.getElementById('login-btn').addEventListener('click',handleLogin);
   document.getElementById('invite-code').addEventListener('keypress',e=>{if(e.key==='Enter')handleLogin();});
   document.getElementById('member-name').addEventListener('keypress',e=>{if(e.key==='Enter')handleLogin();});
@@ -5230,7 +5260,7 @@ let editExoId=null,exoFilterG='all',exoFilterM='all',exoFilterN='all';
 function saveExo(){
   const nom=(document.getElementById('exo-nom').value||'').trim();
   if(!nom){toast('Nom requis','error');return;}
-  const obj={nom,groupe:document.getElementById('exo-groupe').value,materiel:document.getElementById('exo-materiel').value,niveau:document.getElementById('exo-niveau').value,consignes:(document.getElementById('exo-consignes').value||'').trim(),securite:(document.getElementById('exo-securite').value||'').trim(),video:(document.getElementById('exo-video').value||'').trim(),image:(document.getElementById('exo-image').value||'').trim()};
+  const obj={nom,groupe:document.getElementById('exo-groupe').value,sousGroupe:(document.getElementById('exo-sousgroupe')?.value||'').trim(),materiel:(document.getElementById('exo-materiel').value||'').trim(),niveau:document.getElementById('exo-niveau').value,discipline:(document.getElementById('exo-discipline')?.value||'').trim(),consignes:(document.getElementById('exo-consignes').value||'').trim(),securite:(document.getElementById('exo-securite').value||'').trim(),video:(document.getElementById('exo-video').value||'').trim(),image:(document.getElementById('exo-image').value||'').trim()};
   const list=DB.getArr('exercices');
   if(editExoId){const e=list.find(x=>x.id===editExoId);if(e)Object.assign(e,obj);toast('Exercice mis à jour ✅','success');}
   else{list.push(Object.assign({id:Date.now()},obj));toast('Exercice ajouté ✅','success');}
@@ -5238,8 +5268,12 @@ function saveExo(){
 }
 function editExo(id){
   const e=exById(id);if(!e)return;editExoId=id;
+  if(typeof exoFormFillLists==='function')exoFormFillLists();
   document.getElementById('exo-nom').value=e.nom||'';
   document.getElementById('exo-groupe').value=e.groupe||'Pectoraux';
+  if(typeof exoFormSubOptions==='function')exoFormSubOptions();
+  const sg=document.getElementById('exo-sousgroupe');if(sg)sg.value=e.sousGroupe||'';
+  const di=document.getElementById('exo-discipline');if(di)di.value=e.discipline||'';
   document.getElementById('exo-materiel').value=e.materiel||'Barre';
   document.getElementById('exo-niveau').value=e.niveau||'Débutant';
   document.getElementById('exo-consignes').value=e.consignes||'';
@@ -5253,7 +5287,7 @@ function editExo(id){
   document.getElementById('cancel-exo-btn').style.display='inline-flex';
   window.scrollTo({top:0,behavior:'smooth'});
 }
-function cancelExo(){editExoId=null;['exo-nom','exo-consignes','exo-securite','exo-video','exo-image'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});['exo-video-prog','exo-image-prog'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML='';});const t=document.getElementById('exo-form-title');if(t)t.textContent='Nouvel exercice';const s=document.getElementById('save-exo-txt');if(s)s.textContent='Ajouter';const c=document.getElementById('cancel-exo-btn');if(c)c.style.display='none';}
+function cancelExo(){editExoId=null;['exo-nom','exo-consignes','exo-securite','exo-video','exo-image','exo-sousgroupe','exo-materiel','exo-discipline'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});['exo-video-prog','exo-image-prog'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML='';});const t=document.getElementById('exo-form-title');if(t)t.textContent='Nouvel exercice';const s=document.getElementById('save-exo-txt');if(s)s.textContent='Ajouter';const c=document.getElementById('cancel-exo-btn');if(c)c.style.display='none';}
 function delExo(id){if(!confirm('Supprimer cet exercice ?'))return;if(editExoId===id)cancelExo();DB.set('exercices',DB.getArr('exercices').filter(x=>x.id!==id));renderAExos();toast('Supprimé');}
 function renderAExos(){
   const list=document.getElementById('admin-exos-list');if(!list)return;
@@ -5407,7 +5441,9 @@ function assignProg(code){
   const pid=parseInt(document.getElementById('assign-prog').value);
   const p=progById(pid);if(!p){toast('Choisis un programme','error');return;}
   const date=document.getElementById('assign-date').value||localDate();
-  DB.set(aKey(code),{progId:p.id,prog:JSON.parse(JSON.stringify(p)),startDate:date,assignedAt:new Date().toISOString()});
+  // reprend la semaine type du programme si définie (jour → séance)
+  const wk={};if(p.week)Object.keys(p.week).forEach(function(d){if(p.week[d]!=null)wk[d]=p.week[d];});
+  DB.set(aKey(code),{progId:p.id,prog:JSON.parse(JSON.stringify(p)),startDate:date,assignedAt:new Date().toISOString(),version:1,history:[],schedule:{weekdays:wk,overrides:{}},clientSeen:true});
   toast('Programme attribué ✅','success');openTrainingClient(code);
 }
 function unassignProg(code){if(!confirm('Retirer le programme de ce client ?\n(Son historique de séances est conservé.)'))return;DB.set(aKey(code),null);toast('Programme retiré');openTrainingClient(code);}
@@ -5811,7 +5847,7 @@ function seanceRecap(w,prs){
   if(prs&&prs.length&&window.celebrate){celebrate('pr');}else{fireConfetti();if(prs&&prs.length){setTimeout(fireConfetti,400);}}
   toast(prs&&prs.length?'🏆 Nouveau record ! +30 XP':'Séance validée ! +30 XP 🔥','gold');
 }
-function closeRecap(){document.getElementById('sess-el')?.remove();gotoS('training');}
+function closeRecap(){try{releaseWake();}catch(e){}document.getElementById('sess-el')?.remove();gotoS('training');}
 
 // ---------- NOTIFS COACH (séparées des notifs membre) ----------
 function pushCoachNotif(icon,title,text){const n=DB.getArr('coach_notifs');n.unshift({id:Date.now()+Math.random(),icon,title,text,time:new Date().toISOString(),read:false});DB.set('coach_notifs',n.slice(0,40));}
@@ -5959,6 +5995,405 @@ function popCheck(ei,si){
 }
 
 // ============================================================
+// ENTRAÎNEMENT lot 5 — Catalogue complet, sous-groupes & disciplines,
+// éditeur de séance repensé (accordéon mobile + semaine type),
+// substitution d'exercice, équilibre du programme, suggestions de
+// progression, Wake Lock + mode salle. Redéfinit renderAExos,
+// pbRenderSeances, pbPerfHint, exoBadge (def plus tardive = gagne).
+// Nouveaux champs exercice : sousGroupe, discipline. Programme : week{}.
+// ============================================================
+const EXO_GROUPES2=['Pectoraux','Dos','Épaules','Biceps','Triceps','Avant-bras','Abdos','Quadriceps','Ischio-jambiers','Fessiers','Mollets','Full body','Cardio','Bras','Jambes'];
+const EXO_SOUS={
+  'Pectoraux':['Haut','Milieu','Bas'],
+  'Dos':['Largeur','Épaisseur','Bas du dos'],
+  'Épaules':['Avant','Latéral','Arrière','Trapèzes'],
+  'Biceps':['Courte portion','Longue portion','Brachial'],
+  'Triceps':['Longue portion','Courte portion'],
+  'Avant-bras':['Fléchisseurs','Extenseurs'],
+  'Abdos':['Grand droit','Obliques','Transverse'],
+  'Quadriceps':['Quadriceps','Adducteurs'],
+  'Ischio-jambiers':['Ischios','Fessiers'],
+  'Fessiers':['Grand fessier','Moyen fessier'],
+  'Mollets':['Gastrocnémiens','Soléaire'],
+  'Full body':['Polyarticulaire','Conditionnement'],
+  'Cardio':['LISS','HIIT'],
+  'Bras':['Biceps','Triceps'],
+  'Jambes':['Quadriceps','Ischios','Fessiers','Mollets']
+};
+const EXO_MATERIEL2=['Barre','Barre EZ','Haltères','Poulie/Câble','Machine','Machine convergente','Smith machine','Poids du corps','Élastique','Kettlebell','TRX/Sangles','Banc','Médecine ball','Sled/Traîneau','Aucun'];
+const EXO_DISCIPLINES=['Musculation/Hypertrophie','Powerlifting','Cross training/Fonctionnel','Haltérophilie','Cardio/Conditionnement','Mobilité','Poids du corps'];
+const GRP_ICON2={'Pectoraux':'🫀','Dos':'🔙','Épaules':'🤷','Biceps':'💪','Triceps':'💪','Avant-bras':'🤏','Abdos':'🧱','Quadriceps':'🦵','Ischio-jambiers':'🦵','Fessiers':'🍑','Mollets':'🦿','Full body':'🏋️','Cardio':'❤️‍🔥','Bras':'💪','Jambes':'🦵'};
+function grpIcon(g){return (typeof GRP_ICON!=='undefined'&&GRP_ICON[g])||GRP_ICON2[g]||'•';}
+
+// ---------- Catalogue d'exercices (seed additif, version 3) ----------
+function seedTrainV3(force){
+  if(DB.get('seeded_train3')&&!force)return;
+  // X(id, nom, groupe, sous-groupe, matériel, niveau, discipline, consignes)
+  var X=function(id,nom,gr,sg,mat,niv,disc,cons){return {id:id,nom:nom,groupe:gr,sousGroupe:sg,materiel:mat,niveau:niv,discipline:disc,consignes:cons,securite:'',video:'',image:''};};
+  var M='Musculation/Hypertrophie',P='Powerlifting',CF='Cross training/Fonctionnel',HA='Haltérophilie',CO='Cardio/Conditionnement',MO='Mobilité',PC='Poids du corps';
+  var CAT=[
+    // ---- PECTORAUX (mes exos) ----
+    X(2001,"Chest press incliné","Pectoraux","Haut","Machine convergente","Débutant",M,"Assis dossier incliné, poignées au niveau du haut des pectoraux. Pousse en contrôlant sans verrouiller brutalement les coudes, contrôle le retour."),
+    X(2002,"Barrel press incliné","Pectoraux","Haut","Haltères","Intermédiaire",M,"Banc incliné, haltères collés l'un à l'autre paumes face à face. Pousse vers le haut en gardant les haltères en contact, descends en contrôlant."),
+    X(2003,"Écarté poulie basse","Pectoraux","Haut","Poulie/Câble","Débutant",M,"Poulies en position basse, monte les mains en arc de cercle vers le haut et l'intérieur, coudes légèrement fléchis. Cible le haut des pectoraux."),
+    X(2004,"Chest press allongé","Pectoraux","Milieu","Machine convergente","Débutant",M,"Assis, poignées au niveau des pectoraux, pousse jusqu'à extension contrôlée puis reviens en sentant l'étirement."),
+    X(2005,"Écarté haltère","Pectoraux","Milieu","Haltères","Intermédiaire",M,"Allongé, bras semi-fléchis, ouvre les bras jusqu'à un étirement confortable puis ramène les haltères au-dessus de la poitrine. Pas de descente trop basse pour l'épaule."),
+    X(2006,"Barrel press","Pectoraux","Milieu","Haltères","Intermédiaire",M,"Allongé, haltères collés paumes face à face, pousse en gardant le contact entre les haltères pour maximiser la tension interne des pectoraux."),
+    X(2007,"Pec fly (machine)","Pectoraux","Milieu","Machine","Débutant",M,"Assis, coudes à hauteur d'épaules, rapproche les bras en contractant les pectoraux, contrôle l'ouverture sans forcer en arrière."),
+    // ---- DOS ----
+    X(2010,"Tirage horizontal unilatéral","Dos","Largeur","Poulie/Câble","Débutant",M,"À la poulie basse, tire la poignée d'une main vers le flanc, coude proche du corps, contrôle le retour en gardant le buste stable."),
+    X(2011,"Pull over (poulie)","Dos","Largeur","Poulie/Câble","Intermédiaire",M,"Debout face à la poulie haute, bras tendus, descends la barre/corde vers les cuisses par un mouvement d'épaule, contrôle la remontée. Cible les grands dorsaux."),
+    X(2012,"Tirage vertical prise neutre","Dos","Largeur","Poulie/Câble","Débutant",M,"Assis, poignée neutre, tire vers le haut de la poitrine en descendant les coudes, contrôle la remontée jusqu'à étirement complet."),
+    X(2013,"Tirage vertical à la barre","Dos","Largeur","Poulie/Câble","Débutant",M,"Prise pronation un peu plus large que les épaules, tire la barre vers la poitrine, omoplates basses, sans tirer derrière la nuque."),
+    X(2014,"Traction","Dos","Largeur","Poids du corps","Avancé",PC,"Suspendu prise pronation, tire la poitrine vers la barre en descendant les coudes, contrôle la descente. Élastique d'assistance si besoin."),
+    X(2015,"Tirage unilatéral poulie haute","Dos","Largeur","Poulie/Câble","Intermédiaire",M,"À genou ou assis, tire la poignée haute d'une main vers le flanc en cherchant l'amplitude complète du grand dorsal."),
+    X(2016,"Helms row","Dos","Épaisseur","Haltères","Intermédiaire",M,"Buste penché soutenu sur un banc incliné, tire les haltères vers les hanches, coudes proches du corps, contrôle. Protège les lombaires."),
+    X(2017,"Tirage horizontal prise serrée","Dos","Épaisseur","Poulie/Câble","Débutant",M,"Assis, poignée serrée, tire vers le nombril en serrant les omoplates, dos droit, contrôle le retour."),
+    X(2018,"Tirage horizontal prise neutre","Dos","Épaisseur","Poulie/Câble","Débutant",M,"Assis, prise neutre, tire vers le ventre en gardant le buste stable et les épaules basses, contrôle le retour."),
+    // ---- ÉPAULES ----
+    X(2020,"Front raise haltère","Épaules","Avant","Haltères","Débutant",M,"Lève l'haltère devant toi jusqu'à l'horizontale, bras quasi tendu, contrôle la descente. Pas d'élan du buste."),
+    X(2021,"Front raise poulie","Épaules","Avant","Poulie/Câble","Débutant",M,"Poulie basse derrière toi, monte la poignée devant jusqu'à l'horizontale, mouvement lent et contrôlé."),
+    X(2023,"Latéral raise haltère","Épaules","Latéral","Haltères","Débutant",M,"Lève les haltères sur les côtés jusqu'à l'horizontale, coudes légèrement fléchis, sans monter les épaules. Charge légère, pas d'élan."),
+    X(2024,"Latéral raise poulie unilatéral","Épaules","Latéral","Poulie/Câble","Intermédiaire",M,"Poulie basse, monte le bras sur le côté jusqu'à l'horizontale, tension constante du deltoïde latéral, contrôle la descente."),
+    X(2025,"Développé militaire haltère","Épaules","Latéral","Haltères","Débutant",M,"Assis ou debout, haltères au niveau des oreilles, pousse vers le haut sans cambrer, contrôle la descente. Gaine les abdos."),
+    X(2026,"Latéral raise machine","Épaules","Latéral","Machine","Débutant",M,"Assis dans la machine, pousse les coussinets vers l'extérieur jusqu'à l'horizontale, contrôle le retour."),
+    X(2027,"Pec fly inversé","Épaules","Arrière","Machine","Débutant",M,"Face à la machine, écarte les bras vers l'arrière en serrant l'arrière des épaules, contrôle le retour."),
+    X(2028,"Rear delt haltères","Épaules","Arrière","Haltères","Débutant",M,"Buste penché, écarte les bras sur les côtés en serrant l'arrière des épaules, dos plat, charge légère."),
+    X(2029,"Rear delt poulie unilatérale","Épaules","Arrière","Poulie/Câble","Intermédiaire",M,"Poulie réglée à hauteur d'épaule, tire le bras vers l'extérieur et l'arrière, tension sur le deltoïde postérieur."),
+    // ---- BICEPS ----
+    X(2031,"Curl spider","Biceps","Courte portion","Haltères","Intermédiaire",M,"Buste penché sur un banc incliné, bras pendants, fléchis les coudes en gardant les bras devant le corps. Cible la courte portion."),
+    X(2032,"Curl pupitre","Biceps","Courte portion","Barre EZ","Débutant",M,"Bras posés sur le pupitre, fléchis les coudes sans décoller les bras, contrôle la descente sans tendre brutalement."),
+    X(2033,"Curl barre EZ","Biceps","Courte portion","Barre EZ","Débutant",M,"Debout, coudes fixes le long du corps, monte la barre EZ par flexion des coudes, contrôle la descente. Pas de balancier."),
+    X(2034,"Bayesian curl","Biceps","Longue portion","Poulie/Câble","Intermédiaire",M,"Poulie basse derrière toi, bras en arrière du corps, fléchis le coude en gardant le bras reculé pour étirer la longue portion."),
+    X(2035,"Curl banc incliné","Biceps","Longue portion","Haltères","Intermédiaire",M,"Assis dossier incliné, bras pendants derrière le corps, fléchis les coudes en gardant les coudes reculés. Étire la longue portion."),
+    X(2036,"Curl marteau poulie","Biceps","Brachial","Poulie/Câble","Débutant",M,"Corde à la poulie basse, prise neutre, fléchis les coudes en gardant les poignets neutres. Cible le brachial et l'avant-bras."),
+    X(2037,"Curl marteau pupitre","Biceps","Brachial","Haltères","Débutant",M,"Bras sur le pupitre, prise marteau (neutre), fléchis le coude sans décoller le bras, contrôle la descente."),
+    // ---- TRICEPS ----
+    X(2040,"Extension triceps overhead corde","Triceps","Longue portion","Poulie/Câble","Intermédiaire",M,"Corde à la poulie, bras au-dessus de la tête, tends les coudes vers le haut en gardant les coudes près de la tête. Étire la longue portion."),
+    X(2041,"Skullcrusher barre","Triceps","Longue portion","Barre EZ","Intermédiaire",M,"Allongé, bras tendus légèrement inclinés vers l'arrière, fléchis les coudes pour descendre vers le front, puis tends. Coudes fixes."),
+    X(2042,"JM press","Triceps","Longue portion","Barre","Avancé",P,"Hybride entre développé serré et skullcrusher : descends la barre vers le haut du cou en gardant les coudes serrés, puis pousse."),
+    X(2043,"Développé couché prise serrée","Triceps","Longue portion","Barre","Intermédiaire",P,"Allongé, mains largeur épaules, coudes près du corps, descends la barre vers le bas des pectoraux puis pousse. Cible les triceps."),
+    X(2044,"Extension triceps corde","Triceps","Courte portion","Poulie/Câble","Débutant",M,"Coudes collés au corps, tends les bras vers le bas en écartant la corde en fin de mouvement, contrôle la remontée."),
+    X(2045,"Extension triceps barre poulie","Triceps","Courte portion","Poulie/Câble","Débutant",M,"Coudes fixes le long du corps, pousse la barre vers le bas jusqu'à extension complète, contrôle la remontée."),
+    // ---- ABDOS ----
+    X(2050,"Crunch poulie","Abdos","Grand droit","Poulie/Câble","Débutant",M,"À genoux face à la poulie haute, corde derrière la nuque, enroule le buste vers le bas en contractant les abdos, contrôle le retour."),
+    X(2051,"Remontée de jambes","Abdos","Grand droit","Poids du corps","Intermédiaire",PC,"Allongé ou suspendu, monte les jambes en enroulant le bassin, contrôle la descente sans cambrer le bas du dos."),
+    X(2052,"Crunch poids du corps","Abdos","Grand droit","Poids du corps","Débutant",PC,"Allongé genoux fléchis, enroule le buste pour décoller les omoplates, contrôle la descente. Ne tire pas sur la nuque."),
+    X(2053,"Gainage","Abdos","Grand droit","Poids du corps","Débutant",PC,"Appui avant-bras et pointes de pieds, corps aligné, gaine sans creuser ni monter les hanches. Respire et tiens la position."),
+    // ---- QUADRICEPS ----
+    X(2060,"Hack squat","Quadriceps","Quadriceps","Machine","Intermédiaire",M,"Dos plaqué au dossier, descends en fléchissant les genoux jusqu'à parallèle ou plus bas, pousse via les talons. Genoux dans l'axe."),
+    X(2061,"Pendulum squat","Quadriceps","Quadriceps","Machine","Intermédiaire",M,"Pieds sur la plateforme, descends en contrôlant l'arc de la machine, garde le dos plaqué, pousse jusqu'à extension."),
+    X(2062,"Leg press","Quadriceps","Quadriceps","Machine","Débutant",M,"Pieds largeur épaules, descends en contrôlant jusqu'à ~90°, pousse sans verrouiller brutalement. Bas du dos collé au siège."),
+    X(2063,"Machine adducteurs","Quadriceps","Adducteurs","Machine","Débutant",M,"Assis, resserre les cuisses contre la résistance, contrôle l'ouverture sans à-coups."),
+    // ---- ISCHIO-JAMBIERS ----
+    X(2070,"Leg curl assis","Ischio-jambiers","Ischios","Machine","Débutant",M,"Assis, fléchis les genoux pour ramener les talons sous le siège, contrôle le retour sans décoller le bassin."),
+    X(2071,"RDL (soulevé de terre roumain)","Ischio-jambiers","Ischios","Barre","Intermédiaire",P,"Jambes quasi tendues, pousse les hanches en arrière en descendant la barre le long des jambes jusqu'à étirement des ischios, dos plat impératif."),
+    // ---- MOLLETS ----
+    X(2080,"Smith remontée mollets","Mollets","Gastrocnémiens","Smith machine","Débutant",M,"Pointe des pieds sur une cale, barre sur les épaules, monte sur la pointe le plus haut possible, descends en étirant le mollet."),
+    X(2081,"Mollets à la machine","Mollets","Gastrocnémiens","Machine","Débutant",M,"Pousse sur la pointe des pieds le plus haut possible, marque une pause en haut, descends en étirant. Amplitude complète."),
+
+    // ===================== +50 EXERCICES SUPPLÉMENTAIRES =====================
+    // ---- Powerlifting / Force ----
+    X(2101,"Soulevé de terre conventionnel","Dos","Bas du dos","Barre","Avancé",P,"Barre près des tibias, dos neutre, gaine et pousse le sol en tirant la barre le long des jambes jusqu'à extension de hanche. Dos jamais arrondi."),
+    X(2102,"Soulevé de terre sumo","Quadriceps","Quadriceps","Barre","Avancé",P,"Pieds larges, mains à l'intérieur des genoux, gaine et pousse le sol en gardant le buste plus vertical. Genoux dans l'axe."),
+    X(2103,"Squat low bar","Quadriceps","Quadriceps","Barre","Avancé",P,"Barre placée bas sur les épaules, buste légèrement penché, descends à parallèle en poussant les hanches en arrière. Utilise des butées."),
+    X(2104,"Good morning","Ischio-jambiers","Ischios","Barre","Avancé",P,"Barre sur le dos, charnière de hanche dos plat, descends le buste vers l'avant jusqu'à étirement des ischios, reviens. Charge prudente."),
+    X(2105,"Rack pull","Dos","Bas du dos","Barre","Intermédiaire",P,"Soulevé partiel depuis des supports au niveau des genoux, gaine et verrouille la hanche. Dos neutre, idéal pour la chaîne postérieure."),
+    X(2106,"Box squat","Quadriceps","Quadriceps","Barre","Intermédiaire",P,"Squat jusqu'à s'asseoir brièvement sur une box, garde la tension, remonte en poussant. Contrôle la profondeur."),
+    X(2107,"Floor press","Pectoraux","Milieu","Barre","Intermédiaire",P,"Allongé au sol, descends la barre jusqu'à ce que les triceps touchent le sol, puis pousse. Amplitude réduite, protège l'épaule."),
+    X(2108,"Pause bench press","Pectoraux","Milieu","Barre","Avancé",P,"Développé couché avec pause marquée 1-2 s sur la poitrine avant de pousser. Renforce le point bas. Utilise des butées."),
+    // ---- Haltérophilie ----
+    X(2110,"Épaulé-jeté","Full body","Polyarticulaire","Barre","Avancé",HA,"Tire la barre du sol jusqu'aux épaules (épaulé) puis projette-la au-dessus de la tête (jeté). Technique à apprendre léger avant de charger."),
+    X(2111,"Arraché","Full body","Polyarticulaire","Barre","Avancé",HA,"Tire la barre du sol jusqu'au-dessus de la tête en un seul mouvement, réception en squat. Mouvement technique, échauffe-toi bien."),
+    X(2112,"Épaulé debout (power clean)","Full body","Polyarticulaire","Barre","Avancé",HA,"Tire explosivement la barre du sol aux épaules avec une réception haute (sans squat profond). Dos gainé, extension complète des hanches."),
+    X(2113,"Front squat","Quadriceps","Quadriceps","Barre","Intermédiaire",HA,"Barre sur l'avant des épaules, coudes hauts, descends buste droit jusqu'à parallèle, pousse. Gaine la sangle abdominale."),
+    X(2114,"Overhead squat","Quadriceps","Quadriceps","Barre","Avancé",HA,"Barre verrouillée au-dessus de la tête bras tendus, descends en squat en gardant la barre stable. Demande mobilité et gainage."),
+    X(2115,"Push press","Épaules","Avant","Barre","Intermédiaire",HA,"Légère flexion de jambes puis extension explosive pour propulser la barre au-dessus de la tête. Gaine, ne cambre pas."),
+    X(2116,"Clean pull","Dos","Bas du dos","Barre","Avancé",HA,"Tirage explosif de la barre du sol jusqu'à mi-hauteur avec extension complète des hanches, sans réception. Dos neutre."),
+    // ---- Cross training / Fonctionnel ----
+    X(2120,"Thruster","Full body","Polyarticulaire","Barre","Intermédiaire",CF,"Front squat enchaîné avec un développé au-dessus de la tête en remontant. Fluide, gaine bien le tronc."),
+    X(2121,"Wall ball","Full body","Conditionnement","Médecine ball","Débutant",CF,"Squat avec médecine ball, puis lance-le sur une cible en hauteur en remontant, rattrape et enchaîne. Réceptions souples."),
+    X(2122,"Kettlebell swing américain","Full body","Conditionnement","Kettlebell","Intermédiaire",CF,"Swing de kettlebell jusqu'au-dessus de la tête via l'extension explosive des hanches. Dos plat, puissance des hanches."),
+    X(2123,"Box jump","Quadriceps","Quadriceps","Aucun","Intermédiaire",CF,"Saute sur une box avec réception souple genoux fléchis, redescends en contrôle. Hauteur adaptée à ton niveau."),
+    X(2124,"Double under (corde)","Cardio","HIIT","Aucun","Avancé",CF,"Corde à sauter en passant deux fois sous les pieds par saut. Rythme régulier, poignets actifs."),
+    X(2125,"Wall walk","Full body","Polyarticulaire","Poids du corps","Avancé",CF,"Depuis la planche, remonte les pieds le long du mur en rapprochant les mains, gaine fort. Contrôle la descente."),
+    X(2126,"Toes to bar","Abdos","Grand droit","Poids du corps","Avancé",CF,"Suspendu à la barre, monte les pieds jusqu'à la toucher en enroulant le bassin, contrôle la descente. Évite le balancement excessif."),
+    X(2127,"Devil press","Full body","Conditionnement","Haltères","Avancé",CF,"Burpee avec deux haltères puis arraché des haltères au-dessus de la tête. Mouvement complet et intense, gaine bien."),
+    X(2128,"Dumbbell snatch","Full body","Polyarticulaire","Haltères","Intermédiaire",CF,"Arraché d'un haltère du sol au-dessus de la tête en un mouvement, extension explosive des hanches. Alterne les bras."),
+    X(2129,"Farmer carry","Avant-bras","Fléchisseurs","Haltères","Débutant",CF,"Marche en tenant des charges lourdes de chaque côté, épaules basses, gainage actif, pas contrôlés. Excellent pour le grip et le tronc."),
+    X(2130,"Sled push","Quadriceps","Quadriceps","Sled/Traîneau","Intermédiaire",CO,"Pousse le traîneau chargé en avançant par poussées puissantes, buste incliné, gaine. Idéal conditionnement sans impact."),
+    X(2131,"Battle ropes","Cardio","HIIT","Aucun","Débutant",CO,"Ondule les cordes avec les bras de façon rythmée en gainant, légère flexion de genoux. Intervalles courts et intenses."),
+    X(2132,"Assault bike","Cardio","HIIT","Machine","Débutant",CO,"Pédale bras et jambes contre résistance, en continu ou par intervalles. Ajuste l'intensité, garde une posture droite."),
+    // ---- Poids du corps ----
+    X(2140,"Pompes diamant","Triceps","Courte portion","Poids du corps","Intermédiaire",PC,"Mains rapprochées en losange sous la poitrine, descends en gardant les coudes près du corps, pousse. Cible les triceps."),
+    X(2141,"Dips barres parallèles","Pectoraux","Bas","Poids du corps","Avancé",PC,"Sur les barres, descends en pliant les coudes jusqu'à un étirement confortable, pousse pour remonter. Penche-toi pour cibler les pectoraux."),
+    X(2142,"Australian pull-up","Dos","Épaisseur","Poids du corps","Débutant",PC,"Barre basse, corps gainé en oblique, tire la poitrine vers la barre, contrôle la descente. Idéal pour débuter le tirage."),
+    X(2143,"Pistol squat","Quadriceps","Quadriceps","Poids du corps","Avancé",PC,"Squat sur une jambe, l'autre tendue devant, descends en contrôle puis remonte. Demande force et équilibre."),
+    X(2144,"Nordic curl","Ischio-jambiers","Ischios","Poids du corps","Avancé",PC,"Genoux fixés, descends le buste vers l'avant en résistant avec les ischios, remonte. Très exigeant, progresse graduellement."),
+    X(2145,"Hollow hold","Abdos","Grand droit","Poids du corps","Intermédiaire",PC,"Allongé, bas du dos plaqué au sol, jambes et épaules décollées, tiens la position en gainant. Ne cambre jamais."),
+    X(2146,"Bear crawl","Full body","Conditionnement","Poids du corps","Débutant",CF,"À quatre pattes genoux décollés, avance en coordonnant bras et jambes opposés, dos plat et gainé."),
+    X(2147,"Glute bridge","Fessiers","Grand fessier","Poids du corps","Débutant",PC,"Allongé genoux fléchis, pousse les hanches vers le haut en contractant les fessiers, contrôle la descente."),
+    // ---- Jambes / Fessiers ----
+    X(2150,"Hip thrust barre","Fessiers","Grand fessier","Barre","Intermédiaire",M,"Haut du dos sur un banc, barre sur les hanches, pousse les hanches vers le haut jusqu'à alignement en serrant les fessiers, menton rentré."),
+    X(2151,"Fentes bulgares","Quadriceps","Quadriceps","Haltères","Intermédiaire",M,"Pied arrière surélevé, descends le genou arrière vers le sol, buste droit, pousse via la jambe avant. Genou avant aligné."),
+    X(2152,"Fentes avant","Quadriceps","Quadriceps","Haltères","Débutant",M,"Grand pas en avant, descends le genou arrière vers le sol, reviens en poussant. Buste droit, contrôle l'équilibre."),
+    X(2153,"Step-up","Quadriceps","Quadriceps","Haltères","Débutant",M,"Monte sur un banc avec une jambe en poussant via le talon, contrôle la descente. Alterne les jambes."),
+    X(2154,"Soulevé de terre jambes tendues","Ischio-jambiers","Ischios","Barre","Intermédiaire",M,"Jambes tendues, charnière de hanche, descends la barre le long des jambes jusqu'à étirement des ischios, dos plat. Reviens en contractant."),
+    X(2155,"Abduction hanche machine","Fessiers","Moyen fessier","Machine","Débutant",M,"Assis, écarte les cuisses contre la résistance en contractant les fessiers latéraux, contrôle le retour."),
+    X(2156,"Kickback fessier poulie","Fessiers","Grand fessier","Poulie/Câble","Débutant",M,"Cheville attachée à la poulie basse, pousse la jambe vers l'arrière en contractant le fessier, contrôle le retour. Buste stable."),
+    X(2157,"Sissy squat","Quadriceps","Quadriceps","Poids du corps","Avancé",M,"Sur la pointe des pieds, incline le buste en arrière en fléchissant les genoux vers l'avant, remonte. Cible fortement les quadriceps."),
+    X(2158,"Mollets assis","Mollets","Soléaire","Machine","Débutant",M,"Assis, charge sur les genoux, monte sur la pointe des pieds le plus haut possible, descends en étirant. Cible le soléaire."),
+    // ---- Abdos / Obliques ----
+    X(2160,"Russian twist","Abdos","Obliques","Médecine ball","Débutant",PC,"Assis buste incliné, pieds décollés, fais pivoter le buste d'un côté à l'autre en tenant une charge. Contrôle la rotation."),
+    X(2161,"Side plank","Abdos","Obliques","Poids du corps","Débutant",PC,"Gainage latéral sur un avant-bras, corps aligné, hanches hautes. Tiens la position des deux côtés."),
+    X(2162,"Dead bug","Abdos","Transverse","Poids du corps","Débutant",PC,"Allongé, bras et jambes en l'air, descends bras et jambe opposés sans cambrer le bas du dos, alterne."),
+    X(2163,"Woodchopper poulie","Abdos","Obliques","Poulie/Câble","Intermédiaire",M,"Tire la poignée en diagonale d'en haut vers le bas opposé en pivotant le tronc, contrôle le retour. Mouvement gainé."),
+    // ---- Avant-bras / Mobilité ----
+    X(2170,"Curl poignets","Avant-bras","Fléchisseurs","Haltères","Débutant",M,"Avant-bras posés, paumes vers le haut, fléchis les poignets pour monter la charge, contrôle la descente."),
+    X(2171,"Extension poignets","Avant-bras","Extenseurs","Haltères","Débutant",M,"Avant-bras posés, paumes vers le bas, lève le dos des mains contre la charge, contrôle. Renforce les extenseurs."),
+    X(2172,"Rotation thoracique","Full body","Polyarticulaire","Poids du corps","Débutant",MO,"À quatre pattes, une main derrière la tête, ouvre le coude vers le plafond en pivotant le haut du dos, reviens. Mobilité thoracique."),
+    X(2173,"Étirement chat-vache","Full body","Polyarticulaire","Poids du corps","Débutant",MO,"À quatre pattes, alterne dos rond (chat) et dos creux (vache) en synchronisant la respiration. Mobilité de la colonne."),
+    X(2174,"Hip flexor stretch","Quadriceps","Quadriceps","Poids du corps","Débutant",MO,"En fente genou au sol, pousse doucement la hanche vers l'avant pour étirer le fléchisseur de hanche. Garde le bassin rétroversé."),
+    X(2175,"90/90 hanches","Fessiers","Moyen fessier","Poids du corps","Débutant",MO,"Assis, jambes en angle droit devant et sur le côté, pivote doucement d'un côté à l'autre pour mobiliser les hanches.")
+  ];
+  var list=DB.getArr('exercices');
+  var names={};list.forEach(function(e){if(e&&e.nom)names[e.nom.toLowerCase().trim()]=true;});
+  var ids={};list.forEach(function(e){if(e)ids[e.id]=true;});
+  var added=0;
+  CAT.forEach(function(e){
+    if(names[e.nom.toLowerCase().trim()]||ids[e.id])return;
+    list.push(e);names[e.nom.toLowerCase().trim()]=true;ids[e.id]=true;added++;
+  });
+  if(added)DB.set('exercices',list);
+  DB.set('seeded_train3',true);
+  return added;
+}
+// Forcer le rechargement du catalogue depuis la console : forceReloadCatalogue()
+function forceReloadCatalogue(){var n=seedTrainV3(true);toast((n||0)+' exercices ajoutés au catalogue ✅','success');if(typeof renderAExos==='function')renderAExos();return n;}
+
+// ---------- Filtres exercices enrichis (sous-groupe + discipline) ----------
+var exoFilterS='all',exoFilterD='all';
+function exoFiltSelect(id,cur,allLbl,opts,cb){
+  var el=document.getElementById(id);if(!el||el.dataset.f)return;
+  el.dataset.f='1';el.innerHTML='<option value="all">'+allLbl+'</option>'+opts.map(function(o){return '<option>'+h(o)+'</option>';}).join('');
+  el.onchange=function(){cb(el.value);renderAExos();};
+}
+// badge coloré (groupe/sous-groupe/matériel/niveau/discipline)
+function exoBadge(txt,kind){
+  if(!txt)return '';
+  var col,bg,ic='';
+  if(kind==='g'){col='var(--blue)';bg='var(--blue-light)';ic=grpIcon(txt);}
+  else if(kind==='s'){col='var(--blue)';bg='var(--blue-xlight)';}
+  else if(kind==='n'){col=txt==='Avancé'?'var(--red)':txt==='Intermédiaire'?'var(--orange)':'var(--green)';bg=txt==='Avancé'?'var(--red-light)':txt==='Intermédiaire'?'var(--gold-light)':'var(--green-light,#e7f6ec)';}
+  else if(kind==='d'){col='var(--gold-dark)';bg='var(--gold-light)';}
+  else {col='var(--text2)';bg='var(--bg2)';}
+  return '<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px;background:'+bg+';color:'+col+'">'+(ic?ic+' ':'')+h(txt)+'</span>';
+}
+function renderAExos(){
+  var list=document.getElementById('admin-exos-list');if(!list)return;
+  exoFormFillLists();
+  var q=(document.getElementById('exo-search')?document.getElementById('exo-search').value:'').toLowerCase();
+  var exos=DB.getArr('exercices').slice();
+  if(exoFilterG!=='all')exos=exos.filter(function(e){return e.groupe===exoFilterG;});
+  if(exoFilterS!=='all')exos=exos.filter(function(e){return (e.sousGroupe||'')===exoFilterS;});
+  if(exoFilterM!=='all')exos=exos.filter(function(e){return e.materiel===exoFilterM;});
+  if(exoFilterN!=='all')exos=exos.filter(function(e){return e.niveau===exoFilterN;});
+  if(exoFilterD!=='all')exos=exos.filter(function(e){return (e.discipline||'')===exoFilterD;});
+  if(typeof exoFavOnly!=='undefined'&&exoFavOnly)exos=exos.filter(function(e){return isExoFav(e.id);});
+  if(q)exos=exos.filter(function(e){return e.nom.toLowerCase().indexOf(q)>=0;});
+  exos.sort(function(a,b){var fa=isExoFav(a.id),fb=isExoFav(b.id);if(fa!==fb)return fa?-1:1;return a.nom.localeCompare(b.nom);});
+  // peuple les filtres (une seule fois)
+  exoFiltSelect('exo-filter-g',exoFilterG,'Tous groupes',EXO_GROUPES2,function(v){exoFilterG=v;exoFilterS='all';var s=document.getElementById('exo-filter-s');if(s){s.value='all';}});
+  exoFiltSelect('exo-filter-s',exoFilterS,'Toutes parties',Object.keys(EXO_SOUS).reduce(function(a,k){EXO_SOUS[k].forEach(function(x){if(a.indexOf(x)<0)a.push(x);});return a;},[]),function(v){exoFilterS=v;});
+  exoFiltSelect('exo-filter-m',exoFilterM,'Tout matériel',EXO_MATERIEL2,function(v){exoFilterM=v;});
+  exoFiltSelect('exo-filter-n',exoFilterN,'Tous niveaux',EXO_NIVEAUX,function(v){exoFilterN=v;});
+  exoFiltSelect('exo-filter-d',exoFilterD,'Toutes disciplines',EXO_DISCIPLINES,function(v){exoFilterD=v;});
+  var cnt=document.getElementById('exo-count');var nFav=exoFavs().length;
+  if(cnt)cnt.innerHTML=exos.length+' exercice'+(exos.length>1?'s':'')+' <button onclick="toggleFavOnly()" style="margin-left:8px;background:'+(exoFavOnly?'var(--gold)':'var(--bg2)')+';color:'+(exoFavOnly?'#fff':'var(--text2)')+';border:1px solid '+(exoFavOnly?'var(--gold)':'var(--border)')+';border-radius:20px;padding:3px 12px;font-size:12px;font-weight:600;cursor:pointer">★ Favoris'+(nFav?' ('+nFav+')':'')+'</button>';
+  if(!exos.length){list.innerHTML='<div class="empty"><i class="fa-solid fa-dumbbell"></i><p>'+(exoFavOnly?'Aucun favori.':'Aucun exercice.')+'</p></div>';return;}
+  list.innerHTML=exos.map(function(e){var fav=isExoFav(e.id);
+    return '<div class="ali"><div style="width:50px;height:50px;border-radius:12px;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--bg2);position:relative">'+exoThumb(e)+(exoHasVideo(e)?'<span style="position:absolute;bottom:2px;right:2px;width:16px;height:16px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:8px"><i class="fa-solid fa-play"></i></span>':'')+'</div>'
+     +'<div style="flex:1;min-width:0"><div class="ali-title">'+h(e.nom)+'</div><div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:5px">'+exoBadge(e.groupe,'g')+(e.sousGroupe?exoBadge(e.sousGroupe,'s'):'')+exoBadge(e.materiel,'m')+exoBadge(e.niveau,'n')+(e.discipline?exoBadge(e.discipline.split('/')[0],'d'):'')+'</div></div>'
+     +'<div class="ali-actions"><button class="btn-sm" onclick="toggleExoFav('+e.id+')" title="Favori" style="background:none;border:none;color:'+(fav?'var(--gold)':'var(--text3)')+';font-size:17px;cursor:pointer"><i class="fa-'+(fav?'solid':'regular')+' fa-star"></i></button><button class="btn-edit btn-sm" onclick="editExo('+e.id+')"><i class="fa-solid fa-pen"></i></button><button class="btn-del btn-sm" onclick="delExo('+e.id+')"><i class="fa-solid fa-trash"></i></button></div></div>';
+  }).join('');
+}
+// remplit les datalists du formulaire d'exercice + sous-groupes selon le groupe
+function exoFormFillLists(){
+  var setDL=function(id,vals){var dl=document.getElementById(id);if(dl)dl.innerHTML=vals.map(function(v){return '<option value="'+escA(v)+'">';}).join('');};
+  setDL('dl-exo-mat',EXO_MATERIEL2);
+  setDL('dl-exo-disc',EXO_DISCIPLINES);
+  exoFormSubOptions();
+  var gsel=document.getElementById('exo-groupe');
+  if(gsel&&!gsel.dataset.f2){gsel.dataset.f2='1';gsel.innerHTML=EXO_GROUPES2.map(function(g){return '<option>'+h(g)+'</option>';}).join('');gsel.addEventListener('change',exoFormSubOptions);}
+}
+function exoFormSubOptions(){
+  var g=document.getElementById('exo-groupe')?document.getElementById('exo-groupe').value:'';
+  var subs=EXO_SOUS[g]||[];
+  var dl=document.getElementById('dl-exo-sous');if(dl)dl.innerHTML=subs.map(function(s){return '<option value="'+escA(s)+'">';}).join('');
+}
+
+// ============================================================
+// ÉDITEUR DE SÉANCE REPENSÉ — accordéon + semaine type + équilibre
+// ============================================================
+function pbRenderSeances(){
+  var host=document.getElementById('pb-seances');if(!host)return;
+  if(!progDraft.week)progDraft.week={};
+  var top=pbWeekStrip()+pbBalance();
+  if(!progDraft.seances.length){host.innerHTML=top+'<div class="empty" style="padding:30px"><p>Ajoute ta première séance ci-dessous.</p></div>';return;}
+  host.innerHTML=top+progDraft.seances.map(function(se,si){
+    var exoRows=(se.exos||[]).map(function(ex,xi){return pbExoCard(si,xi,ex);}).join('');
+    return '<div class="afc pbseance" id="pbse-'+si+'" style="padding:14px">'
+      +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px"><span style="font-size:18px">📋</span><input type="text" value="'+escA(se.nom)+'" oninput="pbSeanceNom('+si+',this.value)" style="flex:1;min-width:0;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;background:var(--bg2);color:var(--text);font-size:16px;font-weight:700"><button class="btn-edit btn-sm" onclick="pbDupSeance('+si+')" title="Dupliquer la séance"><i class="fa-solid fa-copy"></i></button><button class="btn-del btn-sm" onclick="pbDelSeance('+si+')"><i class="fa-solid fa-trash"></i></button></div>'
+      +'<div style="font-size:11px;color:var(--text3);margin-bottom:8px">'+(se.exos||[]).length+' exercice'+((se.exos||[]).length>1?'s':'')+'</div>'
+      +exoRows
+      +'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><button class="btn-al" onclick="pbPickExo('+si+')"><i class="fa-solid fa-plus"></i> Exercice</button><button class="btn-al" style="background:var(--red-light);color:var(--red)" onclick="pbAddCardio('+si+')"><i class="fa-solid fa-heart-pulse"></i> Bloc cardio/HIIT</button></div></div>';
+  }).join('');
+}
+function pbExoCard(si,xi,ex){
+  var e=ex.cardio?null:exById(ex.exId);
+  var nm=ex.cardio?('🔥 Cardio — '+(ex.cardio.type||'libre').toUpperCase()):(e?e.nom:'(exercice supprimé)');
+  var sub=e&&e.sousGroupe?(' · '+h(e.sousGroupe)):'';
+  var badge=(ex.type&&ex.type!=='mono')?'<span class="pbtag">'+(exoBlockLabel(ex)||ex.type.toUpperCase())+'</span>':(ex.ss?'<span class="pbtag">SS '+h(ex.ss)+'</span>':'');
+  var acts='<div style="display:flex;align-items:center;gap:1px;flex-shrink:0">'
+    +(ex.cardio?'':'<button class="pbact" onclick="pbSubstitute('+si+','+xi+')" title="Remplacer (même groupe)"><i class="fa-solid fa-right-left"></i></button>')
+    +'<button class="pbact" onclick="pbMoveEx('+si+','+xi+',-1)" title="Monter"><i class="fa-solid fa-arrow-up"></i></button>'
+    +'<button class="pbact" onclick="pbMoveEx('+si+','+xi+',1)" title="Descendre"><i class="fa-solid fa-arrow-down"></i></button>'
+    +'<button class="pbact" style="color:var(--blue)" onclick="pbDupEx('+si+','+xi+')" title="Dupliquer"><i class="fa-solid fa-copy"></i></button>'
+    +'<button class="pbact" style="color:var(--red)" onclick="pbDelEx('+si+','+xi+')" title="Retirer"><i class="fa-solid fa-xmark"></i></button></div>';
+  var thumb=e?'<div style="width:34px;height:34px;border-radius:8px;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--bg2)">'+exoThumb(e)+'</div>':'';
+  var header='<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">'+thumb+'<div style="flex:1;min-width:0"><div style="font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+badge+h(nm)+'</div>'+(e?'<div style="font-size:10px;color:var(--text3)">'+h(e.groupe)+sub+'</div>':'')+'</div>'+acts+'</div>';
+  var body;
+  if(ex.cardio){
+    body='<div class="pbgrid"><label class="pbfield"><span>Durée / format</span><input type="text" value="'+escA(ex.cardio.dur||'')+'" oninput="pbEx('+si+','+xi+',\'cardioDur\',this.value)" placeholder="ex : 4 rounds, 10 min" class="pbf-in"></label><label class="pbfield"><span>Consigne</span><input type="text" value="'+escA(ex.cardio.desc||'')+'" oninput="pbEx('+si+','+xi+',\'cardioDesc\',this.value)" placeholder="ex : 20s effort / 10s repos" class="pbf-in"></label></div>';
+  }else{
+    var types=[['mono','Monoset'],['superset','Superset'],['triset','Triset'],['giant','Giant set'],['dropset','Dropset'],['amrap','AMRAP'],['emom','EMOM'],['tabata','Tabata'],['fortime','For Time']];
+    var sec1='<details class="pbsec" open><summary>📊 Séries &amp; reps</summary><div class="pbgrid">'
+      +'<label class="pbfield" style="grid-column:1/-1"><span>Type de bloc</span><select onchange="pbEx('+si+','+xi+',\'type\',this.value);pbRenderSeances()" class="pbf-in">'+types.map(function(t){return '<option value="'+t[0]+'" '+((ex.type||'mono')===t[0]?'selected':'')+'>'+t[1]+'</option>';}).join('')+'</select></label>'
+      +'<label class="pbfield"><span>Séries / tours</span><input type="text" value="'+escA(ex.series||'')+'" oninput="pbEx('+si+','+xi+',\'series\',this.value)" placeholder="ex : 4" class="pbf-in"></label>'
+      +'<label class="pbfield"><span>Répétitions</span><input type="text" value="'+escA(ex.reps||'')+'" oninput="pbEx('+si+','+xi+',\'reps\',this.value)" placeholder="ex : 8-12 ou 30s" class="pbf-in"></label>'
+      +'</div></details>';
+    var sec2='<details class="pbsec"><summary>🏋️ Charge &amp; intensité</summary><div class="pbgrid">'
+      +'<label class="pbfield"><span>Mode de charge</span><select onchange="pbEx('+si+','+xi+',\'chargeMode\',this.value)" class="pbf-in"><option value="kg" '+((ex.chargeMode||'kg')==='kg'?'selected':'')+'>Charge en kg</option><option value="pct" '+(ex.chargeMode==='pct'?'selected':'')+'>% du 1RM</option><option value="rpe" '+(ex.chargeMode==='rpe'?'selected':'')+'>Au ressenti</option></select></label>'
+      +'<label class="pbfield"><span>Valeur</span><input type="text" value="'+escA(ex.charge||'')+'" oninput="pbEx('+si+','+xi+',\'charge\',this.value)" placeholder="ex : 80" class="pbf-in"></label>'
+      +'<label class="pbfield"><span>Cible RIR / RPE</span><input type="text" value="'+escA(ex.rir||'')+'" oninput="pbEx('+si+','+xi+',\'rir\',this.value)" placeholder="ex : RPE 8 / 2 RIR" class="pbf-in"></label>'
+      +'</div></details>';
+    var sec3='<details class="pbsec"><summary>⏱️ Tempo, repos &amp; superset</summary><div class="pbgrid">'
+      +'<label class="pbfield"><span>Tempo</span><input type="text" value="'+escA(ex.tempo||'')+'" oninput="pbEx('+si+','+xi+',\'tempo\',this.value)" placeholder="ex : 3-1-1-0" class="pbf-in"></label>'
+      +'<label class="pbfield"><span>Repos</span><input type="text" value="'+escA(ex.repos||'')+'" oninput="pbEx('+si+','+xi+',\'repos\',this.value)" placeholder="ex : 90s" class="pbf-in"></label>'
+      +'<label class="pbfield"><span>Groupe superset</span><input type="text" value="'+escA(ex.ss||'')+'" oninput="pbEx('+si+','+xi+',\'ss\',this.value)" placeholder="ex : A, B…" class="pbf-in"></label>'
+      +'</div></details>';
+    var hint=pbPerfHint(si,xi,ex);
+    var sec4='<details class="pbsec"'+(ex.note||hint?' open':'')+'><summary>📝 Notes &amp; perfs</summary>'
+      +'<input type="text" value="'+escA(ex.note||'')+'" oninput="pbEx('+si+','+xi+',\'note\',this.value)" placeholder="Note du coach (ex : ralentis la descente)" class="pbf-in" style="margin-bottom:6px">'
+      +hint+'</details>';
+    body=sec1+sec2+sec3+sec4;
+  }
+  return '<div class="pbexo">'+header+body+'</div>';
+}
+// ---- Semaine type : place/déplace les séances sur les jours ----
+function pbWeekStrip(){
+  if(!progDraft.week)progDraft.week={};
+  var cells=JOURS.map(function(jc,i){
+    var dow=i+1;var cur=progDraft.week[dow];var has=(cur!=null&&progDraft.seances[cur]);
+    return '<div class="pbday'+(has?' has':'')+'">'
+      +'<div class="pbday-d">'+jc+'</div>'
+      +'<select class="pbday-sel" onchange="pbSetDay('+dow+',this.value)"><option value="">Repos</option>'+progDraft.seances.map(function(s,si){return '<option value="'+si+'" '+(cur===si?'selected':'')+'>'+h(s.nom)+'</option>';}).join('')+'</select>'
+      +(has?'<button class="pbday-go" onclick="pbScrollSeance('+cur+')"><i class="fa-solid fa-pen"></i></button>':'')
+      +'</div>';
+  }).join('');
+  return '<div class="afc" style="padding:14px"><div style="font-size:12px;font-weight:700;text-transform:uppercase;color:var(--text2);margin-bottom:10px">📅 Semaine type</div><div class="pbweek">'+cells+'</div><div style="font-size:11px;color:var(--text3);margin-top:10px">Place chaque séance sur un jour. Tape ✎ pour modifier la séance de ce jour. Ce planning sera proposé au client (ajustable jour par jour ensuite).</div></div>';
+}
+function pbSetDay(dow,val){if(!progDraft.week)progDraft.week={};if(val===''||val==null){delete progDraft.week[dow];}else{progDraft.week[dow]=parseInt(val);}pbRenderSeances();}
+function pbScrollSeance(si){var el=document.getElementById('pbse-'+si);if(el){el.scrollIntoView({behavior:'smooth',block:'start'});el.classList.add('pbflash');setTimeout(function(){el.classList.remove('pbflash');},1200);}}
+// ---- Équilibre du programme : séries par groupe musculaire ----
+function pbBalance(){
+  var g={},total=0;
+  (progDraft.seances||[]).forEach(function(se){(se.exos||[]).forEach(function(ex){if(ex.cardio||!ex.exId)return;var e=exById(ex.exId);if(!e)return;var sets=parseInt(ex.series)||0;if(sets>0){g[e.groupe]=(g[e.groupe]||0)+sets;total+=sets;}});});
+  var keys=Object.keys(g).sort(function(a,b){return g[b]-g[a];});
+  if(!keys.length)return '';
+  var max=Math.max.apply(null,keys.map(function(k){return g[k];}));
+  return '<div class="afc" style="padding:14px"><div style="font-size:12px;font-weight:700;text-transform:uppercase;color:var(--text2);margin-bottom:10px">⚖️ Équilibre — séries / semaine <span style="color:var(--text3)">('+total+' au total)</span></div>'
+    +keys.map(function(k){return '<div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span style="font-weight:600">'+grpIcon(k)+' '+h(k)+'</span><span style="color:var(--text3)">'+g[k]+'</span></div><div style="height:8px;background:var(--bg2);border-radius:5px;overflow:hidden"><div style="height:100%;width:'+Math.round(g[k]/max*100)+'%;background:linear-gradient(90deg,var(--blue),var(--gold));border-radius:5px"></div></div></div>';}).join('')+'</div>';
+}
+// ---- Substitution d'exercice (même groupe musculaire) ----
+var _pbSubSi=null,_pbSubXi=null,_pbSubGrp=null,_pbSubSous=null;
+function pbSubstitute(si,xi){
+  var ex=progDraft.seances[si].exos[xi];var cur=exById(ex.exId);
+  _pbSubSi=si;_pbSubXi=xi;_pbSubGrp=cur?cur.groupe:null;_pbSubSous=cur?cur.sousGroupe:null;
+  document.getElementById('modal-content').innerHTML='<h3 style="font-family:var(--fd);font-size:18px;margin-bottom:4px"><i class="fa-solid fa-right-left" style="color:var(--blue)"></i> Remplacer l’exercice</h3><p style="font-size:12px;color:var(--text3);margin-bottom:10px">'+(cur?h(cur.nom):'')+' → même groupe (<strong>'+h(_pbSubGrp||'?')+'</strong>). Tes réglages (séries, reps, charge…) sont conservés.</p><div class="sbar" style="margin-bottom:10px"><i class="fa-solid fa-magnifying-glass"></i><input type="text" id="pbsub-s" placeholder="Rechercher..." oninput="pbSubFilter()"></div><div id="pbsub-list" style="max-height:360px;overflow-y:auto"></div>';
+  openModal();pbSubRender();setTimeout(function(){var s=document.getElementById('pbsub-s');if(s)s.focus();},80);
+}
+function pbSubList(q){
+  var ex=progDraft.seances[_pbSubSi].exos[_pbSubXi];
+  var list=DB.getArr('exercices').filter(function(e){return e.id!==ex.exId;});
+  if(_pbSubGrp)list=list.filter(function(e){return e.groupe===_pbSubGrp;});
+  if(q)list=list.filter(function(e){return e.nom.toLowerCase().indexOf(q)>=0;});
+  list.sort(function(a,b){var sa=(a.sousGroupe===_pbSubSous)?0:1,sb=(b.sousGroupe===_pbSubSous)?0:1;return sa-sb||a.nom.localeCompare(b.nom);});
+  return list;
+}
+function pbSubRender(){
+  var el=document.getElementById('pbsub-list');if(!el)return;var list=pbSubList('');
+  el.innerHTML=pbSubItems(list);
+}
+function pbSubFilter(){var q=(document.getElementById('pbsub-s').value||'').toLowerCase();document.getElementById('pbsub-list').innerHTML=pbSubItems(pbSubList(q));}
+function pbSubItems(list){
+  if(!list.length)return '<div class="empty" style="padding:24px"><p>Aucun exercice du même groupe.</p></div>';
+  return list.map(function(e){return '<div onclick="pbDoSub('+e.id+')" style="display:flex;align-items:center;gap:10px;padding:8px 4px;border-bottom:1px solid var(--border2);cursor:pointer"><div style="width:42px;height:42px;border-radius:9px;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--bg2)">'+exoThumb(e)+'</div><div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:600">'+h(e.nom)+'</div><div style="font-size:11px;color:var(--text3)">'+(e.sousGroupe?h(e.sousGroupe)+' · ':'')+h(e.materiel)+'</div></div><i class="fa-solid fa-arrow-right" style="color:var(--blue)"></i></div>';}).join('');
+}
+function pbDoSub(id){progDraft.seances[_pbSubSi].exos[_pbSubXi].exId=id;closeModal();pbRenderSeances();toast('Exercice remplacé ✅','success');}
+
+// ---- Perf réelle + suggestion de progression (édition brouillon client) ----
+function pbPerfHint(si,xi,ex){
+  if(typeof _editClientCode==='undefined'||!_editClientCode||ex.cardio)return '';
+  var txt=(typeof lastPerfText==='function')?lastPerfText(_editClientCode,si,ex.exId):null;
+  var html='';
+  if(txt){
+    html+='<div style="display:flex;align-items:center;gap:8px;margin-top:6px;padding:6px 8px;background:var(--green-light,#e7f6ec);border:1px solid var(--green);border-radius:8px"><span style="font-size:11px;color:var(--green);font-weight:600;flex:1">💪 Réel : '+h(txt)+'</span><button onclick="reprendrePerf('+si+','+xi+')" style="background:var(--green);color:#fff;border:none;border-radius:7px;padding:4px 9px;font-size:11px;font-weight:600;cursor:pointer">Reprendre</button></div>';
+  }else{
+    html+='<div style="font-size:11px;color:var(--text3);margin-top:6px;padding:5px 8px;background:var(--bg2);border-radius:8px">Aucune perf réelle enregistrée.</div>';
+  }
+  var sug=pbSuggestCharge(_editClientCode,si,ex);
+  if(sug){
+    html+='<div style="display:flex;align-items:center;gap:8px;margin-top:6px;padding:6px 8px;background:var(--gold-light);border:1px solid var(--gold);border-radius:8px"><span style="font-size:11px;color:var(--gold-dark);font-weight:600;flex:1">📈 Surcharge : '+sug.base+' → <strong>'+sug.next+' kg</strong> (+'+sug.inc+')</span><button onclick="pbApplySuggest('+si+','+xi+','+sug.next+')" style="background:var(--gold);color:#fff;border:none;border-radius:7px;padding:4px 9px;font-size:11px;font-weight:600;cursor:pointer">Appliquer</button></div>';
+  }
+  return html;
+}
+// suggestion : a-t-il atteint le haut de la fourchette de reps à faible RPE ? → +2,5 kg
+function pbSuggestCharge(code,si,ex){
+  try{
+    if((ex.chargeMode||'kg')!=='kg')return null;
+    var ws=DB.getArr(wKey(code)).filter(function(w){return w.seanceIdx===si;}).sort(function(a,b){return new Date(b.date)-new Date(a.date);});
+    var last=ws[0];if(!last)return null;
+    var log=(last.logs||[]).find(function(l){return l.exId===ex.exId;});if(!log||!log.sets||!log.sets.length)return null;
+    var base=Math.max.apply(null,log.sets.map(function(s){return parseFloat(s.w)||0;}));if(base<=0)return null;
+    // top de la fourchette de reps cible
+    var repsTop=0;var m=String(ex.reps||'').match(/(\d+)\s*(?:-|–|à)?\s*(\d+)?/);if(m){repsTop=parseInt(m[2]||m[1])||0;}
+    if(!repsTop)return null;
+    // toutes les séries travaillées ont-elles atteint le haut de fourchette ?
+    var working=log.sets.filter(function(s){return (parseFloat(s.w)||0)>0;});
+    var allHit=working.length&&working.every(function(s){return (parseInt(s.r)||0)>=repsTop;});
+    // RPE moyen faible (<=7) ou non renseigné
+    var rpes=working.map(function(s){return parseFloat(s.rpe)||0;}).filter(function(x){return x>0;});
+    var avgRpe=rpes.length?rpes.reduce(function(a,b){return a+b;},0)/rpes.length:0;
+    var easy=(avgRpe===0||avgRpe<=7);
+    if(allHit&&easy){var inc=base<20?1:2.5;return {base:base,next:Math.round((base+inc)*10)/10,inc:inc};}
+  }catch(e){}
+  return null;
+}
+function pbApplySuggest(si,xi,val){progDraft.seances[si].exos[xi].charge=String(val);progDraft.seances[si].exos[xi].chargeMode='kg';pbRenderSeances();toast('Charge mise à jour : '+val+' kg','success');}
+
+// ============================================================
+// MODE SALLE (gros chiffres) + WAKE LOCK (écran allumé pendant la séance)
+// ============================================================
+var _wakeLock=null,_gymMode=false;
+try{_gymMode=localStorage.getItem('nc3_gym')==='1';}catch(e){}
+function acquireWake(){try{if('wakeLock' in navigator&&navigator.wakeLock){navigator.wakeLock.request('screen').then(function(w){_wakeLock=w;_wakeLock.addEventListener&&_wakeLock.addEventListener('release',function(){_wakeLock=null;});}).catch(function(){});}}catch(e){}}
+function releaseWake(){try{if(_wakeLock&&_wakeLock.release){_wakeLock.release();}}catch(e){}_wakeLock=null;}
+document.addEventListener('visibilitychange',function(){if(!document.hidden&&document.getElementById('sess-el'))acquireWake();});
+function toggleGym(){_gymMode=!_gymMode;try{localStorage.setItem('nc3_gym',_gymMode?'1':'0');}catch(e){}var el=document.getElementById('sess-el');if(el)el.classList.toggle('gym',_gymMode);var b=document.getElementById('gym-btn');if(b)b.style.color=_gymMode?'var(--gold)':'';}
+function applyGym(){var el=document.getElementById('sess-el');if(el&&_gymMode)el.classList.add('gym');}
+
+// ============================================================
 // CLIENT — MODE SÉANCE LIVE
 // ============================================================
 let sess=null,sessTimer=null;
@@ -5975,7 +6410,7 @@ function startSeance(idx,resumeData){
     const nSets=exoIsTimed(ex)?1:(parseInt(ex.series)||1);
     return {ex,exId:ex.exId,nom:ex.cardio?('Bloc '+(ex.cardio.type||'libre').toUpperCase()):(exById(ex.exId)?.nom||'Exercice'),note:'',sets:Array.from({length:nSets},()=>({w:'',r:'',rpe:'',done:false})),prev:prevMap[ex.exId]||null};
   })};
-  autosaveSess();renderSessLive();
+  autosaveSess();renderSessLive();try{acquireWake();}catch(e){}
 }
 function autosaveSess(){try{if(sess)localStorage.setItem(sessKey(),JSON.stringify(sess));}catch(e){}}
 function clearSessSave(){try{localStorage.removeItem(sessKey());}catch(e){}}
@@ -5987,7 +6422,7 @@ function renderSessLive(){
   const doneSets=sess.exos.reduce((s,e)=>s+e.sets.filter(x=>x.done).length,0);
   const pct=totalSets?Math.round(doneSets/totalSets*100):0;
   const nEx=sess.exos.length;let curEx=sess.exos.findIndex(e=>e.sets.some(x=>!x.done));if(curEx<0)curEx=nEx-1;
-  let html='<div class="fm-hdr"><div class="fm-title">🏋️ '+h(sess.nom)+'</div><button class="fm-close" onclick="quitSeance()"><i class="fa-solid fa-xmark"></i></button></div>'
+  let html='<div class="fm-hdr"><div class="fm-title">🏋️ '+h(sess.nom)+'</div><button id="gym-btn" class="fm-close" onclick="toggleGym()" title="Mode salle (gros chiffres)" style="margin-right:6px;'+(_gymMode?'color:var(--gold)':'')+'"><i class="fa-solid fa-up-right-and-down-left-from-center"></i></button><button class="fm-close" onclick="quitSeance()"><i class="fa-solid fa-xmark"></i></button></div>'
    +'<div style="position:sticky;top:0;background:var(--surface);padding:6px 0 12px;z-index:5"><div class="pbw" style="max-width:none;margin:0"><div class="pbf" style="width:'+pct+'%;transition:width .4s cubic-bezier(.4,0,.2,1)"></div></div><div style="font-size:12px;color:var(--text3);margin-top:4px;text-align:center">Exercice '+(curEx+1)+'/'+nEx+' · '+doneSets+'/'+totalSets+' séries · '+pct+'% <span style="color:var(--green)">· sauvegarde auto</span></div></div>'
    +'<div class="fm-body">';
   // regroupe les exos consécutifs partageant la même lettre de superset
@@ -6000,6 +6435,7 @@ function renderSessLive(){
   }).join('');
   html+='<button class="btn-done" style="width:100%;justify-content:center;margin-top:6px" onclick="finishSeance()"><i class="fa-solid fa-flag-checkered"></i> Terminer la séance</button></div>';
   el.innerHTML=html;
+  try{applyGym();}catch(e){}
 }
 function renderSessExo(ei,grouped){
   const e=sess.exos[ei];const exo=e.exId?exById(e.exId):null;const p=e.ex;
@@ -6039,7 +6475,7 @@ function sessOpenNote(ei){
 }
 function sessSaveNote(ei){sess.exos[ei].note=(document.getElementById('sess-note-txt').value||'').trim().slice(0,300);autosaveSess();closeModal();renderSessLive();}
 function restSeconds(txt){const m=String(txt||'').match(/(\d+)\s*(min|m)?/i);if(!m)return 90;let n=parseInt(m[1]);if(/min|m/i.test(m[2]||'')||n<=10)n=n*60;return n;}
-function quitSeance(){if(!confirm('Mettre la séance en pause ?\n\nTa saisie est sauvegardée : tu pourras reprendre où tu t’es arrêté depuis « Mon entraînement ».'))return;stopRest();autosaveSess();document.getElementById('sess-el')?.remove();sess=null;gotoS('training');}
+function quitSeance(){if(!confirm('Mettre la séance en pause ?\n\nTa saisie est sauvegardée : tu pourras reprendre où tu t’es arrêté depuis « Mon entraînement ».'))return;stopRest();autosaveSess();try{releaseWake();}catch(e){}document.getElementById('sess-el')?.remove();sess=null;gotoS('training');}
 
 // minuteur de repos
 let restState=null,restInt=null;
