@@ -1518,7 +1518,17 @@ button{touch-action:manipulation;}
           <div class="r2"><div class="fg2"><label>Matériel</label><select id="exo-materiel"><option>Barre</option><option>Haltères</option><option>Machine</option><option>Poulie</option><option>Poids du corps</option><option>Élastique</option><option>Kettlebell</option></select></div><div class="fg2"><label>Niveau</label><select id="exo-niveau"><option>Débutant</option><option>Intermédiaire</option><option>Avancé</option></select></div></div>
           <div class="fg2"><label>Consignes d'exécution</label><textarea id="exo-consignes" placeholder="Comment réaliser le mouvement correctement..."></textarea></div>
           <div class="fg2"><label>Conseils de sécurité</label><textarea id="exo-securite" placeholder="Points d'attention, erreurs à éviter..."></textarea></div>
-          <div class="fg2"><label>Lien vidéo de démonstration (YouTube, Vimeo...)</label><input type="text" id="exo-video" placeholder="https://youtube.com/..."></div>
+          <div class="fg2"><label>Lien vidéo de démonstration (YouTube, Vimeo...) ou téléverse ci-dessous</label><input type="text" id="exo-video" placeholder="https://youtube.com/... ou téléverse une vidéo"></div>
+          <div class="fg2"><label>🎬 Téléverser ta propre vidéo (galerie / caméra)</label>
+            <label class="btn-sec" style="display:inline-flex;align-items:center;gap:8px;cursor:pointer"><i class="fa-solid fa-video"></i> Choisir / filmer une vidéo<input type="file" id="exo-video-file" accept="video/*" capture="environment" onchange="handleExoVideo(this)" style="display:none"></label>
+            <div id="exo-video-prog" style="margin-top:8px"></div>
+            <div style="font-size:12px;color:var(--text3);margin-top:4px">Max 50 Mo. Vise des clips courts (15-40 s) filmés à la verticale pour économiser le stockage.</div>
+          </div>
+          <div class="fg2"><label>🖼️ Image ou GIF de démo (optionnel)</label>
+            <input type="text" id="exo-image" placeholder="(rempli automatiquement après téléversement)" style="margin-bottom:8px">
+            <label class="btn-sec" style="display:inline-flex;align-items:center;gap:8px;cursor:pointer"><i class="fa-solid fa-image"></i> Choisir une image / GIF<input type="file" id="exo-image-file" accept="image/*" onchange="handleExoImage(this)" style="display:none"></label>
+            <div id="exo-image-prog" style="margin-top:8px"></div>
+          </div>
           <div class="fa-row"><button class="btn" onclick="saveExo()"><i class="fa-solid fa-save"></i> <span id="save-exo-txt">Ajouter</span></button><button class="btn-sec" id="cancel-exo-btn" onclick="cancelExo()" style="display:none">Annuler</button></div>
         </div>
         <div class="ftabs" style="gap:8px"><select id="exo-filter-g" class="pc-cat" style="font-size:16px"></select><select id="exo-filter-m" class="pc-cat" style="font-size:16px"></select><select id="exo-filter-n" class="pc-cat" style="font-size:16px"></select></div>
@@ -1820,6 +1830,56 @@ async function uploadPhoto(file,prefix){
   try{return await sbUpload('photos',blob,prefix,'jpg','image/jpeg');}
   catch(e){console.warn('photo storage fail → base64',e);if(!_storageWarned){_storageWarned=true;toast('Stockage en ligne indisponible — photo gardée en local. Configure Supabase Storage.','error');}return await blobToDataURL(blob);}
 }
+// ---------- MÉDIAS D'EXERCICE (vidéo perso + image/GIF) ----------
+// Upload d'une VIDÉO d'exercice vers le bucket "videos" (jamais de base64 : trop lourd).
+async function handleExoVideo(inp){
+  const f=inp.files&&inp.files[0];if(!f){return;}
+  if(!/^video\//i.test(f.type||'')&&!/\.(mp4|mov|webm|m4v)$/i.test(f.name)){toast('Choisis un fichier vidéo','error');inp.value='';return;}
+  if(f.size>50*1024*1024){toast('Vidéo trop lourde (max 50 Mo). Raccourcis le clip ou compresse-le.','error');inp.value='';return;}
+  const prog=document.getElementById('exo-video-prog');
+  if(prog)prog.innerHTML='<span style="font-size:13px;color:var(--blue);font-weight:600"><i class="fa-solid fa-spinner fa-spin"></i> Envoi de la vidéo... (peut prendre un moment)</span>';
+  try{
+    const ext=fileExt(f.name,'mp4');
+    const url=await sbUpload('videos',f,'exos',ext,f.type||'video/mp4');
+    const v=document.getElementById('exo-video');if(v)v.value=url;
+    if(prog)prog.innerHTML='<span style="font-size:13px;color:var(--green);font-weight:600"><i class="fa-solid fa-check"></i> Vidéo envoyée ✓ — clique sur Enregistrer</span>';
+    toast('Vidéo téléversée ✅','success');
+  }catch(e){console.warn('exo video',e);
+    if(prog)prog.innerHTML='<span style="font-size:13px;color:var(--red)"><i class="fa-solid fa-triangle-exclamation"></i> Échec. Vérifie ta connexion et que le bucket « videos » existe (voir config Supabase).</span>';
+    toast('Échec de l\'upload de la vidéo','error');
+  }finally{inp.value='';}
+}
+// Upload d'une IMAGE/GIF d'exercice. GIF = pas de recompression (préserve l'animation) ; jpg/png = optimisé.
+async function handleExoImage(inp){
+  const f=inp.files&&inp.files[0];if(!f){return;}
+  if(!/^image\//i.test(f.type||'')&&!/\.(jpe?g|png|gif|webp)$/i.test(f.name)){toast('Choisis une image','error');inp.value='';return;}
+  if(f.size>15*1024*1024){toast('Image trop lourde (max 15 Mo)','error');inp.value='';return;}
+  const prog=document.getElementById('exo-image-prog');
+  if(prog)prog.innerHTML='<span style="font-size:13px;color:var(--blue);font-weight:600"><i class="fa-solid fa-spinner fa-spin"></i> Envoi de l\'image...</span>';
+  try{
+    const isGif=/gif/i.test(f.type)||/\.gif$/i.test(f.name);
+    let url;
+    if(isGif){url=await sbUpload('photos',f,'exos',fileExt(f.name,'gif'),f.type||'image/gif');}
+    else{const blob=await optimizeImageBlob(f,1280,0.78);url=await sbUpload('photos',blob,'exos','jpg','image/jpeg');}
+    const im=document.getElementById('exo-image');if(im)im.value=url;
+    if(prog)prog.innerHTML='<span style="font-size:13px;color:var(--green);font-weight:600"><i class="fa-solid fa-check"></i> Image envoyée ✓</span><div style="margin-top:6px"><img src="'+escA(safeUrl(url))+'" style="max-height:80px;border-radius:8px"></div>';
+    toast('Image téléversée ✅','success');
+  }catch(e){console.warn('exo image',e);
+    if(prog)prog.innerHTML='<span style="font-size:13px;color:var(--red)"><i class="fa-solid fa-triangle-exclamation"></i> Échec de l\'envoi de l\'image.</span>';
+    toast('Échec de l\'upload de l\'image','error');
+  }finally{inp.value='';}
+}
+// Détection YouTube / Vimeo / vidéo fichier + vignette
+function ytId(u){const m=String(u||'').match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/);return m?m[1]:null;}
+function vimeoId(u){const m=String(u||'').match(/vimeo\.com\/(?:video\/)?(\d+)/);return m?m[1]:null;}
+function isVideoFile(u){return /\.(mp4|webm|mov|m4v|ogg)(\?|$)/i.test(String(u||''))||/\/storage\/v1\/object\/public\/videos\//i.test(String(u||''));}
+function exoThumb(e){
+  if(e&&e.image)return '<img src="'+escA(safeUrl(e.image))+'" style="width:100%;height:100%;object-fit:cover" alt="" loading="lazy">';
+  const yt=e&&ytId(e.video);if(yt)return '<img src="https://img.youtube.com/vi/'+yt+'/mqdefault.jpg" style="width:100%;height:100%;object-fit:cover" alt="" loading="lazy">';
+  return '<span style="font-size:24px">'+(GRP_ICON[e&&e.groupe]||'🏋️')+'</span>';
+}
+function exoHasVideo(e){return !!(e&&(ytId(e.video)||vimeoId(e.video)||isVideoFile(e.video)));}
+
 // Upload d'un PDF de ressource (jamais de base64).
 async function handleResPdf(inp){
   const f=inp.files&&inp.files[0];if(!f){return;}
@@ -1938,7 +1998,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
   const t=DB.get('theme')||'light';document.documentElement.setAttribute('data-theme',t);updateThemeIcons(t);
   miniSB=DB.get('sb_mini')||false;if(miniSB)applMini();
   const s=DB.get('session');if(s){CU=s;s.isAdmin?showAdmin():showMember();}else if(!localStorage.getItem('nc3_last_user')&&!localStorage.getItem('nc3_seen_landing')){showPage('landing');setTimeout(initLanding,80);}else{initLoginScreen();}
-  document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();openGS();}if(e.key==='Escape'){closeModal();closeGS();closeBS();closeABS();}});
+  document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();openGS();}if(e.key==='Escape'){closeModal();closeGS();closeBS();closeABS();if(typeof closeExoMedia==='function')closeExoMedia();}});
   document.querySelectorAll('#sidebar .nav-item').forEach(b=>b.addEventListener('click',()=>gotoS(b.dataset.s)));
   document.querySelectorAll('#bnav .bni').forEach(b=>b.addEventListener('click',()=>{gotoS(b.dataset.s);setBN(b);}));
   document.querySelectorAll('#admin-sidebar .nav-item').forEach(b=>b.addEventListener('click',()=>gotoAS(b.dataset.as)));
@@ -5135,7 +5195,7 @@ let editExoId=null,exoFilterG='all',exoFilterM='all',exoFilterN='all';
 function saveExo(){
   const nom=(document.getElementById('exo-nom').value||'').trim();
   if(!nom){toast('Nom requis','error');return;}
-  const obj={nom,groupe:document.getElementById('exo-groupe').value,materiel:document.getElementById('exo-materiel').value,niveau:document.getElementById('exo-niveau').value,consignes:(document.getElementById('exo-consignes').value||'').trim(),securite:(document.getElementById('exo-securite').value||'').trim(),video:(document.getElementById('exo-video').value||'').trim()};
+  const obj={nom,groupe:document.getElementById('exo-groupe').value,materiel:document.getElementById('exo-materiel').value,niveau:document.getElementById('exo-niveau').value,consignes:(document.getElementById('exo-consignes').value||'').trim(),securite:(document.getElementById('exo-securite').value||'').trim(),video:(document.getElementById('exo-video').value||'').trim(),image:(document.getElementById('exo-image').value||'').trim()};
   const list=DB.getArr('exercices');
   if(editExoId){const e=list.find(x=>x.id===editExoId);if(e)Object.assign(e,obj);toast('Exercice mis à jour ✅','success');}
   else{list.push(Object.assign({id:Date.now()},obj));toast('Exercice ajouté ✅','success');}
@@ -5150,12 +5210,15 @@ function editExo(id){
   document.getElementById('exo-consignes').value=e.consignes||'';
   document.getElementById('exo-securite').value=e.securite||'';
   document.getElementById('exo-video').value=e.video||'';
+  document.getElementById('exo-image').value=e.image||'';
+  const ivp=document.getElementById('exo-image-prog');if(ivp)ivp.innerHTML=e.image?'<img src="'+escA(safeUrl(e.image))+'" style="max-height:80px;border-radius:8px;margin-top:6px">':'';
+  const vvp=document.getElementById('exo-video-prog');if(vvp)vvp.innerHTML=e.video?'<span style="font-size:12px;color:var(--green)"><i class="fa-solid fa-check"></i> Vidéo/lien associé</span>':'';
   document.getElementById('exo-form-title').textContent='Modifier l’exercice';
   document.getElementById('save-exo-txt').textContent='Enregistrer';
   document.getElementById('cancel-exo-btn').style.display='inline-flex';
   window.scrollTo({top:0,behavior:'smooth'});
 }
-function cancelExo(){editExoId=null;['exo-nom','exo-consignes','exo-securite','exo-video'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});const t=document.getElementById('exo-form-title');if(t)t.textContent='Nouvel exercice';const s=document.getElementById('save-exo-txt');if(s)s.textContent='Ajouter';const c=document.getElementById('cancel-exo-btn');if(c)c.style.display='none';}
+function cancelExo(){editExoId=null;['exo-nom','exo-consignes','exo-securite','exo-video','exo-image'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});['exo-video-prog','exo-image-prog'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML='';});const t=document.getElementById('exo-form-title');if(t)t.textContent='Nouvel exercice';const s=document.getElementById('save-exo-txt');if(s)s.textContent='Ajouter';const c=document.getElementById('cancel-exo-btn');if(c)c.style.display='none';}
 function delExo(id){if(!confirm('Supprimer cet exercice ?'))return;if(editExoId===id)cancelExo();DB.set('exercices',DB.getArr('exercices').filter(x=>x.id!==id));renderAExos();toast('Supprimé');}
 function renderAExos(){
   const list=document.getElementById('admin-exos-list');if(!list)return;
@@ -5170,7 +5233,7 @@ function renderAExos(){
   const nf=document.getElementById('exo-filter-n');if(nf&&!nf.dataset.f){nf.dataset.f='1';nf.innerHTML='<option value="all">Tous niveaux</option>'+EXO_NIVEAUX.map(g=>'<option>'+g+'</option>').join('');nf.onchange=()=>{exoFilterN=nf.value;renderAExos();};}
   const cnt=document.getElementById('exo-count');if(cnt)cnt.textContent=exos.length+' exercice'+(exos.length>1?'s':'');
   if(!exos.length){list.innerHTML='<div class="empty"><i class="fa-solid fa-dumbbell"></i><p>Aucun exercice.</p></div>';return;}
-  list.innerHTML=exos.map(e=>'<div class="ali"><div class="ali-icon">'+(GRP_ICON[e.groupe]||'🏋️')+'</div><div style="flex:1;min-width:0"><div class="ali-title">'+h(e.nom)+(e.video?' <i class="fa-solid fa-circle-play" style="color:var(--blue);font-size:12px"></i>':'')+'</div><div class="ali-meta">'+h(e.groupe)+' · '+h(e.materiel)+' · '+h(e.niveau)+'</div></div><div class="ali-actions"><button class="btn-edit btn-sm" onclick="editExo('+e.id+')"><i class="fa-solid fa-pen"></i></button><button class="btn-del btn-sm" onclick="delExo('+e.id+')"><i class="fa-solid fa-trash"></i></button></div></div>').join('');
+  list.innerHTML=exos.map(e=>'<div class="ali"><div style="width:48px;height:48px;border-radius:10px;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--bg2)">'+exoThumb(e)+'</div><div style="flex:1;min-width:0"><div class="ali-title">'+h(e.nom)+(exoHasVideo(e)?' <i class="fa-solid fa-circle-play" style="color:var(--blue);font-size:12px"></i>':'')+(e.image?' <i class="fa-solid fa-image" style="color:var(--gold);font-size:11px"></i>':'')+'</div><div class="ali-meta">'+h(e.groupe)+' · '+h(e.materiel)+' · '+h(e.niveau)+'</div></div><div class="ali-actions"><button class="btn-edit btn-sm" onclick="editExo('+e.id+')"><i class="fa-solid fa-pen"></i></button><button class="btn-del btn-sm" onclick="delExo('+e.id+')"><i class="fa-solid fa-trash"></i></button></div></div>').join('');
 }
 
 // ============================================================
@@ -5246,7 +5309,7 @@ function pbPickExo(si){
   document.getElementById('modal-content').innerHTML='<h3 style="font-family:var(--fd);font-size:18px;margin-bottom:10px">Choisir un exercice</h3><div class="sbar" style="margin-bottom:10px"><i class="fa-solid fa-magnifying-glass"></i><input type="text" id="pbpick-s" placeholder="Rechercher..." oninput="pbPickFilter()"></div><div id="pbpick-list" style="max-height:360px;overflow-y:auto"></div>';
   openModal();pbPickRender(exos);setTimeout(()=>document.getElementById('pbpick-s')?.focus(),80);
 }
-function pbPickRender(list){const el=document.getElementById('pbpick-list');if(!el)return;el.innerHTML=list.map(e=>'<div onclick="pbAddExo('+e.id+')" style="display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid var(--border2);cursor:pointer"><span style="font-size:18px">'+(GRP_ICON[e.groupe]||'🏋️')+'</span><div style="flex:1"><div style="font-size:14px;font-weight:600">'+h(e.nom)+'</div><div style="font-size:11px;color:var(--text3)">'+h(e.groupe)+' · '+h(e.materiel)+'</div></div><i class="fa-solid fa-plus" style="color:var(--blue)"></i></div>').join('')||'<div class="empty" style="padding:24px"><p>Aucun exercice.</p></div>';}
+function pbPickRender(list){const el=document.getElementById('pbpick-list');if(!el)return;el.innerHTML=list.map(e=>'<div onclick="pbAddExo('+e.id+')" style="display:flex;align-items:center;gap:10px;padding:8px 4px;border-bottom:1px solid var(--border2);cursor:pointer"><div style="width:44px;height:44px;border-radius:9px;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--bg2)">'+exoThumb(e)+'</div><div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:600">'+h(e.nom)+(exoHasVideo(e)?' <i class="fa-solid fa-circle-play" style="color:var(--blue);font-size:11px"></i>':'')+'</div><div style="font-size:11px;color:var(--text3)">'+h(e.groupe)+' · '+h(e.materiel)+'</div></div><i class="fa-solid fa-plus" style="color:var(--blue)"></i></div>').join('')||'<div class="empty" style="padding:24px"><p>Aucun exercice.</p></div>';}
 function pbPickFilter(){const q=(document.getElementById('pbpick-s').value||'').toLowerCase();pbPickRender(DB.getArr('exercices').filter(e=>e.nom.toLowerCase().includes(q)).sort((a,b)=>a.nom.localeCompare(b.nom)));}
 function pbAddExo(id){progDraft.seances[_pbPickSi].exos.push({exId:id,type:'mono',series:'3',reps:'8-12',charge:'',chargeMode:'kg',tempo:'',repos:'90s',rir:'',note:'',ss:'',cardio:null});closeModal();pbRenderSeances();}
 function saveProgDraft(){
@@ -5395,7 +5458,8 @@ function renderSessLive(){
 function renderSessExo(ei,grouped){
   const e=sess.exos[ei];const exo=e.exId?exById(e.exId):null;const p=e.ex;
   const timed=exoIsTimed(p);const blockLbl=exoBlockLabel(p);
-  let head='<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><span style="font-family:var(--fd);font-size:17px;font-weight:800;flex:1">'+((blockLbl&&!grouped&&blockLbl!=='SUPERSET')?'<span style="background:var(--blue-light);color:var(--blue);font-size:10px;padding:2px 8px;border-radius:8px;margin-right:6px;vertical-align:middle">'+blockLbl+'</span>':'')+h(e.nom)+'</span>'+(exo&&exo.video?'<button class="btn-sec btn-sm" onclick="openExoVideo('+exo.id+')"><i class="fa-solid fa-circle-play"></i></button>':'')+(exo?'<button class="btn-sec btn-sm" onclick="openExoInfo('+exo.id+')"><i class="fa-solid fa-circle-info"></i></button>':'')+'<button class="btn-sec btn-sm" onclick="sessOpenNote('+ei+')" title="Ma note"><i class="fa-'+(e.note?'solid':'regular')+' fa-note-sticky" style="'+(e.note?'color:var(--gold)':'')+'"></i></button></div>';
+  const thumb=exo?('<div onclick="'+((exoHasVideo(exo)||exo.image)?'openExoVideo('+exo.id+')':'openExoInfo('+exo.id+')')+'" style="width:46px;height:46px;border-radius:10px;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--bg2);cursor:pointer;position:relative">'+exoThumb(exo)+(exoHasVideo(exo)?'<span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.3);color:#fff;font-size:15px"><i class="fa-solid fa-play"></i></span>':'')+'</div>'):'';
+  let head='<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">'+thumb+'<span style="font-family:var(--fd);font-size:16px;font-weight:800;flex:1;min-width:0">'+((blockLbl&&!grouped&&blockLbl!=='SUPERSET')?'<span style="background:var(--blue-light);color:var(--blue);font-size:10px;padding:2px 8px;border-radius:8px;margin-right:6px;vertical-align:middle">'+blockLbl+'</span>':'')+h(e.nom)+'</span>'+(exo&&(exoHasVideo(exo)||exo.image)?'<button class="btn-sec btn-sm" onclick="openExoVideo('+exo.id+')" title="Démo"><i class="fa-solid fa-circle-play"></i></button>':'')+(exo?'<button class="btn-sec btn-sm" onclick="openExoInfo('+exo.id+')"><i class="fa-solid fa-circle-info"></i></button>':'')+'<button class="btn-sec btn-sm" onclick="sessOpenNote('+ei+')" title="Ma note"><i class="fa-'+(e.note?'solid':'regular')+' fa-note-sticky" style="'+(e.note?'color:var(--gold)':'')+'"></i></button></div>';
   // ligne cible (coach)
   const chargeTxt=p.cardio?'':(p.chargeMode==='pct'?(p.charge?h(p.charge)+' % 1RM':''):p.chargeMode==='rpe'?'au ressenti':(p.charge?h(p.charge)+' kg':''));
   let target=timed?('<div style="font-size:13px;color:var(--blue);font-weight:600;margin-bottom:6px">'+h((p.cardio?(p.cardio.dur||''):(p.reps||p.series||''))||'')+(p.cardio&&p.cardio.desc?' — '+h(p.cardio.desc):'')+'</div>')
@@ -5465,8 +5529,34 @@ function openHIIT(type){
 }
 function stopHIIT(){if(hiitInt){clearInterval(hiitInt);hiitInt=null;}document.getElementById('hiit-ov')?.remove();}
 
-function openExoVideo(id){const e=exById(id);if(!e||!e.video)return;const u=safeUrl(e.video);if(u==='#'){toast('Lien vidéo invalide','error');return;}window.open(u,'_blank','noopener');}
-function openExoInfo(id){const e=exById(id);if(!e)return;document.getElementById('modal-content').innerHTML='<h3 style="font-family:var(--fd);font-size:19px;margin-bottom:4px">'+h(e.nom)+'</h3><div style="font-size:12px;color:var(--text3);margin-bottom:12px">'+h(e.groupe)+' · '+h(e.materiel)+' · '+h(e.niveau)+'</div>'+(e.video?'<button class="btn" style="width:100%;justify-content:center;margin-bottom:12px" onclick="openExoVideo('+e.id+')"><i class="fa-solid fa-circle-play"></i> Voir la vidéo de démo</button>':'')+(e.consignes?'<div style="font-size:12px;font-weight:700;text-transform:uppercase;color:var(--text2);margin-bottom:4px">Exécution</div><div style="font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:12px">'+h(e.consignes)+'</div>':'')+(e.securite?'<div style="font-size:12px;font-weight:700;text-transform:uppercase;color:var(--text2);margin-bottom:4px">⚠️ Sécurité</div><div style="font-size:14px;color:var(--text2);line-height:1.6">'+h(e.securite)+'</div>':'');openModal();}
+function closeExoMedia(){const el=document.getElementById('exo-media-ov');if(el){const v=el.querySelector('video');if(v){try{v.pause();}catch(e){}}el.remove();}}
+function openExoVideo(id){
+  const e=exById(id);if(!e)return;
+  const yt=ytId(e.video),vm=vimeoId(e.video);
+  let inner='';
+  if(yt)inner='<div style="position:relative;width:100%;max-width:900px;aspect-ratio:16/9"><iframe src="https://www.youtube.com/embed/'+yt+'?autoplay=1&playsinline=1&rel=0" style="position:absolute;inset:0;width:100%;height:100%;border:0;border-radius:12px" allow="autoplay;encrypted-media;fullscreen" allowfullscreen></iframe></div>';
+  else if(vm)inner='<div style="position:relative;width:100%;max-width:900px;aspect-ratio:16/9"><iframe src="https://player.vimeo.com/video/'+vm+'?autoplay=1" style="position:absolute;inset:0;width:100%;height:100%;border:0;border-radius:12px" allow="autoplay;fullscreen" allowfullscreen></iframe></div>';
+  else if(isVideoFile(e.video)){const u=safeUrl(e.video);if(u==='#'){toast('Vidéo invalide','error');return;}inner='<video src="'+escA(u)+'" controls autoplay playsinline style="max-width:100%;max-height:88vh;border-radius:12px;background:#000"></video>';}
+  else if(e.image){inner='<img src="'+escA(safeUrl(e.image))+'" style="max-width:100%;max-height:88vh;object-fit:contain;border-radius:12px" alt="">';}
+  else{toast('Aucune vidéo pour cet exercice','error');return;}
+  closeExoMedia();
+  const ov=document.createElement('div');ov.id='exo-media-ov';
+  ov.style.cssText='position:fixed;inset:0;z-index:980;background:rgba(0,0,0,.95);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px;animation:si .2s ease';
+  ov.innerHTML='<button onclick="closeExoMedia()" style="position:absolute;top:calc(12px + env(safe-area-inset-top));right:14px;width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.15);border:none;color:#fff;font-size:18px;cursor:pointer;z-index:2"><i class="fa-solid fa-xmark"></i></button><div style="color:#fff;font-weight:700;font-size:15px;margin-bottom:12px;max-width:90vw;text-align:center">'+h(e.nom)+'</div>'+inner;
+  ov.addEventListener('click',ev=>{if(ev.target===ov)closeExoMedia();});
+  document.body.appendChild(ov);
+}
+function openExoInfo(id){
+  const e=exById(id);if(!e)return;
+  const hasMedia=exoHasVideo(e)||e.image;
+  const mediaBlock=e.image?'<img src="'+escA(safeUrl(e.image))+'" onclick="openExoVideo('+e.id+')" style="width:100%;max-height:220px;object-fit:cover;border-radius:12px;margin-bottom:12px;cursor:pointer" alt="">':(ytId(e.video)?'<div onclick="openExoVideo('+e.id+')" style="position:relative;border-radius:12px;overflow:hidden;margin-bottom:12px;cursor:pointer"><img src="https://img.youtube.com/vi/'+ytId(e.video)+'/hqdefault.jpg" style="width:100%;display:block"><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center"><div style="width:60px;height:60px;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;display:flex;align-items:center;justify-content:center;font-size:24px"><i class="fa-solid fa-play"></i></div></div></div>':'');
+  document.getElementById('modal-content').innerHTML='<h3 style="font-family:var(--fd);font-size:19px;margin-bottom:4px">'+h(e.nom)+'</h3><div style="font-size:12px;color:var(--text3);margin-bottom:12px">'+h(e.groupe)+' · '+h(e.materiel)+' · '+h(e.niveau)+'</div>'
+   +mediaBlock
+   +(hasMedia?'<button class="btn" style="width:100%;justify-content:center;margin-bottom:12px" onclick="openExoVideo('+e.id+')"><i class="fa-solid fa-circle-play"></i> '+(exoHasVideo(e)?'Voir la vidéo de démo':'Voir en grand')+'</button>':'')
+   +(e.consignes?'<div style="font-size:12px;font-weight:700;text-transform:uppercase;color:var(--text2);margin-bottom:4px">Exécution</div><div style="font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:12px">'+h(e.consignes)+'</div>':'')
+   +(e.securite?'<div style="font-size:12px;font-weight:700;text-transform:uppercase;color:var(--text2);margin-bottom:4px">⚠️ Sécurité</div><div style="font-size:14px;color:var(--text2);line-height:1.6">'+h(e.securite)+'</div>':'');
+  openModal();
+}
 
 function finishSeance(){
   // rendu DANS l'overlay de séance (évite tout conflit de z-index)
