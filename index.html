@@ -14,6 +14,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- Librairies d'effets (CDN, chargées en defer : n'entravent jamais le rendu initial ; tout est progressif et dégrade proprement si le CDN échoue) -->
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
 <style>
 :root{
   --blue:#0f4c81;--blue-mid:#1a6bbf;--blue-light:#e8f2fc;--blue-xlight:#f0f7ff;
@@ -1037,10 +1043,33 @@ button{touch-action:manipulation;}
 /* Dark mode : surfaces un poil plus contrastées pour les nouvelles cartes */
 [data-theme="dark"] .nav-dot{box-shadow:0 0 8px var(--gold);}
 
+/* ---- 13. EFFETS PREMIUM (micro-interactions, loaders) — transform/opacity uniquement ---- */
+/* Micro-interactions au survol : desktop seulement (hover:hover), GPU-friendly */
+@media (hover:hover) and (pointer:fine){
+  .btn,.btn-sec,.btn-login,.ld-cta,.ld-cta-sec,.ld-login-btn,.bsi{transition:transform .18s cubic-bezier(.4,0,.2,1),box-shadow .18s ease,filter .18s ease;}
+  .btn:hover,.btn-login:hover,.ld-cta:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(26,107,191,.30);}
+  .btn-sec:hover,.ld-cta-sec:hover,.ld-login-btn:hover{transform:translateY(-2px);}
+  .dbc,.na-card,.member-card,.ld-card,.ld-feat,.ld-price,.ld-temo,.ali,.dstat{transition:transform .2s cubic-bezier(.4,0,.2,1),box-shadow .2s ease;}
+  .dbc:hover,.na-card:hover,.member-card:hover,.ld-card:hover,.ld-feat:hover,.ld-price:hover,.ld-temo:hover,.ali:hover{transform:translateY(-3px);box-shadow:0 14px 32px rgba(15,30,50,.13);}
+}
+/* Feedback tactile au clic (mobile + desktop) */
+.btn:active,.btn-sec:active,.btn-login:active,.ld-cta:active,.ld-cta-sec:active,.dbc:active,.na-card:active,.member-card:active{transform:scale(.97);}
+/* Halo de respiration sur le CTA principal de la vitrine */
+.ld-cta{position:relative;}
+.ld-cta::after{content:'';position:absolute;inset:0;border-radius:inherit;box-shadow:0 0 0 0 rgba(201,151,42,.45);animation:fxPulse 2.6s ease-out infinite;pointer-events:none;}
+@keyframes fxPulse{0%{box-shadow:0 0 0 0 rgba(201,151,42,.40);}70%{box-shadow:0 0 0 14px rgba(201,151,42,0);}100%{box-shadow:0 0 0 0 rgba(201,151,42,0);}}
+/* Squelettes de chargement (shimmer) — réutilisable */
+.skeleton{position:relative;overflow:hidden;background:var(--bg2);border-radius:10px;}
+.skeleton::after{content:'';position:absolute;inset:0;transform:translateX(-100%);background:linear-gradient(90deg,transparent,rgba(255,255,255,.13),transparent);animation:fxShimmer 1.3s infinite;}
+@keyframes fxShimmer{100%{transform:translateX(100%);}}
+/* Canvas de particules de la vitrine */
+#fx-hero-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;}
+
 /* ---- 12. ACCESSIBILITÉ : reduced motion ---- */
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;}
   html{scroll-behavior:auto;}
+  .ld-cta::after{display:none;}
 }
 </style>
 </head>
@@ -1068,7 +1097,7 @@ button{touch-action:manipulation;}
       <p>La recomposition corporelle, c'est mon métier. Un coaching personnalisé, fondé sur la science, qui sculpte ton physique sans régime extrême ni programme générique — pour les hommes comme pour les femmes qui veulent des résultats qui durent.</p>
       <div class="ld-cta-row">
         <button class="ld-cta" onclick="openContactModal()">Démarrer ma transformation <i class="fa-solid fa-arrow-right"></i></button>
-        <button class="ld-cta-sec" onclick="document.getElementById('ld-method').scrollIntoView({behavior:'smooth'})">Découvrir la méthode</button>
+        <button class="ld-cta-sec" onclick="(window.fxLenisScrollTo&&window.fxLenisScrollTo('#ld-method'))||document.getElementById('ld-method').scrollIntoView({behavior:'smooth'})">Découvrir la méthode</button>
       </div>
       <div class="ld-proof-pills">
         <span>🔄 Recomposition corporelle</span><span>💪 Prise de muscle</span><span>📱 App de suivi privée</span><span>🤝 Coach humain</span>
@@ -5779,7 +5808,7 @@ function seanceRecap(w,prs){
   html+='<div style="background:var(--blue-xlight);border-radius:12px;padding:10px 14px;font-size:13px;color:var(--blue);font-weight:600;margin-bottom:18px">+30 XP ajoutés ⚡</div>';
   html+='<button class="btn-done" style="width:100%;justify-content:center" onclick="closeRecap()"><i class="fa-solid fa-flag-checkered"></i> Terminer</button><div style="height:30px"></div></div>';
   el.innerHTML=html;
-  fireConfetti();if(prs&&prs.length){setTimeout(fireConfetti,400);}
+  if(prs&&prs.length&&window.celebrate){celebrate('pr');}else{fireConfetti();if(prs&&prs.length){setTimeout(fireConfetti,400);}}
   toast(prs&&prs.length?'🏆 Nouveau record ! +30 XP':'Séance validée ! +30 XP 🔥','gold');
 }
 function closeRecap(){document.getElementById('sess-el')?.remove();gotoS('training');}
@@ -6118,6 +6147,153 @@ function openModalTop(){openModal();}
     const _ma=memberAlerts;
     memberAlerts=function(){const a=_ma();try{if(CU&&!CU.isAdmin&&!CU.isPreview){const ass=DB.get('assign_'+(CU.code||''));if(ass&&ass.prog){const w=DB.getArr('workouts_'+(CU.code||''));const today=localDate();if(!w.some(x=>x.date===today))a.training=true;}}}catch(e){}return a;};
   }
+})();
+
+// ============================================================
+// COUCHE EFFETS PREMIUM (GSAP + canvas-confetti + Lenis)
+// Tout est progressif : si un CDN ne charge pas, l'app fonctionne
+// exactement comme avant (vérifications window.* à chaque usage).
+// Priorité mobile : effets lourds (particules, smooth-scroll) désactivés
+// sur petit écran / tactile, et respect total de prefers-reduced-motion.
+// ============================================================
+(function(){
+  var rmq=window.matchMedia?matchMedia('(prefers-reduced-motion:reduce)'):{matches:false};
+  var reduce=!!rmq.matches;
+  try{rmq.addEventListener?rmq.addEventListener('change',function(e){reduce=e.matches;if(reduce){stopLenis();stopParticles();}}):rmq.addListener&&rmq.addListener(function(e){reduce=e.matches;});}catch(e){}
+  function isMobile(){return window.matchMedia?matchMedia('(max-width:760px)').matches:innerWidth<=760;}
+  function isTouch(){return ('ontouchstart' in window)||(navigator.maxTouchPoints>0);}
+
+  // ---------- 1) Confettis premium (remplace fireConfetti, garde le fallback DOM) ----------
+  var _origConfetti=(typeof fireConfetti==='function')?fireConfetti:null;
+  fireConfetti=function(){
+    if(reduce)return;
+    if(window.confetti){
+      var n=isMobile()?70:140;
+      try{window.confetti({particleCount:n,spread:74,startVelocity:42,origin:{y:.62},scalar:isMobile()?.9:1,colors:['#1a6bbf','#c9972a','#2d7a4f','#6d28d9','#e6b93a','#ffffff'],disableForReducedMotion:true});return;}catch(e){}
+    }
+    if(_origConfetti)try{_origConfetti();}catch(e){}
+  };
+  // grands moments (record, niveau, badge) — bref et non envahissant
+  window.celebrate=function(type){
+    if(reduce)return;
+    if(!window.confetti){if(_origConfetti)try{_origConfetti();}catch(e){}return;}
+    var gold=['#c9972a','#e6b93a','#ffffff','#1a6bbf'];
+    try{
+      if(type==='pr'){
+        var end=Date.now()+(isMobile()?700:1100);
+        (function frame(){
+          window.confetti({particleCount:isMobile()?4:7,angle:60,spread:55,origin:{x:0,y:.7},colors:gold,disableForReducedMotion:true});
+          window.confetti({particleCount:isMobile()?4:7,angle:120,spread:55,origin:{x:1,y:.7},colors:gold,disableForReducedMotion:true});
+          if(Date.now()<end)requestAnimationFrame(frame);
+        })();
+      }else{
+        window.confetti({particleCount:isMobile()?90:160,spread:100,startVelocity:45,origin:{y:.6},colors:gold,disableForReducedMotion:true});
+      }
+    }catch(e){fireConfetti();}
+  };
+
+  // ---------- 2) Cascade (stagger) des cartes au changement de section ----------
+  function deepestMulti(root){
+    var el=root,guard=0;
+    while(el&&guard<4){
+      var kids=[].slice.call(el.children).filter(function(c){return c.nodeType===1&&c.offsetParent!==null;});
+      if(kids.length>1)return kids;
+      if(kids.length===1){el=kids[0];guard++;}else return [];
+    }
+    return [];
+  }
+  function fxClear(kids){kids.forEach(function(k){if(k&&k.style){k.style.opacity='';k.style.transform='';}});}
+  function fxStagger(sel){
+    if(reduce||!window.gsap)return;
+    var root=document.querySelector(sel);if(!root)return;
+    var kids=deepestMulti(root);if(!kids.length||kids.length>40)return;
+    kids=kids.slice(0,18);
+    try{
+      gsap.killTweensOf(kids);
+      gsap.fromTo(kids,{opacity:0,y:14},{opacity:1,y:0,duration:.45,stagger:Math.min(.05,.5/kids.length),ease:'power2.out',overwrite:true,clearProps:'transform,opacity'});
+      // FILET DE SÉCURITÉ : si l'animation est interrompue ou throttlée
+      // (onglet en arrière-plan, rAF ralenti), le contenu redevient visible.
+      setTimeout(function(){fxClear(kids);},1400);
+    }catch(e){fxClear(kids);}
+  }
+  if(typeof gotoS==='function'){var _gs=gotoS;gotoS=function(){var r=_gs.apply(this,arguments);try{fxStagger('#page-member .section.active');}catch(e){}return r;};}
+  if(typeof gotoAS==='function'){var _ga=gotoAS;gotoAS=function(){var r=_ga.apply(this,arguments);try{fxStagger('#page-admin .section.active');}catch(e){}return r;};}
+
+  // ---------- 3) Compteur animé (utilitaire dispo) ----------
+  window.ncCountUp=function(el,to,opts){
+    to=parseFloat(to)||0;opts=opts||{};var suf=opts.suffix||'';
+    if(reduce||!window.gsap){el.textContent=Math.round(to)+suf;return;}
+    var o={n:0};try{gsap.to(o,{n:to,duration:opts.dur||1.1,ease:'power2.out',onUpdate:function(){el.textContent=Math.round(o.n)+suf;}});}catch(e){el.textContent=Math.round(to)+suf;}
+  };
+
+  // ---------- 4) Particules subtiles sur la vitrine (desktop uniquement) ----------
+  var pRAF=null,pCanvas=null,pCtx=null,pDots=[],pW=0,pH=0,pDPR=1;
+  function startParticles(){
+    if(reduce||isMobile())return;
+    var host=document.querySelector('#page-landing .ld-hero');
+    if(!host||document.getElementById('fx-hero-canvas'))return;
+    pCanvas=document.createElement('canvas');pCanvas.id='fx-hero-canvas';
+    host.insertBefore(pCanvas,host.firstChild);
+    pCtx=pCanvas.getContext('2d');
+    sizeParticles();
+    var count=Math.min(46,Math.round(pW/26));
+    pDots=[];for(var i=0;i<count;i++)pDots.push({x:Math.random()*pW,y:Math.random()*pH,r:Math.random()*1.8+.6,vx:(Math.random()-.5)*.18,vy:(Math.random()-.5)*.18,a:Math.random()*.4+.15});
+    window.addEventListener('resize',sizeParticles);
+    loopParticles();
+  }
+  function sizeParticles(){
+    if(!pCanvas)return;pDPR=Math.min(2,window.devicePixelRatio||1);
+    pW=pCanvas.offsetWidth;pH=pCanvas.offsetHeight;
+    pCanvas.width=pW*pDPR;pCanvas.height=pH*pDPR;pCtx.setTransform(pDPR,0,0,pDPR,0,0);
+  }
+  function loopParticles(){
+    if(!pCtx){return;}
+    pCtx.clearRect(0,0,pW,pH);
+    for(var i=0;i<pDots.length;i++){var d=pDots[i];d.x+=d.vx;d.y+=d.vy;
+      if(d.x<0)d.x=pW;if(d.x>pW)d.x=0;if(d.y<0)d.y=pH;if(d.y>pH)d.y=0;
+      pCtx.beginPath();pCtx.arc(d.x,d.y,d.r,0,6.2832);pCtx.fillStyle='rgba(201,151,42,'+d.a+')';pCtx.fill();
+    }
+    pRAF=requestAnimationFrame(loopParticles);
+  }
+  function stopParticles(){
+    if(pRAF)cancelAnimationFrame(pRAF);pRAF=null;
+    window.removeEventListener('resize',sizeParticles);
+    if(pCanvas&&pCanvas.parentNode)pCanvas.parentNode.removeChild(pCanvas);
+    pCanvas=null;pCtx=null;pDots=[];
+  }
+  document.addEventListener('visibilitychange',function(){
+    if(document.hidden){if(pRAF){cancelAnimationFrame(pRAF);pRAF=null;}}
+    else if(pCtx&&!pRAF&&!reduce){loopParticles();}
+  });
+
+  // ---------- 5) Smooth scroll premium (Lenis) — vitrine, desktop uniquement ----------
+  var lenis=null,lRAF=null;
+  function startLenis(){
+    if(reduce||isMobile()||isTouch()||!window.Lenis||lenis)return;
+    try{
+      lenis=new Lenis({duration:1.05,smoothWheel:true,wheelMultiplier:1,touchMultiplier:1.5});
+      var raf=function(t){if(!lenis)return;lenis.raf(t);lRAF=requestAnimationFrame(raf);};
+      lRAF=requestAnimationFrame(raf);
+    }catch(e){lenis=null;}
+  }
+  function stopLenis(){
+    if(lRAF)cancelAnimationFrame(lRAF);lRAF=null;
+    if(lenis){try{lenis.destroy();}catch(e){}lenis=null;}
+  }
+  window.fxLenisScrollTo=function(target){if(lenis){try{lenis.scrollTo(target,{duration:1.1});return true;}catch(e){}}return false;};
+
+  // ---------- 6) Branchement sur les changements de page ----------
+  function fxOnPage(n){
+    if(n==='landing'){startLenis();startParticles();}
+    else{stopLenis();stopParticles();}
+  }
+  if(typeof showPage==='function'){var _sp=showPage;showPage=function(n){var r=_sp.apply(this,arguments);try{fxOnPage(n);}catch(e){}return r;};}
+
+  // ---------- 7) Initialisation après chargement des libs (defer → prêtes au DOMContentLoaded) ----------
+  function fxBoot(){
+    try{var active=document.querySelector('.page.active');var n=active?active.id.replace('page-',''):'';fxOnPage(n);}catch(e){}
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',fxBoot);else fxBoot();
 })();
 </script>
 </body>
