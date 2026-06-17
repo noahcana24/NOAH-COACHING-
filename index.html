@@ -5248,26 +5248,31 @@ function renderAProgs(){
     return '<div class="ali"><div class="ali-icon">📋</div><div style="flex:1;min-width:0"><div class="ali-title">'+h(p.nom)+(p.isTemplate?' <span style="background:var(--gold-light);color:var(--gold);font-size:9px;font-weight:700;padding:2px 8px;border-radius:10px">MODÈLE</span>':'')+'</div><div class="ali-meta">'+h(p.objectif||'')+' · '+h(p.niveau||'')+' · '+(p.seances||[]).length+' séances · '+nEx+' exos</div></div><div class="ali-actions"><button class="btn-edit btn-sm" onclick="editProg('+p.id+')" title="Éditer"><i class="fa-solid fa-pen"></i></button><button class="btn-edit btn-sm" onclick="dupProg('+p.id+')" title="Dupliquer"><i class="fa-solid fa-copy"></i></button><button class="btn-del btn-sm" onclick="delProg('+p.id+')"><i class="fa-solid fa-trash"></i></button></div></div>';
   }).join('');
 }
-function newProg(){progDraft={id:Date.now(),nom:'',objectif:'Prise de masse',niveau:'Débutant',dureeSem:6,isTemplate:true,seances:[]};openProgBuilder();}
-function editProg(id){const p=progById(id);if(!p)return;progDraft=JSON.parse(JSON.stringify(p));openProgBuilder();}
+function newProg(){progBuilderTarget={type:'template'};_editClientCode=null;progDraft={id:Date.now(),nom:'',objectif:'Prise de masse',niveau:'Débutant',dureeSem:6,isTemplate:true,seances:[]};openProgBuilder();}
+function editProg(id){const p=progById(id);if(!p)return;progBuilderTarget={type:'template'};_editClientCode=null;progDraft=JSON.parse(JSON.stringify(p));openProgBuilder();}
 function dupProg(id){const p=progById(id);if(!p)return;const progs=DB.getArr('programmes');progs.push(Object.assign(JSON.parse(JSON.stringify(p)),{id:Date.now(),nom:p.nom+' (copie)'}));DB.set('programmes',progs);renderAProgs();toast('Programme dupliqué ✅','success');}
 function delProg(id){if(!confirm('Supprimer ce programme ?\n(Les clients déjà attribués gardent leur copie.)'))return;DB.set('programmes',DB.getArr('programmes').filter(x=>x.id!==id));renderAProgs();toast('Supprimé');}
 function openProgBuilder(){
   const p=progDraft;const iSt='width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:10px;background:var(--bg2);color:var(--text);font-size:16px';
-  let html='<button class="back-btn" onclick="closeProgBuilder()"><i class="fa-solid fa-arrow-left"></i> Retour aux programmes</button>'
-   +'<div class="afc"><h3>'+(progById(p.id)?'Modifier':'Nouveau')+' programme</h3>'
+  const isClient=progBuilderTarget&&progBuilderTarget.type==='client';
+  const cName=isClient?((DB.getArr('members').find(x=>x.code===progBuilderTarget.code)||{}).name||''):'';
+  let html='<button class="back-btn" onclick="closeProgBuilder()"><i class="fa-solid fa-arrow-left"></i> '+(isClient?'Retour au suivi client':'Retour aux programmes')+'</button>'
+   +(isClient?'<div style="background:var(--orange-light,var(--gold-light));border:1px solid var(--orange);border-radius:12px;padding:12px 14px;margin-bottom:12px"><div style="font-weight:700;font-size:14px;color:var(--orange)">✎ Brouillon pour '+h(cName)+'</div><div style="font-size:12px;color:var(--text2);margin-top:2px">Le client ne verra ces changements qu’après <strong>publication</strong>. Les champs « charge » peuvent être pré-remplis avec ses perfs réelles.</div><button class="btn-sec btn-sm" style="margin-top:10px" onclick="prefillFromPerfs()"><i class="fa-solid fa-wand-magic-sparkles"></i> Pré-remplir avec les perfs réelles</button></div>':'')
+   +'<div class="afc"><h3>'+(isClient?'Personnaliser le programme':(progById(p.id)?'Modifier':'Nouveau')+' programme')+'</h3>'
    +'<div class="r2"><div class="fg2"><label>Nom</label><input type="text" id="pb-nom" value="'+escA(p.nom)+'" placeholder="Ex : Prise de masse 4 jours" style="'+iSt+'"></div><div class="fg2"><label>Objectif</label><select id="pb-obj" style="'+iSt+'">'+PROG_OBJECTIFS.map(o=>'<option '+(p.objectif===o?'selected':'')+'>'+o+'</option>').join('')+'</select></div></div>'
    +'<div class="r3"><div class="fg2"><label>Niveau</label><select id="pb-niv" style="'+iSt+'">'+EXO_NIVEAUX.map(n=>'<option '+(p.niveau===n?'selected':'')+'>'+n+'</option>').join('')+'</select></div><div class="fg2"><label>Durée (semaines)</label><input type="number" id="pb-duree" value="'+(p.dureeSem||6)+'" min="1" max="52" style="'+iSt+'"></div><div class="fg2"><label>Modèle réutilisable</label><select id="pb-tpl" style="'+iSt+'"><option value="1" '+(p.isTemplate?'selected':'')+'>Oui (template)</option><option value="0" '+(!p.isTemplate?'selected':'')+'>Non</option></select></div></div>'
    +'</div>'
    +'<div id="pb-seances"></div>'
    +'<button class="btn-sec" onclick="pbAddSeance()" style="width:100%;justify-content:center;margin-bottom:16px"><i class="fa-solid fa-plus"></i> Ajouter une séance</button>'
-   +'<div class="fa-row"><button class="btn" onclick="saveProgDraft()"><i class="fa-solid fa-save"></i> Enregistrer le programme</button></div>';
+   +(isClient
+     ?'<div class="fa-row" style="gap:8px;flex-wrap:wrap"><button class="btn" onclick="saveProgDraft()"><i class="fa-solid fa-save"></i> Enregistrer le brouillon</button><button class="btn" style="background:var(--green)" onclick="saveProgDraft(true)"><i class="fa-solid fa-cloud-arrow-up"></i> Enregistrer + Publier</button></div>'
+     :'<div class="fa-row"><button class="btn" onclick="saveProgDraft()"><i class="fa-solid fa-save"></i> Enregistrer le programme</button></div>');
   document.getElementById('aprog-builder').innerHTML=html;
   document.getElementById('aprog-list-wrap').style.display='none';
   document.getElementById('aprog-builder').style.display='block';
   pbRenderSeances();
 }
-function closeProgBuilder(){progDraft=null;document.getElementById('aprog-builder').style.display='none';document.getElementById('aprog-list-wrap').style.display='block';renderAProgs();}
+function closeProgBuilder(){const wasClient=progBuilderTarget&&progBuilderTarget.type==='client';const code=wasClient?progBuilderTarget.code:null;progDraft=null;progBuilderTarget={type:'template'};_editClientCode=null;document.getElementById('aprog-builder').style.display='none';document.getElementById('aprog-list-wrap').style.display='block';if(wasClient&&code){openTrainingClient(code);}else renderAProgs();}
 function pbSyncMeta(){if(!progDraft)return;progDraft.nom=document.getElementById('pb-nom').value;progDraft.objectif=document.getElementById('pb-obj').value;progDraft.niveau=document.getElementById('pb-niv').value;progDraft.dureeSem=parseInt(document.getElementById('pb-duree').value)||6;progDraft.isTemplate=document.getElementById('pb-tpl').value==='1';}
 function pbAddSeance(){pbSyncMeta();progDraft.seances.push({nom:'Séance '+String.fromCharCode(65+progDraft.seances.length),exos:[]});pbRenderSeances();}
 function pbDelSeance(i){if(!confirm('Supprimer cette séance ?'))return;progDraft.seances.splice(i,1);pbRenderSeances();}
@@ -5287,7 +5292,8 @@ function pbRenderSeances(){
           +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px"><select onchange="pbEx('+si+','+xi+',\'chargeMode\',this.value)" style="'+inp+'"><option value="kg" '+((ex.chargeMode||'kg')==='kg'?'selected':'')+'>Charge en kg</option><option value="pct" '+(ex.chargeMode==='pct'?'selected':'')+'>% du 1RM</option><option value="rpe" '+(ex.chargeMode==='rpe'?'selected':'')+'>Au ressenti</option></select><input type="text" value="'+escA(ex.charge||'')+'" oninput="pbEx('+si+','+xi+',\'charge\',this.value)" placeholder="Valeur (ex : 80)" style="'+inp+'"></div>'
           +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px"><input type="text" value="'+escA(ex.tempo||'')+'" oninput="pbEx('+si+','+xi+',\'tempo\',this.value)" placeholder="Tempo (ex : 3-1-1-0)" style="'+inp+'"><input type="text" value="'+escA(ex.repos||'')+'" oninput="pbEx('+si+','+xi+',\'repos\',this.value)" placeholder="Repos (ex : 90s)" style="'+inp+'"></div>'
           +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px"><input type="text" value="'+escA(ex.ss||'')+'" oninput="pbEx('+si+','+xi+',\'ss\',this.value)" placeholder="Groupe superset (A, B...)" style="'+inp+'"><input type="text" value="'+escA(ex.rir||'')+'" oninput="pbEx('+si+','+xi+',\'rir\',this.value)" placeholder="Cible RIR/RPE (ex : RPE 8)" style="'+inp+'"></div>'
-          +'<input type="text" value="'+escA(ex.note||'')+'" oninput="pbEx('+si+','+xi+',\'note\',this.value)" placeholder="Note du coach (ex : ralentis la descente)" style="width:100%;'+inp+';margin-top:6px">');
+          +'<input type="text" value="'+escA(ex.note||'')+'" oninput="pbEx('+si+','+xi+',\'note\',this.value)" placeholder="Note du coach (ex : ralentis la descente)" style="width:100%;'+inp+';margin-top:6px">'
+          +pbPerfHint(si,xi,ex));
       return '<div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px;margin-bottom:8px"><div style="display:flex;align-items:center;gap:6px;margin-bottom:2px"><span style="font-weight:700;font-size:13px;flex:1">'+tBadge+h(nm)+'</span><button onclick="pbMoveEx('+si+','+xi+',-1)" style="background:none;border:none;color:var(--text3);cursor:pointer;padding:3px"><i class="fa-solid fa-arrow-up"></i></button><button onclick="pbMoveEx('+si+','+xi+',1)" style="background:none;border:none;color:var(--text3);cursor:pointer;padding:3px"><i class="fa-solid fa-arrow-down"></i></button><button onclick="pbDupEx('+si+','+xi+')" style="background:none;border:none;color:var(--blue);cursor:pointer;padding:3px" title="Dupliquer"><i class="fa-solid fa-copy"></i></button><button onclick="pbDelEx('+si+','+xi+')" style="background:none;border:none;color:var(--red);cursor:pointer;padding:3px"><i class="fa-solid fa-xmark"></i></button></div>'+detail+'</div>';
     }).join('');
     return '<div class="afc" style="padding:16px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:12px"><input type="text" value="'+escA(se.nom)+'" oninput="pbSeanceNom('+si+',this.value)" style="flex:1;padding:9px 12px;border:1.5px solid var(--border);border-radius:10px;background:var(--bg2);color:var(--text);font-size:16px;font-weight:700"><button class="btn-edit btn-sm" onclick="pbDupSeance('+si+')" title="Dupliquer la séance"><i class="fa-solid fa-copy"></i></button><button class="btn-del btn-sm" onclick="pbDelSeance('+si+')"><i class="fa-solid fa-trash"></i></button></div>'
@@ -5312,10 +5318,18 @@ function pbPickExo(si){
 function pbPickRender(list){const el=document.getElementById('pbpick-list');if(!el)return;el.innerHTML=list.map(e=>'<div onclick="pbAddExo('+e.id+')" style="display:flex;align-items:center;gap:10px;padding:8px 4px;border-bottom:1px solid var(--border2);cursor:pointer"><div style="width:44px;height:44px;border-radius:9px;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--bg2)">'+exoThumb(e)+'</div><div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:600">'+h(e.nom)+(exoHasVideo(e)?' <i class="fa-solid fa-circle-play" style="color:var(--blue);font-size:11px"></i>':'')+'</div><div style="font-size:11px;color:var(--text3)">'+h(e.groupe)+' · '+h(e.materiel)+'</div></div><i class="fa-solid fa-plus" style="color:var(--blue)"></i></div>').join('')||'<div class="empty" style="padding:24px"><p>Aucun exercice.</p></div>';}
 function pbPickFilter(){const q=(document.getElementById('pbpick-s').value||'').toLowerCase();pbPickRender(DB.getArr('exercices').filter(e=>e.nom.toLowerCase().includes(q)).sort((a,b)=>a.nom.localeCompare(b.nom)));}
 function pbAddExo(id){progDraft.seances[_pbPickSi].exos.push({exId:id,type:'mono',series:'3',reps:'8-12',charge:'',chargeMode:'kg',tempo:'',repos:'90s',rir:'',note:'',ss:'',cardio:null});closeModal();pbRenderSeances();}
-function saveProgDraft(){
+function saveProgDraft(andPublish){
   pbSyncMeta();
   if(!progDraft.nom.trim()){toast('Donne un nom au programme','error');return;}
   if(!progDraft.seances.length){toast('Ajoute au moins une séance','error');return;}
+  if(progBuilderTarget&&progBuilderTarget.type==='client'){
+    const code=progBuilderTarget.code;const a=getAssign(code);if(!a){toast('Client introuvable','error');return;}
+    a.draft=JSON.parse(JSON.stringify(progDraft));DB.set(aKey(code),a);
+    progBuilderTarget={type:'template'};_editClientCode=null;
+    document.getElementById('aprog-builder').style.display='none';document.getElementById('aprog-list-wrap').style.display='block';progDraft=null;
+    if(andPublish===true){publishClientProgram(code);}else{toast('Brouillon enregistré ✅','success');openTrainingClient(code);}
+    return;
+  }
   const progs=DB.getArr('programmes');const i=progs.findIndex(x=>x.id===progDraft.id);
   if(i>=0)progs[i]=progDraft;else progs.push(progDraft);
   DB.set('programmes',progs);toast('Programme enregistré ✅','success');closeProgBuilder();
@@ -5373,18 +5387,23 @@ function nextSeanceIdx(){
 }
 function renderTraining(){
   const wrap=document.getElementById('training-wrap');if(!wrap||!CU)return;
-  const a=DB.get(aKey(CU.code||''));
+  const a=getAssign(CU.code||'');
   if(!a||!a.prog){wrap.innerHTML='<div class="empty"><i class="fa-solid fa-dumbbell"></i><p>Aucun programme attribué pour le moment.</p><p style="font-size:13px;margin-top:6px">Ton coach va bientôt t’en créer un sur mesure 💪</p></div>';return;}
   const prog=a.prog;const workouts=DB.getArr(wKey(CU.code||''));
   const nextIdx=nextSeanceIdx();
   const dz={1:'😖',2:'😕',3:'😐',4:'🙂',5:'😄'};
   let html='';
+  if(a.clientSeen===false){html+='<div class="na-card" style="margin-bottom:18px;border-color:var(--green);background:var(--green-light,#e7f6ec)"><div class="na-icon" style="background:var(--green)">🎉</div><div style="flex:1"><div class="na-lbl" style="color:var(--green)">Mise à jour du coach</div><div class="na-title">Ton coach a mis à jour ton programme (v'+a.version+')</div></div></div>';a.clientSeen=true;DB.set(aKey(CU.code),a);}
   let saved=null;try{saved=JSON.parse(localStorage.getItem(sessKey()));}catch(e){}
   if(saved&&saved.exos){const dn=saved.exos.reduce((s,e)=>s+(e.sets||[]).filter(x=>x.done).length,0);html+='<div class="na-card" style="margin-bottom:18px;border-color:rgba(201,151,42,.45);background:var(--gold-light)" onclick="resumeSeance()"><div class="na-icon" style="background:var(--gold)">⏸️</div><div style="flex:1"><div class="na-lbl" style="color:var(--gold-dark)">Séance en pause</div><div class="na-title">'+h(saved.nom)+' — reprendre ('+dn+' séries faites)</div></div><i class="fa-solid fa-play" style="color:var(--gold);font-size:18px"></i></div>';}
   html+='<div style="background:linear-gradient(135deg,var(--dark),var(--dark2));border-radius:var(--rxl);padding:24px;margin-bottom:18px;color:#fff"><div style="font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:.07em;font-weight:700">'+h(prog.objectif||'')+' · '+h(prog.niveau||'')+'</div><div style="font-family:var(--fd);font-size:24px;font-weight:800;margin:4px 0">'+h(prog.nom)+'</div><div style="font-size:13px;color:rgba(255,255,255,.6)">'+(prog.seances||[]).length+' séances · '+(prog.dureeSem||'?')+' semaines · '+workouts.length+' séances réalisées</div></div>';
   // séance recommandée
   const nx=prog.seances[nextIdx];
   if(nx)html+='<div class="na-card" onclick="startSeance('+nextIdx+')" style="margin-bottom:18px"><div class="na-icon">▶️</div><div style="flex:1"><div class="na-lbl">Ta prochaine séance</div><div class="na-title">'+h(nx.nom)+' · '+(nx.exos||[]).length+' exercices</div></div><i class="fa-solid fa-arrow-right" style="color:var(--blue);font-size:18px"></i></div>';
+  // calendrier (si le coach a défini un planning)
+  if(Object.keys(a.schedule.weekdays).length||Object.keys(a.schedule.overrides).length){
+    html+='<div style="font-family:var(--fd);font-size:16px;font-weight:700;margin-bottom:10px">📅 Mon calendrier</div><div style="border:1px solid var(--border);border-radius:var(--rxl,16px);padding:16px;margin-bottom:18px;background:var(--surface)">'+calendarHTML(CU.code,true)+'</div>';
+  }
   // toutes les séances
   html+='<div style="font-family:var(--fd);font-size:16px;font-weight:700;margin-bottom:10px">Mes séances</div><div style="display:flex;flex-direction:column;gap:10px">';
   html+=prog.seances.map((se,i)=>{
@@ -5411,6 +5430,204 @@ function openProgression(){
   const svg=pts=>{if(pts.length<2)return '<div style="font-size:12px;color:var(--text3)">'+pts.length+' séance — continue pour voir la courbe</div>';const vals=pts.map(p=>p.w);const min=Math.min(...vals),max=Math.max(...vals);const W=280,H=60,P=6;const xf=i=>P+(W-2*P)*i/(pts.length-1);const yf=v=>H-P-(H-2*P)*(max===min?0.5:(v-min)/(max-min));const d=pts.map((p,i)=>(i?'L':'M')+xf(i).toFixed(0)+' '+yf(p.w).toFixed(0)).join(' ');return '<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:auto"><path d="'+d+'" fill="none" stroke="var(--blue)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>'+pts.map((p,i)=>'<circle cx="'+xf(i).toFixed(0)+'" cy="'+yf(p.w).toFixed(0)+'" r="3" fill="var(--blue)"/>').join('')+'</svg>';};
   document.getElementById('modal-content').innerHTML='<h3 style="font-family:var(--fd);font-size:18px;margin-bottom:12px">📈 Ma progression</h3>'+keys.map(k=>{const e=byEx[k];const first=e.pts[0].w,last=e.pts[e.pts.length-1].w;const diff=last-first;return '<div style="border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:10px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-weight:700;font-size:14px">'+h(e.nom)+'</span><span style="font-size:13px;font-weight:700;color:'+(diff>0?'var(--green)':diff<0?'var(--orange)':'var(--text3)')+'">'+last+' kg'+(diff?' ('+(diff>0?'+':'')+diff.toFixed(1).replace('.0','')+')':'')+'</span></div>'+svg(e.pts)+'</div>';}).join('');
   openModal();
+}
+
+// ============================================================
+// ENTRAÎNEMENT lot 3/4 — boucle coach↔client, brouillon/publication,
+// calendrier, planning récurrent. Redéclare openTrainingClient,
+// renderTraining, nextSeanceIdx (les définitions plus tardives gagnent).
+// assign_<code> enrichi : {prog(publié), draft, version, history[], endDate, schedule:{weekdays,overrides}, clientSeen}
+// ============================================================
+const JOURS=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+const JOURS_LONG=['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'];
+function isoDow(dStr){const d=new Date(dStr+'T12:00:00');return (d.getDay()+6)%7+1;} // 1=Lun..7=Dim
+function addDaysStr(dStr,n){const d=new Date(dStr+'T12:00:00');d.setDate(d.getDate()+n);return localDate(d);}
+function getAssign(code){const a=DB.get(aKey(code));if(!a||!a.prog)return null;if(typeof a.version!=='number')a.version=1;if(!a.history)a.history=[];if(!a.schedule)a.schedule={weekdays:{},overrides:{}};if(!a.schedule.weekdays)a.schedule.weekdays={};if(!a.schedule.overrides)a.schedule.overrides={};return a;}
+function scheduledIdxFor(a,dStr){
+  if(!a)return null;
+  if(a.startDate&&dStr<a.startDate)return null;
+  if(a.endDate&&dStr>a.endDate)return null;
+  const ov=a.schedule.overrides;
+  if(Object.prototype.hasOwnProperty.call(ov,dStr))return ov[dStr]; // peut être null (jour vidé)
+  const wd=a.schedule.weekdays[isoDow(dStr)];
+  return (wd===undefined||wd===null)?null:wd;
+}
+function seanceStatusFor(code,dStr,idx){
+  const w=DB.getArr(wKey(code));
+  if(w.some(x=>x.date===dStr&&x.seanceIdx===idx))return 'done';
+  return dStr<localDate()?'missed':'todo';
+}
+function estSeanceMin(se){if(!se)return 0;let s=0;(se.exos||[]).forEach(ex=>{if(ex.cardio){s+=8;return;}const n=parseInt(ex.series)||3;s+=n*(0.7+ (restSeconds(ex.repos||'90s')/60));});return Math.max(5,Math.round(s));}
+function lastPerf(code,seanceIdx,exId){
+  const w=DB.getArr(wKey(code)).filter(x=>x.seanceIdx===seanceIdx).sort((a,b)=>new Date(b.date)-new Date(a.date));
+  for(const wo of w){const l=(wo.logs||[]).find(x=>x.exId===exId);if(l){const sets=(l.sets||[]).filter(s=>s.w||s.r);if(sets.length)return{sets,date:wo.date,note:l.note};}}
+  return null;
+}
+function lastPerfText(code,seanceIdx,exId){const p=lastPerf(code,seanceIdx,exId);if(!p)return null;return p.sets.map(s=>(s.w||'?')+'×'+(s.r||'?')+(s.rpe?'@'+s.rpe:'')).join(', ');}
+function bestWeight(code,seanceIdx,exId){const p=lastPerf(code,seanceIdx,exId);if(!p)return null;const ws=p.sets.map(s=>parseFloat(s.w)||0);const m=Math.max(0,...ws);return m>0?String(m):null;}
+
+// ---------- COACH : éditer le brouillon du programme client ----------
+let progBuilderTarget={type:'template'};
+let _editClientCode=null;
+function editClientProgram(code){
+  const a=getAssign(code);if(!a)return;
+  if(!a.draft)a.draft=JSON.parse(JSON.stringify(a.prog));
+  DB.set(aKey(code),a);
+  _editClientCode=code;progBuilderTarget={type:'client',code};
+  progDraft=a.draft;
+  openProgBuilder();
+}
+function prefillFromPerfs(){
+  if(!_editClientCode||!progDraft)return;
+  let n=0;
+  progDraft.seances.forEach((se,si)=>(se.exos||[]).forEach(ex=>{if(ex.cardio)return;const bw=bestWeight(_editClientCode,si,ex.exId);if(bw){ex.charge=bw;ex.chargeMode='kg';n++;}}));
+  pbRenderSeances();toast(n?(n+' charges pré-remplies avec les perfs réelles ✅'):'Aucune perf trouvée à reprendre','success');
+}
+function reprendrePerf(si,xi){const ex=progDraft.seances[si].exos[xi];const bw=bestWeight(_editClientCode,si,ex.exId);if(!bw){toast('Aucune perf enregistrée','error');return;}ex.charge=bw;ex.chargeMode='kg';pbRenderSeances();}
+function pbPerfHint(si,xi,ex){
+  if(!_editClientCode||ex.cardio)return'';
+  const txt=lastPerfText(_editClientCode,si,ex.exId);
+  if(!txt)return '<div style="font-size:11px;color:var(--text3);margin-top:6px;padding:5px 8px;background:var(--bg2);border-radius:8px">Aucune perf réelle enregistrée pour cet exercice.</div>';
+  return '<div style="display:flex;align-items:center;gap:8px;margin-top:6px;padding:6px 8px;background:var(--green-light,#e7f6ec);border:1px solid var(--green);border-radius:8px"><span style="font-size:11px;color:var(--green);font-weight:600;flex:1">💪 Réel : '+h(txt)+'</span><button onclick="reprendrePerf('+si+','+xi+')" style="background:var(--green);color:#fff;border:none;border-radius:7px;padding:4px 9px;font-size:11px;font-weight:600;cursor:pointer">Reprendre</button></div>';
+}
+function publishClientProgram(code){
+  const a=getAssign(code);if(!a||!a.draft)return;
+  if(!confirm('Publier cette version ?\nLe client verra immédiatement le programme mis à jour.'))return;
+  a.history.unshift({v:a.version,date:new Date().toISOString(),snapshot:a.prog});
+  a.history=a.history.slice(0,8);
+  a.prog=a.draft;a.draft=null;a.version=(a.version||1)+1;a.clientSeen=false;a.lastPublish=new Date().toISOString();
+  DB.set(aKey(code),a);
+  toast('Programme publié ✅ (v'+a.version+')','success');
+  if(typeof progBuilderTarget==='object')progBuilderTarget={type:'template'};
+  openTrainingClient(code);
+}
+function discardDraft(code){if(!confirm('Annuler les modifications non publiées ?'))return;const a=getAssign(code);if(!a)return;a.draft=null;DB.set(aKey(code),a);toast('Brouillon annulé');openTrainingClient(code);}
+function openVersionHistory(code){
+  const a=getAssign(code);if(!a)return;
+  let html='<h3 style="font-family:var(--fd);font-size:18px;margin-bottom:6px">Historique des versions</h3><p style="font-size:12px;color:var(--text3);margin-bottom:12px">Version actuelle : <strong>v'+a.version+'</strong></p>';
+  if(!a.history.length)html+='<p style="font-size:13px;color:var(--text3)">Aucune version antérieure.</p>';
+  else html+=a.history.map(hv=>'<div style="border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:8px;display:flex;align-items:center;gap:10px"><div style="flex:1"><div style="font-weight:700;font-size:13px">Version '+hv.v+'</div><div style="font-size:11px;color:var(--text3)">publiée le '+fmtDate(hv.date)+' · '+(hv.snapshot.seances||[]).length+' séances</div></div><button class="btn-sec btn-sm" onclick="revertVersion(\''+code+'\','+hv.v+')"><i class="fa-solid fa-rotate-left"></i> Restaurer</button></div>').join('');
+  document.getElementById('modal-content').innerHTML=html;openModal();
+}
+function revertVersion(code,v){
+  const a=getAssign(code);if(!a)return;const hv=a.history.find(x=>x.v===v);if(!hv)return;
+  if(!confirm('Restaurer la version '+v+' ? Elle sera publiée comme version actuelle.'))return;
+  a.history.unshift({v:a.version,date:new Date().toISOString(),snapshot:a.prog});a.history=a.history.slice(0,8);
+  a.prog=JSON.parse(JSON.stringify(hv.snapshot));a.draft=null;a.version=(a.version||1)+1;a.clientSeen=false;
+  DB.set(aKey(code),a);toast('Version '+v+' restaurée et publiée ✅','success');openTrainingClient(code);
+}
+
+// ---------- PLANNING (récurrence par jour + prolonger) ----------
+function setWeekday(code,dow,val){const a=getAssign(code);if(!a)return;if(val==='')delete a.schedule.weekdays[dow];else a.schedule.weekdays[dow]=parseInt(val);DB.set(aKey(code),a);openTrainingClient(code);}
+function setEndDate(code,val){const a=getAssign(code);if(!a)return;a.endDate=val||'';DB.set(aKey(code),a);openTrainingClient(code);}
+function extendProgram(code,weeks){const a=getAssign(code);if(!a)return;const base=a.endDate||localDate();a.endDate=addDaysStr(base,weeks*7);DB.set(aKey(code),a);toast('Programme prolongé de '+weeks+' semaines ✅','success');openTrainingClient(code);}
+
+// ---------- CALENDRIER (partagé coach lecture + client) ----------
+let _calRef=null,_calMode='week',_coachTrainCode=null;
+function calInit(){_calRef=localDate();_calMode='week';}
+function calRefresh(){if(CU&&CU.isAdmin&&_coachTrainCode)openTrainingClient(_coachTrainCode);else renderTraining();}
+function calNav(dir){_calRef=addDaysStr(_calRef,_calMode==='week'?dir*7:dir*30);calRefresh();}
+function calToday(){_calRef=localDate();calRefresh();}
+function calSetMode(m){_calMode=m;calRefresh();}
+function statusColor(st){return st==='done'?'var(--green)':st==='missed'?'var(--red)':'var(--blue)';}
+function calendarHTML(code,interactive){
+  const a=getAssign(code);if(!a)return'';
+  if(!_calRef)calInit();
+  const today=localDate();
+  const label=_calMode==='week'?('Semaine du '+fmtDate(_calRef)):new Date(_calRef+'T12:00:00').toLocaleDateString('fr-FR',{month:'long',year:'numeric'});
+  let head='<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;flex-wrap:wrap"><div style="display:flex;gap:6px"><button class="ftab '+(_calMode==='week'?'active':'')+'" onclick="calSetMode(\'week\')">Semaine</button><button class="ftab '+(_calMode==='month'?'active':'')+'" onclick="calSetMode(\'month\')">Mois</button></div><div style="display:flex;align-items:center;gap:6px"><button class="btn-sec btn-sm" onclick="calNav(-1)">‹</button><button class="btn-sec btn-sm" onclick="calToday()">Aujourd’hui</button><button class="btn-sec btn-sm" onclick="calNav(1)">›</button></div></div><div style="font-weight:700;font-size:14px;text-transform:capitalize;margin-bottom:10px">'+label+'</div>';
+  if(_calMode==='week'){
+    // début de semaine (lundi)
+    let start=_calRef;while(isoDow(start)!==1)start=addDaysStr(start,-1);
+    let cells='';
+    for(let i=0;i<7;i++){const d=addDaysStr(start,i);const idx=scheduledIdxFor(a,d);const isToday=d===today;
+      let inner='';
+      if(idx!=null&&a.prog.seances[idx]){const se=a.prog.seances[idx];const st=seanceStatusFor(code,d,idx);const col=statusColor(st);
+        const tap=interactive?(' onclick="calTap(\''+code+'\',\''+d+'\','+idx+',\''+st+'\')" style="cursor:pointer"'):(CU&&CU.isAdmin?(' onclick="coachDayMenu(\''+code+'\',\''+d+'\')" style="cursor:pointer"'):'');
+        inner='<div'+tap+' style="background:'+col+'18;border:1px solid '+col+'55;border-left:3px solid '+col+';border-radius:8px;padding:7px 9px;margin-top:4px"><div style="font-size:12px;font-weight:700;color:'+col+'">'+(st==='done'?'✓ ':st==='missed'?'✗ ':'')+h(se.nom)+'</div><div style="font-size:10px;color:var(--text3)">'+(se.exos||[]).length+' exos · ~'+estSeanceMin(se)+' min</div></div>';
+      }else if(CU&&CU.isAdmin){inner='<div onclick="coachDayMenu(\''+code+'\',\''+d+'\')" style="cursor:pointer;font-size:11px;color:var(--text3);padding:6px 0">+ Repos</div>';}
+      else inner='<div style="font-size:11px;color:var(--text3);padding:6px 0">Repos</div>';
+      cells+='<div style="border-bottom:1px solid var(--border2);padding:8px 0;display:flex;gap:10px"><div style="width:48px;flex-shrink:0;text-align:center"><div style="font-size:11px;color:var(--text3);text-transform:uppercase">'+JOURS[i]+'</div><div style="font-family:var(--fd);font-size:18px;font-weight:800;'+(isToday?'color:var(--blue)':'')+'">'+new Date(d+'T12:00:00').getDate()+'</div></div><div style="flex:1;min-width:0">'+inner+'</div></div>';
+    }
+    return head+cells;
+  }else{
+    // mois
+    const ref=new Date(_calRef+'T12:00:00');const y=ref.getFullYear(),mo=ref.getMonth();
+    const first=new Date(y,mo,1);let startDow=(first.getDay()+6)%7;
+    const daysInMonth=new Date(y,mo+1,0).getDate();
+    let grid='<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px">'+JOURS.map(j=>'<div style="text-align:center;font-size:10px;color:var(--text3);font-weight:700;padding:2px">'+j+'</div>').join('');
+    for(let i=0;i<startDow;i++)grid+='<div></div>';
+    for(let dnum=1;dnum<=daysInMonth;dnum++){const d=localDate(new Date(y,mo,dnum));const idx=scheduledIdxFor(a,d);const isToday=d===today;
+      let dot='';if(idx!=null&&a.prog.seances[idx]){const st=seanceStatusFor(code,d,idx);dot='<div style="width:7px;height:7px;border-radius:50%;background:'+statusColor(st)+';margin:2px auto 0"></div>';}
+      const tap=(idx!=null&&a.prog.seances[idx])?(interactive?' onclick="calTap(\''+code+'\',\''+d+'\','+idx+',\''+seanceStatusFor(code,d,idx)+'\')"':(CU&&CU.isAdmin?' onclick="coachDayMenu(\''+code+'\',\''+d+'\')"':'')):'';
+      grid+='<div'+tap+' style="aspect-ratio:1;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:13px;'+(isToday?'background:var(--blue);color:#fff;font-weight:800':'background:var(--bg2)')+';cursor:'+(idx!=null?'pointer':'default')+'">'+dnum+(isToday?'':dot)+'</div>';
+    }
+    grid+='</div><div style="display:flex;gap:14px;justify-content:center;margin-top:12px;font-size:11px;color:var(--text3)"><span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--blue);margin-right:4px"></span>à faire</span><span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);margin-right:4px"></span>réalisée</span><span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--red);margin-right:4px"></span>manquée</span></div>';
+    return head+grid;
+  }
+}
+function calTap(code,d,idx,st){
+  // client : démarrer la séance (aujourd'hui/passé) ou info (futur)
+  if(d>localDate()){toast('Séance prévue le '+fmtDate(d),'success');return;}
+  if(st==='done'){const w=DB.getArr(wKey(code)).find(x=>x.date===d&&x.seanceIdx===idx);if(w){toast('✓ Séance déjà réalisée le '+fmtDate(d),'success');return;}}
+  startSeance(idx);
+}
+function coachDayMenu(code,d){
+  const a=getAssign(code);if(!a)return;
+  const cur=scheduledIdxFor(a,d);
+  let html='<h3 style="font-family:var(--fd);font-size:18px;margin-bottom:4px">'+new Date(d+'T12:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'})+'</h3><p style="font-size:12px;color:var(--text3);margin-bottom:12px">Choisis la séance de ce jour (remplace la récurrence pour cette date).</p>';
+  html+='<select id="day-seance" class="pc-cat" style="width:100%;font-size:16px;margin-bottom:12px"><option value="">Repos / aucune séance</option>'+a.prog.seances.map((se,i)=>'<option value="'+i+'" '+(cur===i?'selected':'')+'>'+h(se.nom)+'</option>').join('')+'</select>';
+  html+='<button class="btn" style="width:100%;justify-content:center" onclick="saveDayOverride(\''+code+'\',\''+d+'\')"><i class="fa-solid fa-check"></i> Enregistrer pour ce jour</button>';
+  document.getElementById('modal-content').innerHTML=html;openModal();
+}
+function saveDayOverride(code,d){const a=getAssign(code);if(!a)return;const v=document.getElementById('day-seance').value;a.schedule.overrides[d]=(v===''?null:parseInt(v));DB.set(aKey(code),a);closeModal();openTrainingClient(code);toast('Planning du jour mis à jour');}
+
+// ---------- COACH : panneau entraînement client enrichi (remplace l'ancien) ----------
+function openTrainingClient(code){
+  const m=DB.getArr('members').find(x=>x.code===code);if(!m)return;
+  _coachTrainCode=code;
+  const a=getAssign(code);const workouts=DB.getArr(wKey(code));const progs=DB.getArr('programmes');
+  let html='<h3 style="font-family:var(--fd);font-size:19px;margin-bottom:4px"><i class="fa-solid fa-dumbbell" style="color:var(--blue)"></i> Entraînement — '+h(m.name)+'</h3>';
+  html+='<div style="background:var(--bg2);border-radius:12px;padding:14px;margin:12px 0"><div style="font-size:12px;font-weight:700;text-transform:uppercase;color:var(--text2);margin-bottom:8px">'+(a?'Changer de programme':'Attribuer un programme')+'</div><div style="display:flex;gap:8px;flex-wrap:wrap"><select id="assign-prog" class="pc-cat" style="flex:1;min-width:0;font-size:16px"><option value="">— Choisir —</option>'+progs.map(p=>'<option value="'+p.id+'">'+h(p.nom)+'</option>').join('')+'</select><input type="date" id="assign-date" value="'+localDate()+'" style="padding:9px;border:1.5px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text);font-size:16px"></div><button class="btn btn-sm" style="margin-top:10px" onclick="assignProg(\''+code+'\')"><i class="fa-solid fa-check"></i> '+(a?'Remplacer':'Attribuer')+'</button></div>';
+  if(a){
+    const planned=Object.keys(a.schedule.weekdays).length||(a.prog.seances||[]).length;
+    const done=workouts.length;
+    const hasDraft=!!a.draft;
+    // bandeau état + actions
+    html+='<div style="border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:12px"><div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap"><div><div style="font-weight:700;font-size:15px">'+h(a.prog.nom)+' <span style="font-size:11px;color:var(--text3)">v'+a.version+'</span></div><div style="font-size:12px;color:var(--text3)">Depuis le '+fmtDate(a.startDate)+(a.endDate?' → '+fmtDate(a.endDate):'')+'</div></div>'+(hasDraft?'<span style="background:var(--orange);color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px">✎ Brouillon non publié</span>':'<span style="background:var(--green);color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px">✓ À jour</span>')+'</div>'
+     +'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><button class="btn btn-sm" onclick="editClientProgram(\''+code+'\')"><i class="fa-solid fa-pen"></i> '+(hasDraft?'Continuer le brouillon':'Modifier le programme')+'</button>'
+     +(hasDraft?'<button class="btn-sm" style="background:var(--green);color:#fff;border:none;border-radius:10px;padding:7px 14px;font-weight:600;cursor:pointer" onclick="publishClientProgram(\''+code+'\')"><i class="fa-solid fa-cloud-arrow-up"></i> Publier</button><button class="btn-sec btn-sm" onclick="discardDraft(\''+code+'\')">Annuler</button>':'')
+     +'<button class="btn-sec btn-sm" onclick="openVersionHistory(\''+code+'\')"><i class="fa-solid fa-clock-rotate-left"></i> Versions</button></div></div>';
+    // planning récurrent
+    html+='<div style="border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:12px"><div style="font-size:12px;font-weight:700;text-transform:uppercase;color:var(--text2);margin-bottom:8px">📅 Planning hebdomadaire</div><div style="display:flex;flex-direction:column;gap:6px">'
+     +JOURS_LONG.map((j,i)=>{const dow=i+1;const cur=a.schedule.weekdays[dow];return '<div style="display:flex;align-items:center;gap:8px"><span style="width:80px;font-size:13px;font-weight:600">'+j+'</span><select onchange="setWeekday(\''+code+'\','+dow+',this.value)" style="flex:1;padding:7px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:16px"><option value="">Repos</option>'+a.prog.seances.map((se,si)=>'<option value="'+si+'" '+(cur===si?'selected':'')+'>'+h(se.nom)+'</option>').join('')+'</select></div>';}).join('')
+     +'</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;align-items:center"><span style="font-size:12px;color:var(--text2)">Fin :</span><input type="date" value="'+(a.endDate||'')+'" onchange="setEndDate(\''+code+'\',this.value)" style="padding:7px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg2);color:var(--text);font-size:16px"><button class="btn-sec btn-sm" onclick="extendProgram(\''+code+'\',4)"><i class="fa-solid fa-plus"></i> Prolonger 4 sem.</button></div></div>';
+    // calendrier
+    html+='<div style="border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:12px">'+calendarHTML(code,false)+'</div>';
+    // adhérence
+    const adh=planned?Math.min(100,Math.round(done/Math.max(1,planned)*100)):0;
+    html+='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px"><div style="flex:1;min-width:90px;background:var(--bg2);border-radius:10px;padding:10px;text-align:center"><div style="font-family:var(--fd);font-size:22px;font-weight:800;color:var(--blue)">'+done+'</div><div style="font-size:11px;color:var(--text3)">séances réalisées</div></div><div style="flex:1;min-width:90px;background:var(--bg2);border-radius:10px;padding:10px;text-align:center"><div style="font-family:var(--fd);font-size:22px;font-weight:800;color:'+(adh>=70?'var(--green)':adh>=40?'var(--orange)':'var(--red)')+'">'+adh+'%</div><div style="font-size:11px;color:var(--text3)">adhérence/sem</div></div></div>';
+    html+='<button class="btn-del btn-sm" style="margin-bottom:12px" onclick="unassignProg(\''+code+'\')"><i class="fa-solid fa-xmark"></i> Retirer le programme</button>';
+    // historique perfs (ce que le client a fait)
+    if(workouts.length){
+      html+='<div style="font-size:12px;font-weight:700;text-transform:uppercase;color:var(--text2);margin:8px 0 8px">Ce que le client a fait</div>';
+      html+=workouts.slice().sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,12).map(w=>{const dz={1:'😖',2:'😕',3:'😐',4:'🙂',5:'😄'};
+        return '<div style="border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:8px"><div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700"><span>'+h(w.seanceNom||'Séance')+'</span><span style="color:var(--text3);font-weight:500">'+fmtDate(w.date)+'</span></div><div style="font-size:12px;color:var(--text3);margin-top:3px">RPE '+(w.rpe||'—')+'/10 · énergie '+(dz[w.energy]||'—')+(w.douleur?' · douleur : '+h(w.douleur):'')+'</div>'+(w.comment?'<div style="font-size:12px;color:var(--text2);margin-top:4px;font-style:italic">« '+h(w.comment)+' »</div>':'')
+         +'<details style="margin-top:6px"><summary style="font-size:12px;color:var(--blue);cursor:pointer">Détail des charges'+(w.duree?' · '+w.duree+' min':'')+'</summary>'+(w.logs||[]).map(l=>'<div style="font-size:12px;color:var(--text2);padding:3px 0">'+h(l.nom||'')+' : '+((l.sets||[]).filter(s=>s.w||s.r).map(s=>(s.w||'?')+'×'+(s.r||'?')+(s.rpe?' @RPE'+s.rpe:'')).join(', ')||'—')+(l.note?'<div style="font-size:11px;color:var(--blue)">📝 '+h(l.note)+'</div>':'')+'</div>').join('')+'</details></div>';
+      }).join('');
+    }else html+='<p style="font-size:13px;color:var(--text3)">Aucune séance réalisée pour l’instant.</p>';
+  }else html+='<p style="font-size:13px;color:var(--text3)">Aucun programme attribué. Choisis-en un ci-dessus.</p>';
+  document.getElementById('modal-content').innerHTML=html;openModal();
+}
+
+// nextSeanceIdx tient compte du planning si défini
+function nextSeanceIdx(){
+  const a=getAssign(CU.code||'');if(!a)return 0;
+  if(Object.keys(a.schedule.weekdays).length){
+    const today=localDate();
+    for(let i=0;i<14;i++){const d=addDaysStr(today,i);const idx=scheduledIdxFor(a,d);if(idx!=null&&a.prog.seances[idx]&&seanceStatusFor(CU.code,d,idx)!=='done')return idx;}
+  }
+  const w=DB.getArr(wKey(CU.code||''));const n=(a.prog.seances||[]).length||1;return w.length%n;
 }
 
 // ============================================================
