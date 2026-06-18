@@ -1104,6 +1104,116 @@ button{touch-action:manipulation;}
 @keyframes pbReveal{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:none;}}
 .pbseance.open{border-color:var(--blue);}
 
+/* ---- 16. MAQUETTES D'ÉCRANS ULTRA-RÉALISTES (vitrine landing) ---- */
+.ldp-phone{width:216px;margin:0 auto;background:linear-gradient(152deg,#2b3142 0%,#0c1018 58%);border-radius:36px;padding:8px;position:relative;box-shadow:0 36px 64px -20px rgba(8,14,24,.6),0 10px 22px -10px rgba(8,14,24,.45),inset 0 0 0 1.5px rgba(255,255,255,.10);}
+.ldp-phone::after{content:'';position:absolute;inset:0;border-radius:36px;background:linear-gradient(122deg,rgba(255,255,255,.20),transparent 30%,transparent 72%,rgba(255,255,255,.07));pointer-events:none;}
+.ldp-island{position:absolute;top:16px;left:50%;transform:translateX(-50%);width:78px;height:20px;background:#04070c;border-radius:13px;z-index:6;}
+.ldp-screen{position:relative;border-radius:28px;overflow:hidden;height:442px;background:var(--surface);}
+.ldp-status{position:absolute;top:0;left:0;right:0;height:36px;display:flex;align-items:flex-start;justify-content:space-between;padding:12px 19px 0;font-size:11px;font-weight:800;z-index:5;color:#0d1b2a;}
+.ldp-status .ldp-sig{display:flex;gap:5px;align-items:center;font-size:10px;}
+.ldp-status.on-dark{color:#fff;}
+.ldp-body{height:100%;background:var(--surface);}
+.lm-scr{padding:42px 13px 14px;display:flex;flex-direction:column;gap:9px;height:100%;box-sizing:border-box;}
+.lm-top{display:flex;align-items:center;justify-content:space-between;font-size:12.5px;font-weight:800;color:var(--text);}
+.lm-pill{font-size:9.5px;font-weight:700;background:var(--blue-light);color:var(--blue);padding:3px 9px;border-radius:11px;white-space:nowrap;}
+.lm-prog{height:7px;background:var(--bg2);border-radius:4px;overflow:hidden;}
+.lm-prog i{display:block;height:100%;background:linear-gradient(90deg,var(--blue-mid),var(--blue));border-radius:4px;}
+.lm-prog.gold i{background:linear-gradient(90deg,var(--gold),#e6b93a);}
+.g{color:var(--gold-dark);}.gr{color:var(--green);}
+.lm-hero{background:linear-gradient(140deg,#0d1b2a,#0a1626 55%,#070b12);color:#fff;padding:44px 16px 18px;position:relative;overflow:hidden;}
+.lm-hero::after{content:'';position:absolute;width:200px;height:200px;border-radius:50%;top:-80px;right:-60px;background:radial-gradient(circle,rgba(201,151,42,.35),transparent 70%);}
+.lm-hero-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:7px;}
+.lm-hero-lvl{font-size:10px;font-weight:800;color:var(--gold);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;}
+.lm-hero-h{font-family:var(--fd);font-size:19px;font-weight:800;margin:0 0 2px;}
+.lm-hero-sub{font-size:11px;color:rgba(255,255,255,.6);}
+.lm-hbar{height:6px;background:rgba(255,255,255,.14);border-radius:3px;overflow:hidden;margin-top:9px;}
+.lm-hbar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),#e6b93a);border-radius:3px;}
+.lm-hero-xp{font-size:11px;font-weight:800;color:rgba(255,255,255,.6);white-space:nowrap;}
+.lm-hero-xp b{font-family:var(--fd);font-size:15px;color:var(--gold);}
+.lm-scrl{padding:12px 13px 14px;display:flex;flex-direction:column;gap:9px;}
+.lm-stat3{display:flex;gap:7px;}
+.lm-stat3>div{flex:1;background:var(--bg2);border-radius:11px;padding:10px 4px;text-align:center;}
+.lm-stat3 b{font-family:var(--fd);font-size:16px;font-weight:800;color:var(--blue);display:block;}
+.lm-stat3 span{font-size:9px;color:var(--text3);font-weight:600;}
+.lm-next{display:flex;align-items:center;gap:9px;background:var(--blue-xlight);border:1px solid var(--blue-light);border-radius:12px;padding:10px 11px;}
+.lm-next-ic{font-size:18px;}
+.lm-next-l{font-size:9px;color:var(--blue);font-weight:700;text-transform:uppercase;}
+.lm-next-t{font-size:12px;font-weight:700;color:var(--text);}
+.lm-quote{font-size:11px;font-style:italic;color:var(--text3);text-align:center;padding:4px;}
+.lm-exo{background:var(--bg2);border-radius:12px;padding:10px;}
+.lm-exo-h{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:800;color:var(--text);margin-bottom:7px;}
+.lm-thumb{width:26px;height:26px;border-radius:7px;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:13px;}
+.lm-set{display:flex;align-items:center;gap:8px;font-size:11px;padding:6px 0;border-top:1px solid var(--border2);}
+.lm-set span{color:var(--text3);font-weight:600;}
+.lm-set b{flex:1;color:var(--text);font-weight:700;}
+.lm-set.done b{color:var(--text3);}
+.lm-chk{width:22px;height:22px;border-radius:50%;border:2px solid var(--border);color:transparent;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;}
+.lm-chk.on{background:var(--green);border-color:var(--green);color:#fff;}
+.lm-rest{background:var(--dark);color:#fff;border-radius:10px;padding:9px 11px;font-size:11px;font-weight:600;display:flex;align-items:center;gap:7px;}
+.lm-rest b{color:var(--gold);font-family:var(--fd);}
+.lm-cta{margin-top:auto;text-align:center;font-size:12px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--green),#2d7a4f);border-radius:11px;padding:11px;}
+.lm-kpi3{display:flex;gap:7px;}
+.lm-kpi3>div{flex:1;background:var(--bg2);border-radius:11px;padding:11px 4px;text-align:center;}
+.lm-kpi3 b{font-family:var(--fd);font-size:16px;font-weight:800;color:var(--blue);display:block;}
+.lm-kpi3 span{font-size:9px;color:var(--text3);font-weight:600;}
+.lm-tonne{display:flex;align-items:center;gap:11px;background:linear-gradient(135deg,var(--gold-light),transparent);border:1px solid var(--gold);border-radius:13px;padding:11px 12px;}
+.lm-tonne-e{font-size:30px;}
+.lm-tonne-l{font-size:9px;font-weight:800;text-transform:uppercase;color:var(--gold-dark);}
+.lm-tonne-v{font-family:var(--fd);font-size:15px;font-weight:800;color:var(--text);}
+.lm-tonne-s{font-size:11px;color:var(--text2);font-weight:600;}
+.lm-card{background:var(--bg2);border-radius:12px;padding:11px;}
+.lm-card-h{display:flex;justify-content:space-between;font-size:11.5px;font-weight:700;color:var(--text);margin-bottom:6px;}
+.lm-spark,.lm-chart2{width:100%;height:auto;}
+.lm-calring{width:108px;height:108px;border-radius:50%;background:conic-gradient(var(--gold) var(--p),var(--bg2) 0);margin:6px auto 2px;position:relative;display:flex;align-items:center;justify-content:center;}
+.lm-calring::after{content:'';position:absolute;inset:9px;border-radius:50%;background:var(--surface);}
+.lm-calring-in{position:relative;z-index:1;text-align:center;}
+.lm-calring-in b{font-family:var(--fd);font-size:20px;font-weight:800;color:var(--text);display:block;line-height:1;}
+.lm-calring-in span{font-size:9px;color:var(--text3);font-weight:600;}
+.lm-macros2{display:flex;gap:8px;}
+.lm-macros2>div{flex:1;text-align:center;font-size:9px;color:var(--text3);font-weight:600;}
+.lm-mac-bar{height:6px;background:var(--bg2);border-radius:4px;overflow:hidden;margin-bottom:4px;}
+.lm-mac-bar i{display:block;height:100%;border-radius:4px;}
+.lm-row{display:flex;align-items:center;justify-content:space-between;font-size:11px;background:var(--bg2);border-radius:9px;padding:8px 10px;gap:8px;}
+.lm-rowname{font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.lm-rowmeta{color:var(--text3);font-weight:600;white-space:nowrap;}
+.lm-bignum{font-family:var(--fd);font-size:30px;font-weight:800;color:var(--text);text-align:center;}
+.lm-bignum span{font-size:14px;color:var(--text3);}
+.lm-ba{position:relative;display:flex;gap:6px;height:170px;}
+.lm-ba-half{flex:1;background:var(--bg2);border-radius:12px;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;}
+.lm-ba-half.after{background:linear-gradient(160deg,var(--blue-xlight),var(--green-light,#e7f6ec));}
+.lm-ba-tag{position:absolute;top:8px;left:8px;font-size:8px;font-weight:800;color:#fff;background:var(--text3);padding:2px 7px;border-radius:8px;letter-spacing:.05em;}
+.lm-ba-img{font-size:54px;}
+.lm-ba-date{position:absolute;bottom:8px;font-size:9px;color:var(--text3);font-weight:600;}
+.lm-ba-line{position:absolute;top:0;bottom:0;left:50%;width:2px;background:var(--surface);transform:translateX(-50%);}
+.lm-ba-res{text-align:center;font-size:13px;color:var(--text);margin-top:2px;}
+.lm-ba-sub{text-align:center;font-size:11px;color:var(--text3);}
+.lm-mod{display:flex;align-items:center;gap:9px;background:var(--bg2);border-radius:11px;padding:9px 10px;}
+.lm-mod-ic{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.lm-mod-b{flex:1;min-width:0;}
+.lm-mod-b b{font-size:11px;color:var(--text);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.lm-mini{height:4px;background:var(--surface);border-radius:3px;overflow:hidden;margin-top:5px;}
+.lm-mini i{display:block;height:100%;background:linear-gradient(90deg,var(--blue-mid),var(--blue));border-radius:3px;}
+.lm-mod>span{font-size:10px;font-weight:800;color:var(--text2);}
+.lm-xptext{font-size:10px;color:var(--text3);text-align:center;}
+.lm-badges2{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;}
+.lm-badges2 .b{aspect-ratio:1;background:var(--bg2);border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;}
+.lm-badges2 .b.lock{filter:grayscale(1);opacity:.45;font-size:14px;}
+.lm-quest{display:flex;align-items:center;justify-content:space-between;background:var(--bg2);border-radius:11px;padding:9px 11px;}
+.lm-quest b{font-size:11px;color:var(--text);display:block;}
+.lm-quest span{font-size:9.5px;color:var(--text3);}
+.lm-quest-v{font-family:var(--fd);font-size:14px;font-weight:800;color:var(--gold);}
+.lm-post{display:flex;gap:9px;align-items:flex-start;background:var(--bg2);border-radius:12px;padding:10px;}
+.lm-av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--blue-mid),var(--blue));color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;}
+.lm-post-b{flex:1;min-width:0;}
+.lm-post-b b{font-size:11.5px;color:var(--text);}
+.lm-post-b p{font-size:10.5px;color:var(--text2);margin:2px 0 4px;line-height:1.35;}
+.lm-react{font-size:10px;color:var(--text3);font-weight:600;}
+.lm-res{display:flex;align-items:center;gap:10px;background:var(--bg2);border-radius:11px;padding:10px;}
+.lm-res-ic{width:32px;height:32px;border-radius:9px;background:var(--blue-light);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.lm-res-b{flex:1;min-width:0;}
+.lm-res-b b{font-size:11px;color:var(--text);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.lm-res-b span{font-size:9.5px;color:var(--text3);font-weight:600;}
+
 /* ---- 14. ÉDITEUR DE SÉANCE v2 (accordéon mobile + semaine type) ---- */
 .pbexo{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:10px;margin-bottom:10px;}
 .pbtag{background:var(--blue-light);color:var(--blue);font-size:10px;font-weight:700;padding:1px 7px;border-radius:8px;margin-right:5px;vertical-align:middle;}
@@ -6625,6 +6735,98 @@ function ldpNext(){var t=document.getElementById('ldp-track');if(!t)return;var n
 function ldpPlay(){ldpStop();if(window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches)return;if(document.getElementById('ldp-track'))_ldpTimer=setInterval(function(){if(!document.hidden)ldpNext();},4500);}
 function ldpStop(){if(_ldpTimer){clearInterval(_ldpTimer);_ldpTimer=null;}}
 function ldpKick(){ldpStop();if(_ldpResume)clearTimeout(_ldpResume);_ldpResume=setTimeout(ldpPlay,7000);} // pause à l'interaction, reprise après 7s
+
+// ============================================================
+// LOT 7 — Vitrine landing : reproductions d'écrans ULTRA-RÉALISTES
+// (redéfinit _ldpPhone + _LDP_SLIDES — defs plus tardives = gagnent)
+// Tout en HTML/CSS, aucune capture à fournir.
+// ============================================================
+function _ldpPhone(inner,dark){
+  return '<div class="ldp-phone"><div class="ldp-island"></div>'
+    +'<div class="ldp-screen"><div class="ldp-status'+(dark?' on-dark':'')+'"><span class="ldp-time">9:41</span><span class="ldp-sig"><i class="fa-solid fa-signal"></i><i class="fa-solid fa-wifi"></i><i class="fa-solid fa-battery-three-quarters"></i></span></div>'
+    +'<div class="ldp-body">'+inner+'</div></div></div>';
+}
+// petits sous-composants de maquette
+function _lmRow(name,meta,done){return '<div class="lm-row"><span class="lm-rowname">'+(done?'<i class="fa-solid fa-circle-check" style="color:var(--green)"></i> ':'')+name+'</span><span class="lm-rowmeta">'+meta+'</span></div>';}
+function _lmSet(n,kg,reps,done){return '<div class="lm-set'+(done?' done':'')+'"><span>Série '+n+'</span><b>'+kg+' kg × '+reps+'</b><span class="lm-chk'+(done?' on':'')+'"><i class="fa-solid fa-check"></i></span></div>';}
+
+var _LDP_SLIDES=[
+  // 1. DASHBOARD
+  {t:'Ton tableau de bord',d:'Tout ton suivi en un coup d’œil, dès l’ouverture de l’app.',m:function(){return _ldpPhone(
+    '<div class="lm-hero"><div class="lm-hero-top"><span class="lm-hero-lvl">⭐ Gold</span><span class="lm-hero-xp"><b>1 240</b> XP</span></div><div class="lm-hero-h">Salut Noah 💪</div><div class="lm-hero-sub">68% de ta formation complétée</div><div class="lm-hbar"><i style="width:68%"></i></div></div>'
+    +'<div class="lm-scrl"><div class="lm-stat3"><div><b>4</b><span>séances</span></div><div><b>12🔥</b><span>jours</span></div><div><b>7,8h</b><span>sommeil</span></div></div>'
+    +'<div class="lm-next"><div class="lm-next-ic">▶️</div><div><div class="lm-next-l">Prochaine séance</div><div class="lm-next-t">Push A · 6 exercices</div></div><i class="fa-solid fa-chevron-right" style="color:var(--text3)"></i></div>'
+    +'<div class="lm-quote">“ La discipline bat le talent. ”</div></div>',true);}},
+  // 2. SÉANCE EN COURS
+  {t:'Tes séances, guidées',d:'Chaque série, chaque charge, ton minuteur de repos automatique.',m:function(){return _ldpPhone(
+    '<div class="lm-scr">'
+    +'<div class="lm-top"><span>🏋️ Push A</span><span class="lm-pill">3/6</span></div>'
+    +'<div class="lm-prog"><i style="width:52%"></i></div>'
+    +'<div class="lm-exo"><div class="lm-exo-h"><div class="lm-thumb">🏋️</div><b>Développé couché</b></div>'
+    +_lmSet(1,'60','10',true)+_lmSet(2,'60','9',true)+_lmSet(3,'62,5','8',false)+'</div>'
+    +'<div class="lm-rest"><i class="fa-solid fa-stopwatch"></i> Repos en cours · <b>1:28</b></div>'
+    +'<div class="lm-cta">Terminer la séance</div></div>');}},
+  // 3. STATS ENTRAÎNEMENT
+  {t:'Vois chaque progrès',d:'Courbes, records et le tonnage soulevé — rendu concret et motivant.',m:function(){return _ldpPhone(
+    '<div class="lm-scr">'
+    +'<div class="lm-top"><span>📊 Mes stats</span></div>'
+    +'<div class="lm-kpi3"><div><b>86</b><span>séances</span></div><div><b class="g">412 t</b><span>volume</span></div><div><b class="gr">14</b><span>records</span></div></div>'
+    +'<div class="lm-tonne"><div class="lm-tonne-e">🐘</div><div><div class="lm-tonne-l">Cette séance</div><div class="lm-tonne-v">9 600 kg soulevés</div><div class="lm-tonne-s">soit ≈ 2 éléphants 🐘 !</div></div></div>'
+    +'<div class="lm-card"><div class="lm-card-h"><span>Développé couché</span><span class="g">+22 kg</span></div>'
+    +'<svg viewBox="0 0 220 56" class="lm-spark"><polyline points="4,48 40,44 78,38 116,30 154,22 196,10" fill="none" stroke="var(--blue)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="196" cy="10" r="4" fill="var(--blue)"/></svg></div></div>');}},
+  // 4. NUTRITION
+  {t:'Ta nutrition maîtrisée',d:'Calories, macros et journal du jour — suivis par ton coach.',m:function(){return _ldpPhone(
+    '<div class="lm-scr">'
+    +'<div class="lm-top"><span>🥗 Aujourd’hui</span><span class="lm-pill" style="background:var(--gold-light);color:var(--gold-dark)">Objectif</span></div>'
+    +'<div class="lm-calring" style="--p:88%"><div class="lm-calring-in"><b>1 850</b><span>/ 2 100 kcal</span></div></div>'
+    +'<div class="lm-macros2"><div><div class="lm-mac-bar"><i style="width:80%;background:var(--blue)"></i></div><span>Prot 148g</span></div><div><div class="lm-mac-bar"><i style="width:55%;background:var(--gold)"></i></div><span>Gluc 180g</span></div><div><div class="lm-mac-bar"><i style="width:42%;background:var(--green)"></i></div><span>Lip 58g</span></div></div>'
+    +_lmRow('🍳 Petit-déjeuner','480 kcal',true)+_lmRow('🍗 Déjeuner','720 kcal',true)+_lmRow('🥤 Collation','310 kcal',false)+'</div>');}},
+  // 5. SUIVI / PROGRESSION
+  {t:'Ton évolution, mesurée',d:'Poids, mensurations, tendances : la preuve que ça marche.',m:function(){return _ldpPhone(
+    '<div class="lm-scr">'
+    +'<div class="lm-top"><span>📈 Mon poids</span><span class="lm-pill" style="background:var(--green-light,#e7f6ec);color:var(--green)">-6,8 kg</span></div>'
+    +'<div class="lm-bignum">82,4 <span>kg</span></div>'
+    +'<svg viewBox="0 0 220 80" class="lm-chart2"><defs><linearGradient id="lg1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--blue)" stop-opacity=".25"/><stop offset="1" stop-color="var(--blue)" stop-opacity="0"/></linearGradient></defs><path d="M4,18 L40,26 L78,30 L116,42 L154,52 L196,64 L196,76 L4,76 Z" fill="url(#lg1)"/><polyline points="4,18 40,26 78,30 116,42 154,52 196,64" fill="none" stroke="var(--blue)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+    +_lmRow('Tour de taille','-7 cm',false)+_lmRow('Tour de bras','+2 cm',false)+_lmRow('Tour de cuisse','+3 cm',false)+'</div>');}},
+  // 6. TRANSFORMATION AVANT/APRÈS
+  {t:'Avant / Après',d:'Compare tes photos et savoure le chemin parcouru.',m:function(){return _ldpPhone(
+    '<div class="lm-scr">'
+    +'<div class="lm-top"><span>📸 Transformation</span></div>'
+    +'<div class="lm-ba"><div class="lm-ba-half"><div class="lm-ba-tag">AVANT</div><div class="lm-ba-img">🧍</div><div class="lm-ba-date">Janv. 2026</div></div><div class="lm-ba-half after"><div class="lm-ba-tag" style="background:var(--green)">APRÈS</div><div class="lm-ba-img">🏋️</div><div class="lm-ba-date">Juin 2026</div></div><div class="lm-ba-line"></div></div>'
+    +'<div class="lm-ba-res"><b>-8 kg de gras</b> · +5 kg de muscle</div>'
+    +'<div class="lm-ba-sub">5 mois de coaching 💪</div></div>');}},
+  // 7. MODULES DE FORMATION
+  {t:'Apprends les bases',d:'Muscu, nutrition, récup, mindset : deviens autonome.',m:function(){return _ldpPhone(
+    '<div class="lm-scr">'
+    +'<div class="lm-top"><span>🎓 Formation</span><span class="lm-pill">12 modules</span></div>'
+    +'<div class="lm-mod"><div class="lm-mod-ic" style="background:var(--blue-light)">💪</div><div class="lm-mod-b"><b>Les bases de la muscu</b><div class="lm-mini"><i style="width:100%"></i></div></div><span class="g">100%</span></div>'
+    +'<div class="lm-mod"><div class="lm-mod-ic" style="background:var(--gold-light)">🥦</div><div class="lm-mod-b"><b>Nutrition intelligente</b><div class="lm-mini"><i style="width:62%"></i></div></div><span>62%</span></div>'
+    +'<div class="lm-mod"><div class="lm-mod-ic" style="background:var(--green-light,#e7f6ec)">😴</div><div class="lm-mod-b"><b>Récup & sommeil</b><div class="lm-mini"><i style="width:35%"></i></div></div><span>35%</span></div>'
+    +'<div class="lm-mod"><div class="lm-mod-ic" style="background:#efe7fb">🧠</div><div class="lm-mod-b"><b>Mindset gagnant</b><div class="lm-mini"><i style="width:10%"></i></div></div><span>10%</span></div></div>');}},
+  // 8. DÉFIS & GAMIFICATION
+  {t:'Reste motivé',d:'Niveaux, badges et défis : ta progression devient un jeu.',m:function(){return _ldpPhone(
+    '<div class="lm-scr">'
+    +'<div class="lm-top"><span>🏆 Niveau 7 · Élite</span><span class="lm-pill" style="background:var(--gold-light);color:var(--gold-dark)">3 480 XP</span></div>'
+    +'<div class="lm-prog gold"><i style="width:74%"></i></div><div class="lm-xptext">520 XP avant le niveau 8</div>'
+    +'<div class="lm-badges2"><div class="b">🥇</div><div class="b">🔥</div><div class="b">💎</div><div class="b">⚡</div><div class="b">🎯</div><div class="b lock">🔒</div><div class="b lock">🔒</div><div class="b lock">🔒</div></div>'
+    +'<div class="lm-quest"><div><b>Défi de la semaine</b><span>4 séances réalisées</span></div><span class="lm-quest-v">3/4</span></div>'
+    +'<div class="lm-quest"><div><b>Streak 30 jours</b><span>Connexion quotidienne</span></div><span class="lm-quest-v">12/30</span></div></div>');}},
+  // 9. COMMUNAUTÉ
+  {t:'Reste entouré',d:'Partage ta progression, encourage, ne lâche rien à plusieurs.',m:function(){return _ldpPhone(
+    '<div class="lm-scr">'
+    +'<div class="lm-top"><span>💬 Communauté</span></div>'
+    +'<div class="lm-post"><div class="lm-av">K</div><div class="lm-post-b"><b>Karim B.</b><p>+6 kg de muscle en 5 mois, jamais aussi sec 🔥</p><div class="lm-react">❤️ 24 · 💬 6</div></div></div>'
+    +'<div class="lm-post"><div class="lm-av" style="background:linear-gradient(135deg,var(--gold),var(--gold-dark))">J</div><div class="lm-post-b"><b>Julie M.</b><p>Premier 100 kg au squat aujourd’hui ! 🎉</p><div class="lm-react">❤️ 38 · 💬 12</div></div></div>'
+    +'<div class="lm-post"><div class="lm-av" style="background:linear-gradient(135deg,#6d28d9,#9333ea)">T</div><div class="lm-post-b"><b>Thomas L.</b><p>3 mois sans rater une séance 💪</p><div class="lm-react">❤️ 19 · 💬 4</div></div></div></div>');}},
+  // 10. RESSOURCES
+  {t:'Tout pour réussir',d:'Guides et PDF téléchargeables, disponibles partout.',m:function(){return _ldpPhone(
+    '<div class="lm-scr">'
+    +'<div class="lm-top"><span>📚 Ressources</span><span class="lm-pill">18 fichiers</span></div>'
+    +'<div class="lm-res"><div class="lm-res-ic">📄</div><div class="lm-res-b"><b>Guide du débutant</b><span>PDF · 2,4 Mo</span></div><i class="fa-solid fa-download" style="color:var(--blue)"></i></div>'
+    +'<div class="lm-res"><div class="lm-res-ic" style="background:var(--gold-light)">🍽️</div><div class="lm-res-b"><b>50 recettes prise de masse</b><span>PDF · 5,1 Mo</span></div><i class="fa-solid fa-download" style="color:var(--blue)"></i></div>'
+    +'<div class="lm-res"><div class="lm-res-ic" style="background:var(--green-light,#e7f6ec)">🧘</div><div class="lm-res-b"><b>Routine étirements & mobilité</b><span>PDF · 1,8 Mo</span></div><i class="fa-solid fa-download" style="color:var(--blue)"></i></div>'
+    +'<div class="lm-res"><div class="lm-res-ic" style="background:#efe7fb">😴</div><div class="lm-res-b"><b>Plan de sommeil optimal</b><span>PDF · 1,2 Mo</span></div><i class="fa-solid fa-download" style="color:var(--blue)"></i></div></div>');}}
+];
 
 // ============================================================
 // CLIENT — MODE SÉANCE LIVE
