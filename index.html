@@ -1113,6 +1113,7 @@ button{touch-action:manipulation;}
 .ldp-status .ldp-sig{display:flex;gap:5px;align-items:center;font-size:10px;}
 .ldp-status.on-dark{color:#fff;}
 .ldp-body{height:100%;background:var(--surface);}
+.ldp-img{width:100%;height:100%;object-fit:cover;display:block;background:var(--bg2);}
 .lm-scr{padding:42px 13px 14px;display:flex;flex-direction:column;gap:9px;height:100%;box-sizing:border-box;}
 .lm-top{display:flex;align-items:center;justify-content:space-between;font-size:12.5px;font-weight:800;color:var(--text);}
 .lm-pill{font-size:9.5px;font-weight:700;background:var(--blue-light);color:var(--blue);padding:3px 9px;border-radius:11px;white-space:nowrap;}
@@ -1705,6 +1706,7 @@ button{touch-action:manipulation;}
       <button class="nav-item" data-as="atips"><i class="fa-solid fa-heart-pulse"></i><span>Tips</span></button>
       <button class="nav-item" data-as="afaq"><i class="fa-solid fa-circle-question"></i><span>FAQ</span></button>
       <button class="nav-item" data-as="amessage"><i class="fa-solid fa-paper-plane"></i><span>Message</span></button>
+      <button class="nav-item" data-as="apercus"><i class="fa-solid fa-mobile-screen"></i><span>Aperçus landing</span></button>
     </nav>
     <div class="sb-bottom"><button class="btn-logout" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i><span> Quitter</span></button></div>
   </nav>
@@ -1927,6 +1929,10 @@ button{touch-action:manipulation;}
           <button class="btn" onclick="saveCitations()"><i class="fa-solid fa-quote-left"></i> Enregistrer mes citations</button>
         </div>
       </section>
+
+      <section id="section-apercus" class="section">
+        <div id="apercus-wrap"></div>
+      </section>
     </main>
   </div>
 
@@ -1957,6 +1963,7 @@ button{touch-action:manipulation;}
       <button class="bsi" onclick="gotoAS('atips');closeABS()"><i class="fa-solid fa-heart-pulse"></i><span>Tips</span></button>
       <button class="bsi" onclick="gotoAS('afaq');closeABS()"><i class="fa-solid fa-circle-question"></i><span>FAQ</span></button>
       <button class="bsi" onclick="gotoAS('amessage');closeABS()"><i class="fa-solid fa-paper-plane"></i><span>Message</span></button>
+      <button class="bsi" onclick="gotoAS('apercus');closeABS()"><i class="fa-solid fa-mobile-screen"></i><span>Aperçus landing</span></button>
       <button class="bsi" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i><span>Quitter</span></button>
     </div>
   </div>
@@ -2146,7 +2153,7 @@ async function handleResPdf(inp){
   }finally{inp.value='';}
 }
 // Clés synchronisées dans le cloud (le reste = purement local : theme, session, sb_mini, checklist...)
-const CLOUD_KEYS=['members','invites','modules','repas','defis','resources','glossaire','tips','faq','posts','coach_message','notifs','formules','admin_auth','citations','exercices','programmes','coach_notifs','exo_favs'];
+const CLOUD_KEYS=['members','invites','modules','repas','defis','resources','glossaire','tips','faq','posts','coach_message','notifs','formules','admin_auth','citations','exercices','programmes','coach_notifs','exo_favs','landing_previews'];
 function isCloudKey(k){
   if(CLOUD_KEYS.includes(k))return true;
   // données par client : body_, transfo_, temo_, comments_
@@ -3360,7 +3367,7 @@ function gotoAS(name){
   document.querySelectorAll('#admin-sidebar .nav-item').forEach(n=>n.classList.remove('active'));
   const sec=document.getElementById('section-'+name);if(sec)sec.classList.add('active');
   const nav=document.querySelector('#admin-sidebar .nav-item[data-as="'+name+'"]');if(nav)nav.classList.add('active');
-  if(name==='adashboard')renderAdminDash();if(name==='amodules')renderAMods();if(name==='aexercices')renderAExos();if(name==='atraining')renderATraining();if(name==='aprogrammes')renderAProgs();if(name==='arepas')renderARepas();if(name==='adefis')renderADefis();if(name==='aformules')renderAFormules();if(name==='ainvites')renderAInvites();if(name==='amembers')renderAMembers();if(name==='acommunity')renderAComm();if(name==='aresources')renderARes();if(name==='aglossaire')renderAGlos();if(name==='atips')renderATips();if(name==='afaq')renderAFAQ();if(name==='amessage'){const m=DB.get('coach_message');if(m)document.getElementById('coach-msg').value=m;const cq=document.getElementById('coach-quotes');if(cq)cq.value=DB.getArr('citations').join('\n');}
+  if(name==='adashboard')renderAdminDash();if(name==='amodules')renderAMods();if(name==='aexercices')renderAExos();if(name==='atraining')renderATraining();if(name==='aprogrammes')renderAProgs();if(name==='arepas')renderARepas();if(name==='adefis')renderADefis();if(name==='aformules')renderAFormules();if(name==='ainvites')renderAInvites();if(name==='amembers')renderAMembers();if(name==='acommunity')renderAComm();if(name==='aresources')renderARes();if(name==='aglossaire')renderAGlos();if(name==='atips')renderATips();if(name==='afaq')renderAFAQ();if(name==='apercus')renderAApercus();if(name==='amessage'){const m=DB.get('coach_message');if(m)document.getElementById('coach-msg').value=m;const cq=document.getElementById('coach-quotes');if(cq)cq.value=DB.getArr('citations').join('\n');}
   closeASB();window.scrollTo(0,0);
 }
 function updateFAB(s){const fab=document.getElementById('fab');fab.style.display=['community','body','transformation'].includes(s)&&window.innerWidth<=768?'flex':'none';fab.dataset.s=s;}
@@ -6827,6 +6834,104 @@ var _LDP_SLIDES=[
     +'<div class="lm-res"><div class="lm-res-ic" style="background:var(--green-light,#e7f6ec)">🧘</div><div class="lm-res-b"><b>Routine étirements & mobilité</b><span>PDF · 1,8 Mo</span></div><i class="fa-solid fa-download" style="color:var(--blue)"></i></div>'
     +'<div class="lm-res"><div class="lm-res-ic" style="background:#efe7fb">😴</div><div class="lm-res-b"><b>Plan de sommeil optimal</b><span>PDF · 1,2 Mo</span></div><i class="fa-solid fa-download" style="color:var(--blue)"></i></div></div>');}}
 ];
+
+// ============================================================
+// LOT 8 — Galerie d'aperçus avec TES images (cadre téléphone)
+// Clé cloud : landing_previews = [{id,img,title,desc}]
+// Si vide → les maquettes stylisées (lot 7) servent de placeholders.
+// ============================================================
+
+// cadre téléphone contenant une vraie image (capture de l'app)
+function _ldpPhoneImg(url){
+  return '<div class="ldp-phone"><div class="ldp-island"></div>'
+    +'<div class="ldp-screen"><img class="ldp-img" loading="lazy" decoding="async" src="'+escA(safeUrl(url))+'" alt="Aperçu de l’application NoahCana"></div></div>';
+}
+// Reconstruit le carrousel : images du coach si présentes, sinon maquettes.
+function buildAppPreviews(){
+  var track=document.getElementById('ldp-track');if(!track)return;
+  var ups=DB.getArr('landing_previews').filter(function(p){return p&&p.img;});
+  var slides;
+  if(ups.length){
+    slides=ups.map(function(p){return '<div class="ldp-slide"><div class="ldp-mock">'+_ldpPhoneImg(p.img)+'</div>'+(p.title?'<h3 class="ldp-title">'+h(p.title)+'</h3>':'')+(p.desc?'<p class="ldp-desc">'+h(p.desc)+'</p>':'')+'</div>';});
+  }else{
+    slides=_LDP_SLIDES.map(function(s){return '<div class="ldp-slide"><div class="ldp-mock">'+s.m()+'</div><h3 class="ldp-title">'+h(s.t)+'</h3><p class="ldp-desc">'+h(s.d)+'</p></div>';});
+  }
+  track.innerHTML=slides.join('');
+  var dots=document.getElementById('ldp-dots');
+  if(dots){dots.innerHTML='';for(var i=0;i<track.children.length;i++){(function(i){var b=document.createElement('button');b.className='ldp-dot'+(i===0?' on':'');b.setAttribute('aria-label','Aperçu '+(i+1));b.onclick=function(){ldpGo(i);ldpKick();};dots.appendChild(b);})(i);}}
+  _ldpIdx=0;track.onscroll=ldpOnScroll;
+  ['pointerdown','touchstart'].forEach(function(ev){track.addEventListener(ev,ldpKick,{passive:true});});
+  ldpPlay();
+}
+
+// ============================================================
+// ADMIN — Gestionnaire des aperçus de la landing
+// ============================================================
+function renderAApercus(){
+  var wrap=document.getElementById('apercus-wrap');if(!wrap)return;
+  var list=DB.getArr('landing_previews');
+  var html='<div class="sec-header"><h2>Aperçus de l’app (landing)</h2><p>Tes visuels affichés dans des cadres de téléphone sur la page de vente</p></div>';
+  html+='<div class="afc"><h3 id="ap-form-title">Nouvel aperçu</h3><input type="hidden" id="ap-edit-id">'
+    +'<div class="fg2"><label>Image (capture / visuel de l’app)</label>'
+    +'<label class="btn-sec" style="display:inline-flex;align-items:center;gap:8px;cursor:pointer"><i class="fa-solid fa-image"></i> Choisir une image<input type="file" id="ap-file" accept="image/*" onchange="handleApercuImg(this)" style="display:none"></label>'
+    +'<div id="ap-prog" style="margin-top:8px"></div>'
+    +'<input type="text" id="ap-img" placeholder="…ou colle l’URL d’une image (https://…)" style="margin-top:8px">'
+    +'<div style="font-size:12px;color:var(--text3);margin-top:6px;line-height:1.5">📐 Idéal : <strong>capture verticale de téléphone</strong>, largeur ~1080 px, format JPG/PNG/WebP. L’app compresse automatiquement à l’envoi (pas besoin de t’en soucier).</div></div>'
+    +'<div class="r2"><div class="fg2"><label>Titre court</label><input type="text" id="ap-title" placeholder="Ex : Ton entraînement"></div></div>'
+    +'<div class="fg2"><label>Phrase d’explication (1-2 phrases, orientée bénéfice)</label><textarea id="ap-desc" placeholder="Ex : Lance ta séance, enregistre tes perfs et suis ta progression en temps réel."></textarea></div>'
+    +'<div class="fa-row"><button class="btn" onclick="saveApercu()"><i class="fa-solid fa-save"></i> <span id="ap-save-txt">Ajouter</span></button><button class="btn-sec" id="ap-cancel" onclick="cancelApercu()" style="display:none">Annuler</button></div></div>';
+  html+='<div style="font-size:13px;color:var(--text3);margin:8px 2px 14px;line-height:1.5">'+(list.length?('<strong>'+list.length+'</strong> aperçu'+(list.length>1?'s':'')+' — affichés sur la landing dans l’ordre ci-dessous (réordonne avec ↑ ↓).'):'Aucun aperçu pour l’instant : des <strong>maquettes stylisées</strong> s’affichent sur la landing en attendant tes vraies images. Ajoute ta première ci-dessus 👆')+'</div>';
+  html+='<div class="list-title">Mes aperçus</div>';
+  if(!list.length){html+='<div class="empty"><i class="fa-solid fa-mobile-screen"></i><p>Aucun aperçu ajouté.</p></div>';}
+  else html+=list.map(function(p,i){
+    return '<div class="ali"><div style="width:46px;height:64px;border-radius:8px;overflow:hidden;flex-shrink:0;background:var(--bg2);display:flex;align-items:center;justify-content:center">'+(p.img?'<img src="'+escA(safeUrl(p.img))+'" style="width:100%;height:100%;object-fit:cover" alt="">':'<i class="fa-solid fa-image" style="color:var(--text3)"></i>')+'</div>'
+      +'<div style="flex:1;min-width:0"><div class="ali-title">'+h(p.title||'(sans titre)')+'</div><div class="ali-meta" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+h(p.desc||'—')+'</div></div>'
+      +'<div class="ali-actions"><button class="btn-sm" onclick="moveApercu('+i+',-1)" title="Monter" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px"><i class="fa-solid fa-arrow-up"></i></button><button class="btn-sm" onclick="moveApercu('+i+',1)" title="Descendre" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px"><i class="fa-solid fa-arrow-down"></i></button><button class="btn-edit btn-sm" onclick="editApercu(\''+p.id+'\')"><i class="fa-solid fa-pen"></i></button><button class="btn-del btn-sm" onclick="delApercu(\''+p.id+'\')"><i class="fa-solid fa-trash"></i></button></div></div>';
+  }).join('');
+  wrap.innerHTML=html;
+}
+async function handleApercuImg(inp){
+  var f=inp.files&&inp.files[0];if(!f)return;
+  if(!/^image\//i.test(f.type||'')&&!/\.(jpe?g|png|gif|webp)$/i.test(f.name)){toast('Choisis une image','error');inp.value='';return;}
+  var prog=document.getElementById('ap-prog');
+  if(prog)prog.innerHTML='<span style="font-size:12px;color:var(--blue);font-weight:600"><i class="fa-solid fa-spinner fa-spin"></i> Envoi de l’image…</span>';
+  try{var url=await uploadPhoto(f,'apercus');var inEl=document.getElementById('ap-img');if(inEl)inEl.value=url;if(prog)prog.innerHTML='<img src="'+escA(safeUrl(url))+'" style="max-height:120px;border-radius:10px">';toast('Image envoyée ✅','success');}
+  catch(e){toast(e.message||'Échec de l’image','error');if(prog)prog.innerHTML='';}
+  finally{inp.value='';}
+}
+function saveApercu(){
+  var img=(document.getElementById('ap-img').value||'').trim();
+  var title=(document.getElementById('ap-title').value||'').trim();
+  var desc=(document.getElementById('ap-desc').value||'').trim();
+  if(!img){toast('Ajoute une image (envoi ou URL)','error');return;}
+  var list=DB.getArr('landing_previews');
+  var id=document.getElementById('ap-edit-id').value;
+  if(id){var e=list.find(function(x){return String(x.id)===String(id);});if(e){e.img=img;e.title=title;e.desc=desc;}toast('Aperçu mis à jour ✅','success');}
+  else{list.push({id:Date.now(),img:img,title:title,desc:desc});toast('Aperçu ajouté ✅','success');}
+  DB.set('landing_previews',list);cancelApercu();renderAApercus();
+}
+function editApercu(id){
+  var p=DB.getArr('landing_previews').find(function(x){return String(x.id)===String(id);});if(!p)return;
+  document.getElementById('ap-edit-id').value=p.id;
+  document.getElementById('ap-img').value=p.img||'';
+  document.getElementById('ap-title').value=p.title||'';
+  document.getElementById('ap-desc').value=p.desc||'';
+  document.getElementById('ap-prog').innerHTML=p.img?'<img src="'+escA(safeUrl(p.img))+'" style="max-height:120px;border-radius:10px">':'';
+  document.getElementById('ap-form-title').textContent='Modifier l’aperçu';
+  document.getElementById('ap-save-txt').textContent='Enregistrer';
+  document.getElementById('ap-cancel').style.display='inline-flex';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function cancelApercu(){
+  ['ap-img','ap-title','ap-desc'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+  var ide=document.getElementById('ap-edit-id');if(ide)ide.value='';
+  var pr=document.getElementById('ap-prog');if(pr)pr.innerHTML='';
+  var t=document.getElementById('ap-form-title');if(t)t.textContent='Nouvel aperçu';
+  var s=document.getElementById('ap-save-txt');if(s)s.textContent='Ajouter';
+  var c=document.getElementById('ap-cancel');if(c)c.style.display='none';
+}
+function delApercu(id){if(!confirm('Supprimer cet aperçu ?'))return;DB.set('landing_previews',DB.getArr('landing_previews').filter(function(x){return String(x.id)!==String(id);}));renderAApercus();toast('Supprimé');}
+function moveApercu(i,dir){var list=DB.getArr('landing_previews');var ni=i+dir;if(ni<0||ni>=list.length)return;var t=list[i];list[i]=list[ni];list[ni]=t;DB.set('landing_previews',list);renderAApercus();}
 
 // ============================================================
 // CLIENT — MODE SÉANCE LIVE
