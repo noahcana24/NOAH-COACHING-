@@ -1051,6 +1051,59 @@ button{touch-action:manipulation;}
 /* Dark mode : surfaces un poil plus contrastées pour les nouvelles cartes */
 [data-theme="dark"] .nav-dot{box-shadow:0 0 8px var(--gold);}
 
+/* ---- 15. CARROUSEL APERÇUS LANDING + ÉDITEUR SÉANCES REPLIABLES ---- */
+.ldp-carousel{position:relative;display:flex;align-items:center;gap:6px;max-width:520px;margin:8px auto 0;}
+.ldp-track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;flex:1;scrollbar-width:none;}
+.ldp-track::-webkit-scrollbar{display:none;}
+.ldp-slide{flex:0 0 100%;scroll-snap-align:center;display:flex;flex-direction:column;align-items:center;text-align:center;padding:6px 10px;box-sizing:border-box;}
+.ldp-arrow{flex-shrink:0;width:40px;height:40px;border-radius:50%;border:1px solid var(--border);background:var(--surface);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;box-shadow:var(--sh);transition:transform .15s,background .15s;}
+.ldp-arrow:hover{background:var(--bg2);transform:scale(1.06);}
+@media(max-width:600px){.ldp-arrow{display:none;}}
+.ldp-dots{display:flex;gap:7px;justify-content:center;margin-top:16px;}
+.ldp-dot{width:8px;height:8px;border-radius:50%;border:none;background:var(--border2);cursor:pointer;padding:0;transition:all .25s;}
+.ldp-dot.on{background:var(--gold);width:22px;border-radius:4px;}
+.ldp-title{font-family:var(--fd);font-size:19px;font-weight:800;margin:14px 0 4px;color:var(--text);}
+.ldp-desc{font-size:14px;color:var(--text2);max-width:340px;line-height:1.5;}
+.ldp-mock{display:flex;justify-content:center;}
+.ldp-phone{width:208px;background:#0d1b2a;border-radius:26px;padding:12px 9px 9px;box-shadow:0 18px 44px rgba(13,27,42,.30),inset 0 0 0 2px rgba(255,255,255,.06);position:relative;}
+.ldp-notch{position:absolute;top:9px;left:50%;transform:translateX(-50%);width:52px;height:5px;border-radius:3px;background:rgba(255,255,255,.22);}
+.ldp-screen{background:var(--surface);border-radius:18px;padding:14px 12px;height:240px;overflow:hidden;display:flex;flex-direction:column;gap:8px;}
+.lm-top{display:flex;align-items:center;justify-content:space-between;font-size:12px;font-weight:800;color:var(--text);}
+.lm-pill{font-size:10px;font-weight:700;background:var(--blue-light);color:var(--blue);padding:2px 8px;border-radius:10px;white-space:nowrap;}
+.lm-prog{height:7px;background:var(--bg2);border-radius:4px;overflow:hidden;}
+.lm-prog i{display:block;height:100%;background:linear-gradient(90deg,var(--blue-mid),var(--blue));border-radius:4px;}
+.lm-prog.gold i{background:linear-gradient(90deg,var(--gold),#e6b93a);}
+.lm-row{display:flex;align-items:center;justify-content:space-between;font-size:11px;background:var(--bg2);border-radius:9px;padding:8px 10px;gap:8px;}
+.lm-row b{font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.lm-row span{color:var(--text3);font-weight:600;white-space:nowrap;}
+.lm-cta{margin-top:auto;text-align:center;font-size:11px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--blue-mid),var(--blue));border-radius:10px;padding:9px;}
+.lm-macros{display:flex;justify-content:space-around;margin:2px 0;}
+.lm-macros>div{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:9px;color:var(--text3);font-weight:600;}
+.lm-ring{width:44px;height:44px;border-radius:50%;background:conic-gradient(var(--col) var(--p),var(--bg2) 0);position:relative;}
+.lm-ring::after{content:'';position:absolute;inset:6px;border-radius:50%;background:var(--surface);}
+.lm-chart{width:100%;height:auto;background:var(--bg2);border-radius:10px;padding:6px;box-sizing:border-box;}
+.lm-photos{display:flex;align-items:center;gap:6px;}
+.lm-photos>div{width:38px;height:38px;border-radius:8px;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:15px;}
+.lm-photo-arrow{background:transparent!important;color:var(--green);font-weight:800;width:auto!important;}
+.lm-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.lm-tile{background:var(--bg2);border-radius:10px;padding:9px;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:18px;}
+.lm-tile span{font-size:9px;color:var(--text2);font-weight:700;}
+.lm-badges{display:flex;gap:8px;font-size:20px;justify-content:center;margin:2px 0;}
+.lm-lock{filter:grayscale(1);opacity:.5;}
+.lm-post{display:flex;gap:8px;align-items:flex-start;background:var(--bg2);border-radius:10px;padding:8px 10px;}
+.lm-av{width:26px;height:26px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;}
+.lm-post b{font-size:11px;color:var(--text);}
+.lm-post p{font-size:10px;color:var(--text2);margin-top:1px;line-height:1.35;}
+/* Éditeur — séances repliables (divulgation progressive) */
+.pbse-head{display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px 0;}
+.pbse-chev{width:20px;text-align:center;color:var(--text3);font-size:13px;flex-shrink:0;}
+.pbse-name{flex:1;min-width:0;padding:9px 11px;border:1.5px solid var(--border);border-radius:10px;background:var(--bg2);color:var(--text);font-size:16px;font-weight:700;}
+.pbse-count{font-size:10px;font-weight:700;color:var(--blue);background:var(--blue-light);padding:3px 9px;border-radius:10px;white-space:nowrap;flex-shrink:0;}
+.pbse-count.empty{color:var(--text3);background:var(--bg2);}
+.pbse-body{padding-top:10px;animation:pbReveal .22s ease;}
+@keyframes pbReveal{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:none;}}
+.pbseance.open{border-color:var(--blue);}
+
 /* ---- 14. ÉDITEUR DE SÉANCE v2 (accordéon mobile + semaine type) ---- */
 .pbexo{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:10px;margin-bottom:10px;}
 .pbtag{background:var(--blue-light);color:var(--blue);font-size:10px;font-weight:700;padding:1px 7px;border-radius:8px;margin-right:5px;vertical-align:middle;}
@@ -1141,6 +1194,17 @@ button{touch-action:manipulation;}
       </div>
     </div>
   </div>
+
+  <section class="ld-sec lv" id="ld-previews">
+    <h2 class="ld-h2">Aperçu de l'application</h2>
+    <p class="ld-sub">Une appli privée pensée pour ta progression — voici ce qui t'attend à l'intérieur.</p>
+    <div class="ldp-carousel">
+      <button class="ldp-arrow ldp-prev" aria-label="Précédent" onclick="ldpGo(Math.max(0,_ldpIdx-1));ldpKick()"><i class="fa-solid fa-chevron-left"></i></button>
+      <div class="ldp-track" id="ldp-track"></div>
+      <button class="ldp-arrow ldp-next" aria-label="Suivant" onclick="ldpGo(_ldpIdx+1);ldpKick()"><i class="fa-solid fa-chevron-right"></i></button>
+    </div>
+    <div class="ldp-dots" id="ldp-dots"></div>
+  </section>
 
   <section class="ld-sec lv">
     <h2 class="ld-h2">Tu reconnais cette situation ?</h2>
@@ -4625,6 +4689,7 @@ function openContactModal(){
   openModal();
 }
 function initLanding(){
+  try{buildAppPreviews();}catch(e){}
   const els=document.querySelectorAll('#page-landing .lv');
   if(!('IntersectionObserver' in window)){els.forEach(e=>e.classList.add('lv-vis'));return;}
   const io=new IntersectionObserver(entries=>{entries.forEach(en=>{if(en.isIntersecting){en.target.classList.add('lv-vis');io.unobserve(en.target);}});},{threshold:.12});
@@ -5792,6 +5857,8 @@ function openStats(code,fromCoach){
    +'<div style="flex:1;min-width:88px;background:var(--bg2);border-radius:12px;padding:12px;text-align:center"><div style="font-family:var(--fd);font-size:22px;font-weight:800;color:var(--blue)">'+workouts.length+'</div><div style="font-size:11px;color:var(--text3)">séances</div></div>'
    +'<div style="flex:1;min-width:88px;background:var(--bg2);border-radius:12px;padding:12px;text-align:center"><div style="font-family:var(--fd);font-size:22px;font-weight:800;color:var(--gold)">'+fmtVol(totalVol)+'</div><div style="font-size:11px;color:var(--text3)">volume total</div></div>'
    +'<div style="flex:1;min-width:88px;background:var(--bg2);border-radius:12px;padding:12px;text-align:center"><div style="font-family:var(--fd);font-size:22px;font-weight:800;color:'+(prs.length?'var(--green)':'var(--text3)')+'">'+prs.length+'</div><div style="font-size:11px;color:var(--text3)">records</div></div></div>';
+  // tonnage cumulé + comparaison imagée
+  html+=tonnageBlock(totalVol,'total');
   // comparaison semaine N vs N-1
   const arrow=diff>0?'▲':diff<0?'▼':'=';const col=diff>0?'var(--green)':diff<0?'var(--orange)':'var(--text3)';
   html+='<div style="border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:14px"><div style="font-size:12px;font-weight:700;text-transform:uppercase;color:var(--text2);margin-bottom:8px">Cette semaine vs semaine dernière</div><div style="display:flex;align-items:center;gap:12px"><div style="flex:1"><div style="font-family:var(--fd);font-size:24px;font-weight:800">'+fmtVol(vThis)+'</div><div style="font-size:11px;color:var(--text3)">vs '+fmtVol(vLast)+' la semaine passée</div></div><div style="font-size:15px;font-weight:800;color:'+col+';background:'+(diff>0?'var(--green-light,#e7f6ec)':diff<0?'var(--gold-light)':'var(--bg2)')+';padding:8px 12px;border-radius:12px">'+arrow+' '+(diff>0?'+':'')+diff+'%</div></div>'
@@ -5848,6 +5915,7 @@ function seanceRecap(w,prs){
   html+='<div style="display:flex;gap:8px;margin-bottom:18px"><div style="flex:1;background:var(--bg2);border-radius:12px;padding:12px"><div style="font-family:var(--fd);font-size:20px;font-weight:800;color:var(--blue)">'+doneSets+'/'+totalSets+'</div><div style="font-size:11px;color:var(--text3)">séries</div></div>'
    +'<div style="flex:1;background:var(--bg2);border-radius:12px;padding:12px"><div style="font-family:var(--fd);font-size:20px;font-weight:800;color:var(--gold)">'+fmtVol(vol)+'</div><div style="font-size:11px;color:var(--text3)">volume</div></div>'
    +'<div style="flex:1;background:var(--bg2);border-radius:12px;padding:12px"><div style="font-family:var(--fd);font-size:20px;font-weight:800;color:var(--blue)">'+(w.duree||0)+'</div><div style="font-size:11px;color:var(--text3)">minutes</div></div></div>';
+  html+='<div style="text-align:left">'+tonnageBlock(vol,'seance')+'</div>';
   html+='<div style="display:flex;justify-content:center;gap:18px;font-size:13px;color:var(--text2);margin-bottom:20px"><span>Difficulté <strong>RPE '+(w.rpe||'—')+'/10</strong></span><span>Énergie '+dz+'</span></div>';
   html+='<div style="background:var(--blue-xlight);border-radius:12px;padding:10px 14px;font-size:13px;color:var(--blue);font-weight:600;margin-bottom:18px">+30 XP ajoutés ⚡</div>';
   html+='<button class="btn-done" style="width:100%;justify-content:center" onclick="closeRecap()"><i class="fa-solid fa-flag-checkered"></i> Terminer</button><div style="height:30px"></div></div>';
@@ -6400,6 +6468,163 @@ function releaseWake(){try{if(_wakeLock&&_wakeLock.release){_wakeLock.release();
 document.addEventListener('visibilitychange',function(){if(!document.hidden&&document.getElementById('sess-el'))acquireWake();});
 function toggleGym(){_gymMode=!_gymMode;try{localStorage.setItem('nc3_gym',_gymMode?'1':'0');}catch(e){}var el=document.getElementById('sess-el');if(el)el.classList.toggle('gym',_gymMode);var b=document.getElementById('gym-btn');if(b)b.style.color=_gymMode?'var(--gold)':'';}
 function applyGym(){var el=document.getElementById('sess-el');if(el&&_gymMode)el.classList.add('gym');}
+
+// ============================================================
+// LOT 6 — Aperçus app (landing), tonnage motivant, éditeur progressif
+// ============================================================
+
+// ---------- TONNAGE & comparaisons imagées ----------
+var TONNE_CMP=[
+  {kg:6,e:'🐈',s:'un chat',p:'chats'},
+  {kg:20,e:'🛍️',s:'un gros cabas de courses',p:'cabas de courses'},
+  {kg:35,e:'🪨',s:'un sac de ciment',p:'sacs de ciment'},
+  {kg:70,e:'🧍',s:'un adulte',p:'adultes'},
+  {kg:130,e:'🧊',s:'un réfrigérateur',p:'réfrigérateurs'},
+  {kg:270,e:'🎹',s:'un piano à queue',p:'pianos à queue'},
+  {kg:500,e:'🐎',s:'un cheval',p:'chevaux'},
+  {kg:900,e:'🐄',s:'une vache',p:'vaches'},
+  {kg:1500,e:'🚗',s:'une petite voiture',p:'petites voitures'},
+  {kg:3000,e:'🦛',s:'un hippopotame',p:'hippopotames'},
+  {kg:6000,e:'🐘',s:'un éléphant',p:'éléphants'},
+  {kg:12000,e:'🚌',s:'un bus',p:'bus'},
+  {kg:20000,e:'🚚',s:'un camion',p:'camions'},
+  {kg:50000,e:'🐋',s:'une baleine bleue',p:'baleines bleues'},
+  {kg:90000,e:'✈️',s:'un avion de ligne',p:'avions de ligne'},
+  {kg:200000,e:'🏢',s:'un immeuble',p:'immeubles'}
+];
+function tonnageCompare(kg){
+  kg=Math.round(kg||0);if(kg<=0)return null;
+  var le=TONNE_CMP.filter(function(x){return x.kg<=kg;});
+  if(!le.length)le=[TONNE_CMP[0]];
+  // candidats donnant un nombre raisonnable (<=30), on privilégie les gros objets
+  var cand=le.filter(function(x){return kg/x.kg<=30;});
+  if(!cand.length)cand=[le[le.length-1]];
+  var pool=cand.slice(-3); // les 3 objets les plus lourds qui collent
+  var x=pool[Math.floor(Math.random()*pool.length)];
+  var count=Math.max(1,Math.round(kg/x.kg));
+  return {e:x.e,s:x.s,p:x.p,count:count};
+}
+function tonnageText(kg){var c=tonnageCompare(kg);if(!c)return '';return (c.count===1?('soit '+c.s):('soit ≈ '+c.count+' '+c.p))+' '+c.e;}
+function tonnageBlock(kg,kind){
+  kg=Math.round(kg||0);if(kg<=0)return '';
+  var c=tonnageCompare(kg);if(!c)return '';
+  var t=(c.count===1?('soit '+c.s):('soit ≈ '+c.count+' '+c.p));
+  var lbl=kind==='total'?'Depuis tes débuts':kind==='week'?'Cette semaine':'Cette séance';
+  return '<div style="background:linear-gradient(135deg,var(--gold-light),transparent);border:1px solid var(--gold);border-radius:14px;padding:13px 14px;margin-bottom:16px;display:flex;align-items:center;gap:13px">'
+    +'<div style="font-size:34px;line-height:1;flex-shrink:0">'+c.e+'</div>'
+    +'<div style="flex:1;min-width:0"><div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--gold-dark);letter-spacing:.04em">'+lbl+'</div>'
+    +'<div style="font-family:var(--fd);font-size:21px;font-weight:800;color:var(--text);line-height:1.1">'+fmtVol(kg)+' <span style="font-size:12px;font-weight:600;color:var(--text3)">soulevés</span></div>'
+    +'<div style="font-size:12.5px;color:var(--text2);font-weight:600;margin-top:1px">'+t+' '+c.e+' !</div></div></div>';
+}
+function tonnageTotal(code){return DB.getArr(wKey(code)).reduce(function(t,w){return t+woVolume(w);},0);}
+
+// ============================================================
+// ÉDITEUR DE PROGRAMME — divulgation progressive (séances repliables)
+// Redéfinit pbRenderSeances / pbAddSeance / pbDupSeance / pbScrollSeance.
+// ============================================================
+var pbOpenSet={},pbOpenInit=null;
+function pbSeanceOpen(si){return !!pbOpenSet[si];}
+function pbToggleSeance(si){pbOpenSet[si]=!pbOpenSet[si];pbRenderSeances();}
+function pbExpandAll(v){progDraft.seances.forEach(function(_,i){pbOpenSet[i]=v;});pbRenderSeances();}
+function pbRenderSeances(){
+  var host=document.getElementById('pb-seances');if(!host)return;
+  if(!progDraft.week)progDraft.week={};
+  if(pbOpenInit!==progDraft.id){pbOpenInit=progDraft.id;pbOpenSet={};progDraft.seances.forEach(function(_,i){pbOpenSet[i]=(progDraft.seances.length<=1||i===0);});}
+  var top=pbWeekStrip()+pbBalance();
+  if(!progDraft.seances.length){host.innerHTML=top+'<div class="empty" style="padding:30px"><p>Ajoute ta première séance ci-dessous.</p></div>';return;}
+  var allOpen=progDraft.seances.every(function(_,i){return pbOpenSet[i];});
+  var bar='<div style="display:flex;align-items:center;justify-content:space-between;margin:4px 2px 10px"><div style="font-size:12px;font-weight:700;text-transform:uppercase;color:var(--text2)">Séances ('+progDraft.seances.length+')</div><button class="btn-sec btn-sm" onclick="pbExpandAll('+(allOpen?'false':'true')+')">'+(allOpen?'<i class="fa-solid fa-compress"></i> Tout replier':'<i class="fa-solid fa-expand"></i> Tout déplier')+'</button></div>';
+  host.innerHTML=top+bar+progDraft.seances.map(function(se,si){
+    var open=pbSeanceOpen(si);var nEx=(se.exos||[]).length;
+    var head='<div class="pbse-head" onclick="pbToggleSeance('+si+')">'
+      +'<span class="pbse-chev"><i class="fa-solid fa-chevron-'+(open?'down':'right')+'"></i></span>'
+      +'<input type="text" value="'+escA(se.nom)+'" oninput="pbSeanceNom('+si+',this.value)" onclick="event.stopPropagation()" class="pbse-name">'
+      +'<span class="pbse-count'+(nEx?'':' empty')+'">'+(nEx?(nEx+' exo'+(nEx>1?'s':'')):'vide')+'</span>'
+      +'<button class="pbact" onclick="event.stopPropagation();pbDupSeance('+si+')" title="Dupliquer la séance"><i class="fa-solid fa-copy"></i></button>'
+      +'<button class="pbact" style="color:var(--red)" onclick="event.stopPropagation();pbDelSeance('+si+')" title="Supprimer la séance"><i class="fa-solid fa-trash"></i></button></div>';
+    var body='';
+    if(open){
+      var exoRows=(se.exos||[]).map(function(ex,xi){return pbExoCard(si,xi,ex);}).join('');
+      body='<div class="pbse-body">'+(nEx?exoRows:'<div style="font-size:12px;color:var(--text3);padding:6px 2px 10px">Aucun exercice — ajoute-en un 👇</div>')
+        +'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px"><button class="btn-al" onclick="pbPickExo('+si+')"><i class="fa-solid fa-plus"></i> Exercice</button><button class="btn-al" style="background:var(--red-light);color:var(--red)" onclick="pbAddCardio('+si+')"><i class="fa-solid fa-heart-pulse"></i> Bloc cardio/HIIT</button></div></div>';
+    }
+    return '<div class="afc pbseance'+(open?' open':'')+'" id="pbse-'+si+'" style="padding:6px 12px 10px">'+head+body+'</div>';
+  }).join('');
+}
+function pbAddSeance(){pbSyncMeta();progDraft.seances.push({nom:'Séance '+String.fromCharCode(65+progDraft.seances.length),exos:[]});pbOpenSet[progDraft.seances.length-1]=true;pbRenderSeances();var el=document.getElementById('pbse-'+(progDraft.seances.length-1));if(el)el.scrollIntoView({behavior:'smooth',block:'center'});}
+function pbDupSeance(si){pbSyncMeta();var cp=JSON.parse(JSON.stringify(progDraft.seances[si]));cp.nom=cp.nom+' (copie)';progDraft.seances.splice(si+1,0,cp);pbOpenSet[si+1]=true;pbRenderSeances();toast('Séance dupliquée');}
+function pbScrollSeance(si){pbOpenSet[si]=true;pbRenderSeances();var el=document.getElementById('pbse-'+si);if(el){el.scrollIntoView({behavior:'smooth',block:'start'});el.classList.add('pbflash');setTimeout(function(){el.classList.remove('pbflash');},1200);}}
+
+// ============================================================
+// LANDING — Carrousel "Aperçu de l'application" (maquettes HTML/CSS)
+// ============================================================
+function _ldpPhone(inner){return '<div class="ldp-phone"><span class="ldp-notch"></span><div class="ldp-screen">'+inner+'</div></div>';}
+function _ldpBar(w,c){return '<div style="height:7px;border-radius:4px;background:'+(c||'var(--blue)')+';width:'+w+'"></div>';}
+var _LDP_SLIDES=[
+  {t:'Entraînement',d:'Ton programme sur mesure, tes séances guidées, ta progression en temps réel.',m:function(){
+    return _ldpPhone('<div class="lm-top"><span>🏋️ Séance Push</span><span class="lm-pill">60%</span></div>'
+      +'<div class="lm-prog"><i style="width:60%"></i></div>'
+      +'<div class="lm-row"><b>Développé couché</b><span>4×8 · 60kg</span></div>'
+      +'<div class="lm-row"><b>Développé incliné</b><span>3×10 · 22kg</span></div>'
+      +'<div class="lm-row"><b>Élévations latérales</b><span>3×15</span></div>'
+      +'<div class="lm-cta">▶ Commencer la séance</div>');
+  }},
+  {t:'Nutrition',d:'Tes repas, tes macros et ton journal alimentaire suivis par ton coach.',m:function(){
+    return _ldpPhone('<div class="lm-top"><span>🥗 Aujourd’hui</span><span class="lm-pill">1 850 kcal</span></div>'
+      +'<div class="lm-macros"><div><div class="lm-ring" style="--p:65%;--col:var(--blue)"></div><span>Prot</span></div><div><div class="lm-ring" style="--p:45%;--col:var(--gold)"></div><span>Gluc</span></div><div><div class="lm-ring" style="--p:30%;--col:var(--green)"></div><span>Lip</span></div></div>'
+      +'<div class="lm-row"><b>🍳 Petit-déj</b><span>480 kcal</span></div>'
+      +'<div class="lm-row"><b>🍗 Déjeuner</b><span>720 kcal</span></div>');
+  }},
+  {t:'Suivi & progression',d:'Poids, photos, mensurations, bilans : visualise ton évolution.',m:function(){
+    return _ldpPhone('<div class="lm-top"><span>📈 Mon poids</span><span class="lm-pill" style="background:var(--green-light,#e7f6ec);color:var(--green)">-4,2 kg</span></div>'
+      +'<svg viewBox="0 0 200 70" class="lm-chart"><polyline points="4,58 40,52 78,46 116,38 154,30 196,18" fill="none" stroke="var(--blue)" stroke-width="3" stroke-linecap="round"/></svg>'
+      +'<div class="lm-photos"><div>📷</div><div>📷</div><div class="lm-photo-arrow">→</div><div>📷</div></div>'
+      +'<div class="lm-row"><b>Tour de taille</b><span>-6 cm</span></div>');
+  }},
+  {t:'Modules de formation',d:'Apprends les bases : muscu, nutrition, récup, mindset.',m:function(){
+    return _ldpPhone('<div class="lm-top"><span>🎓 Formation</span><span class="lm-pill">12 leçons</span></div>'
+      +'<div class="lm-grid"><div class="lm-tile">💪<span>Muscu</span></div><div class="lm-tile">🥦<span>Nutrition</span></div><div class="lm-tile">😴<span>Récup</span></div><div class="lm-tile">🧠<span>Mindset</span></div></div>'
+      +'<div class="lm-prog"><i style="width:40%"></i></div><div style="font-size:9px;color:var(--text3);margin-top:4px">40% complété</div>');
+  }},
+  {t:'Ressources',d:'Guides et PDF téléchargeables pour t’accompagner partout.',m:function(){
+    return _ldpPhone('<div class="lm-top"><span>📚 Ressources</span></div>'
+      +'<div class="lm-row"><b>📄 Guide débutant</b><span>PDF</span></div>'
+      +'<div class="lm-row"><b>📄 Recettes prise de masse</b><span>PDF</span></div>'
+      +'<div class="lm-row"><b>📄 Étirements & mobilité</b><span>PDF</span></div>'
+      +'<div class="lm-row"><b>📄 Plan de sommeil</b><span>PDF</span></div>');
+  }},
+  {t:'Défis & gamification',d:'Des défis, des niveaux et des badges pour rester motivé.',m:function(){
+    return _ldpPhone('<div class="lm-top"><span>🏆 Niveau 4</span><span class="lm-pill" style="background:var(--gold-light);color:var(--gold-dark)">340 XP</span></div>'
+      +'<div class="lm-prog gold"><i style="width:70%"></i></div>'
+      +'<div class="lm-badges"><span>🥇</span><span>🔥</span><span>💎</span><span>⭐</span><span class="lm-lock">🔒</span></div>'
+      +'<div class="lm-row"><b>Défi : 4 séances / semaine</b><span>3/4</span></div>');
+  }},
+  {t:'Communauté',d:'Échange, partage ta progression, reste entouré et motivé.',m:function(){
+    return _ldpPhone('<div class="lm-top"><span>💬 Communauté</span></div>'
+      +'<div class="lm-post"><div class="lm-av">K</div><div><b>Karim</b><p>+6 kg de muscle en 5 mois 💪🔥</p></div></div>'
+      +'<div class="lm-post"><div class="lm-av" style="background:var(--gold)">J</div><div><b>Julie</b><p>Premier 100 kg au squat ! 🎉</p></div></div>');
+  }}
+];
+function buildAppPreviews(){
+  var track=document.getElementById('ldp-track');if(!track)return;
+  track.innerHTML=_LDP_SLIDES.map(function(s){
+    return '<div class="ldp-slide"><div class="ldp-mock">'+s.m()+'</div><h3 class="ldp-title">'+h(s.t)+'</h3><p class="ldp-desc">'+h(s.d)+'</p></div>';
+  }).join('');
+  var dots=document.getElementById('ldp-dots');
+  if(dots){dots.innerHTML='';for(var i=0;i<_LDP_SLIDES.length;i++){(function(i){var b=document.createElement('button');b.className='ldp-dot'+(i===0?' on':'');b.setAttribute('aria-label','Aperçu '+(i+1));b.onclick=function(){ldpGo(i);ldpKick();};dots.appendChild(b);})(i);}}
+  track.onscroll=ldpOnScroll;
+  ['pointerdown','touchstart'].forEach(function(ev){track.addEventListener(ev,ldpKick,{passive:true});});
+  ldpPlay();
+}
+var _ldpTimer=null,_ldpResume=null,_ldpIdx=0,_ldpRaf=null;
+function ldpCurrent(){var t=document.getElementById('ldp-track');if(!t||!t.children.length)return 0;var c=t.scrollLeft+t.clientWidth/2,best=0,bd=1e9;for(var i=0;i<t.children.length;i++){var s=t.children[i];var cc=s.offsetLeft+s.clientWidth/2;var d=Math.abs(cc-c);if(d<bd){bd=d;best=i;}}return best;}
+function ldpUpdateDots(){var dots=document.getElementById('ldp-dots');if(!dots)return;for(var i=0;i<dots.children.length;i++)dots.children[i].classList.toggle('on',i===_ldpIdx);}
+function ldpOnScroll(){if(_ldpRaf)return;_ldpRaf=requestAnimationFrame(function(){_ldpRaf=null;_ldpIdx=ldpCurrent();ldpUpdateDots();});}
+function ldpGo(i){var t=document.getElementById('ldp-track');if(!t||!t.children[i])return;_ldpIdx=i;var s=t.children[i];t.scrollTo({left:s.offsetLeft-(t.clientWidth-s.clientWidth)/2,behavior:'smooth'});ldpUpdateDots();}
+function ldpNext(){var t=document.getElementById('ldp-track');if(!t)return;var n=t.children.length;ldpGo((_ldpIdx+1)%n);}
+function ldpPlay(){ldpStop();if(window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches)return;if(document.getElementById('ldp-track'))_ldpTimer=setInterval(function(){if(!document.hidden)ldpNext();},4500);}
+function ldpStop(){if(_ldpTimer){clearInterval(_ldpTimer);_ldpTimer=null;}}
+function ldpKick(){ldpStop();if(_ldpResume)clearTimeout(_ldpResume);_ldpResume=setTimeout(ldpPlay,7000);} // pause à l'interaction, reprise après 7s
 
 // ============================================================
 // CLIENT — MODE SÉANCE LIVE
