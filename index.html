@@ -1266,6 +1266,29 @@ button{touch-action:manipulation;}
 /* Canvas de particules de la vitrine */
 #fx-hero-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;}
 
+/* ---- 17. GALERIE APERÇUS — corrections d'affichage (override final) ---- */
+/* Titre jamais collé en haut / sous la barre de statut (encoche incluse) */
+#ld-previews{padding-top:calc(64px + env(safe-area-inset-top));padding-bottom:60px;overflow:hidden;}
+#ld-previews .ld-h2{margin-bottom:10px;}
+#ld-previews .ld-sub{margin-bottom:26px;max-width:520px;margin-left:auto;margin-right:auto;}
+/* Scène : conteneur relatif non rogné (pour les flèches), centré */
+.ldp-stage{position:relative;max-width:440px;margin:0 auto;}
+/* Piste : UNE seule slide visible, débordement strictement rogné → aucun fragment de la slide voisine */
+.ldp-track{display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-radius:18px;}
+.ldp-track::-webkit-scrollbar{display:none;}
+.ldp-slide{flex:0 0 100%;width:100%;min-width:100%;scroll-snap-align:center;scroll-snap-stop:always;display:flex;flex-direction:column;align-items:center;text-align:center;padding:6px 8px 0;box-sizing:border-box;}
+/* Plus d'air entre le téléphone et son texte */
+.ldp-title{margin:20px 0 6px;}
+.ldp-desc{max-width:330px;margin:0 auto;line-height:1.55;}
+/* Flèches : posées proprement dans la zone visible, avec halo, jamais coupées */
+.ldp-arrow{position:absolute;top:42%;transform:translateY(-50%);z-index:4;width:42px;height:42px;border-radius:50%;border:none;background:rgba(255,255,255,.94);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;box-shadow:0 6px 18px rgba(13,27,42,.22);transition:transform .15s ease,background .15s ease;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);}
+.ldp-arrow:hover{background:#fff;transform:translateY(-50%) scale(1.08);}
+.ldp-prev{left:-2px;}
+.ldp-next{right:-2px;}
+@media(max-width:640px){.ldp-arrow{display:none;}}
+/* Points de pagination bien centrés et visibles */
+.ldp-dots{display:flex;gap:7px;justify-content:center;margin-top:22px;}
+
 /* ---- 12. ACCESSIBILITÉ : reduced motion ---- */
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;}
@@ -1309,9 +1332,9 @@ button{touch-action:manipulation;}
   <section class="ld-sec lv" id="ld-previews">
     <h2 class="ld-h2">Aperçu de l'application</h2>
     <p class="ld-sub">Une appli privée pensée pour ta progression — voici ce qui t'attend à l'intérieur.</p>
-    <div class="ldp-carousel">
-      <button class="ldp-arrow ldp-prev" aria-label="Précédent" onclick="ldpGo(Math.max(0,_ldpIdx-1));ldpKick()"><i class="fa-solid fa-chevron-left"></i></button>
+    <div class="ldp-stage">
       <div class="ldp-track" id="ldp-track"></div>
+      <button class="ldp-arrow ldp-prev" aria-label="Précédent" onclick="ldpGo(Math.max(0,_ldpIdx-1));ldpKick()"><i class="fa-solid fa-chevron-left"></i></button>
       <button class="ldp-arrow ldp-next" aria-label="Suivant" onclick="ldpGo(_ldpIdx+1);ldpKick()"><i class="fa-solid fa-chevron-right"></i></button>
     </div>
     <div class="ldp-dots" id="ldp-dots"></div>
