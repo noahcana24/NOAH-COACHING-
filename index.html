@@ -2182,19 +2182,30 @@ function isCloudKey(k){
   // données par client : body_, transfo_, temo_, comments_
   return /^(body_|transfo_|temo_|comments_|journal_|hydra_|cycle_|sleep_|blessures_|bilans_|courses_|quetes_|assign_|workouts_)/.test(k);
 }
+// Collections PARTAGÉES et critiques : une seule écriture incomplète écrase
+// tous les comptes. On ne les pousse que si le cloud a bien été lu d'abord.
+const PROTECTED_KEYS=['members','invites'];
 // Pousse une clé vers Supabase (sans bloquer l'interface)
 function cloudPush(key,val){
   if(!SB||!isCloudKey(key))return;
+  if(PROTECTED_KEYS.includes(key)&&!_cloudOK){console.warn('push bloqué (cloud non confirmé) :',key);return;}
   try{SB.from('contenu').upsert({cle:key,data:val,updated_at:new Date().toISOString()}).then(()=>{},e=>console.warn('push',key,e));}catch(e){}
 }
-// Tire toutes les données cloud vers le localStorage au démarrage
+// Indique si on a réussi à LIRE le cloud au moins une fois cette session.
+// Tant que c'est false, on n'écrase JAMAIS les collections partagées
+// (members, invites) côté cloud : sinon une copie locale incomplète
+// (lecture échouée / RLS / réseau) effacerait tous les comptes.
+let _cloudOK=false;
+// Tire toutes les données cloud vers le localStorage au démarrage.
+// Renvoie true si la lecture a réussi (même si le cloud est vide), false sinon.
 async function cloudPullAll(){
-  if(!SB)return;
+  if(!SB)return false;
   try{
     const {data,error}=await SB.from('contenu').select('cle,data');
-    if(error){console.warn('pull',error);return;}
+    if(error){console.warn('pull',error);return false;}
     (data||[]).forEach(row=>{try{localStorage.setItem('nc3_'+row.cle,JSON.stringify(row.data));}catch(e){}});
-  }catch(e){console.warn('pullAll',e);}
+    _cloudOK=true;return true;
+  }catch(e){console.warn('pullAll',e);return false;}
 }
 // Rafraîchissement périodique : re-tire le cloud et rafraîchit la vue active
 let _refreshing=false;
@@ -3147,6 +3158,10 @@ async function handleLogin(){
       const code=cleanCode(document.getElementById('invite-code').value);
       const name=(document.getElementById('member-name').value||'').trim().slice(0,40);
       if(!code&&!name){err.textContent='Entre ton prénom (et ton code si c’est ta première connexion).';return;}
+      // Anti-perte : on relit les comptes depuis le cloud AVANT toute décision
+      // « compte existant vs nouveau » (sinon une lecture ratée ferait croire
+      // à un nouveau compte et écraserait la progression existante).
+      if(SB){const lb=document.getElementById('login-btn');if(lb)lb.disabled=true;await cloudPullAll();if(lb)lb.disabled=false;}
       if(code===ADMIN_CODE){
         const aa=DB.get('admin_auth');
         pendingLogin={type:aa?'admin':'admin-create',code,name:name||'Noah'};
@@ -3197,7 +3212,7 @@ async function handleLogin(){
         DB.set('admin_auth',{salt,hash,createdAt:new Date().toISOString()});
         loginAsAdmin();return;
       }
-      finishMemberLogin(pendingLogin.code,pendingLogin.name,{salt,hash});return;
+      await finishMemberLogin(pendingLogin.code,pendingLogin.name,{salt,hash});return;
     }
     if(pendingLogin.type==='admin'){
       const aa=DB.get('admin_auth');
@@ -3210,15 +3225,26 @@ async function handleLogin(){
     if(!m||!m.pwSalt){err.textContent='Compte introuvable. Recommence.';resetLogin();return;}
     const hash=await hashPw(m.pwSalt,pw);
     if(hash!==m.pwHash){notePwFail(lockId);err.textContent='Mot de passe incorrect. Oublié ? Contacte ton coach pour le réinitialiser.';return;}
-    clearPwFails(lockId);finishMemberLogin(pendingLogin.code,m.name||pendingLogin.name,null);
+    clearPwFails(lockId);await finishMemberLogin(pendingLogin.code,m.name||pendingLogin.name,null);
   }catch(e){console.warn('login',e);if(err)err.textContent='Erreur inattendue. Réessaie.';}
 }
 function loginAsAdmin(){CU={name:'Noah Cana',isAdmin:true};DB.set('session',CU);resetLogin();showAdmin();}
-function finishMemberLogin(code,name,newPw){
+async function finishMemberLogin(code,name,newPw){
+  // ANTI-PERTE DE DONNÉES : avant de considérer ce code comme un NOUVEAU compte,
+  // on relit le cloud. Si le compte y existe déjà, on le récupère intact.
+  let members=DB.getArr('members');
+  if(!members.find(x=>x.code===code)&&SB){await cloudPullAll();members=DB.getArr('members');}
+  // Si le compte reste introuvable MAIS qu'on n'a pas pu lire le cloud,
+  // on refuse de créer un compte vide (ce qui réinitialiserait la progression).
+  if(!members.find(x=>x.code===code)&&SB&&!_cloudOK){
+    const err=document.getElementById('login-error');
+    if(err)err.textContent='Connexion au serveur impossible — réessaie dans un instant. Ton compte et ta progression sont préservés.';
+    return;
+  }
   const invs=DB.getArr('invites');let inv=invs.find(i=>i.code===code);
   if(!inv){inv={code,name:'',note:'',used:false,createdAt:new Date().toISOString()};invs.push(inv);}
   inv.used=true;inv.usedBy=name;inv.usedAt=new Date().toISOString();DB.set('invites',invs);
-  const members=DB.getArr('members');let m=members.find(x=>x.code===code);
+  let m=members.find(x=>x.code===code);
   const today=new Date().toDateString();
   if(!m){
     m={id:Date.now(),name,code,joinedAt:new Date().toISOString(),xp:0,completedLessons:[],completedDefis:[],badges:['first_login'],postCount:0,streak:1,lastLogin:today,favRepas:[],favTips:[],objectif:'',onboarded:false,lessonNotes:{},access:accessFromFormule(inv.formule)};
